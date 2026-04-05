@@ -3,13 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>VPS Generator - Tạo VPS Miễn Phí</title>
+    <title>VPS Generator - Windows + Tailscale + noVNC</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -23,30 +19,14 @@
             background: white;
             border-radius: 20px;
             padding: 40px;
-            max-width: 600px;
+            max-width: 650px;
             width: 100%;
             box-shadow: 0 20px 60px rgba(0,0,0,0.3);
         }
-        h1 {
-            text-align: center;
-            color: #333;
-            margin-bottom: 10px;
-        }
-        .subtitle {
-            text-align: center;
-            color: #666;
-            margin-bottom: 30px;
-            font-size: 14px;
-        }
-        .input-group {
-            margin-bottom: 20px;
-        }
-        label {
-            display: block;
-            margin-bottom: 8px;
-            color: #333;
-            font-weight: 500;
-        }
+        h1 { text-align: center; color: #333; margin-bottom: 10px; }
+        .subtitle { text-align: center; color: #666; margin-bottom: 30px; font-size: 14px; }
+        .input-group { margin-bottom: 20px; }
+        label { display: block; margin-bottom: 8px; color: #333; font-weight: 500; }
         input {
             width: 100%;
             padding: 12px 15px;
@@ -55,10 +35,7 @@
             font-size: 16px;
             transition: all 0.3s;
         }
-        input:focus {
-            outline: none;
-            border-color: #667eea;
-        }
+        input:focus { outline: none; border-color: #667eea; }
         button {
             width: 100%;
             padding: 14px;
@@ -71,13 +48,8 @@
             cursor: pointer;
             transition: transform 0.2s;
         }
-        button:hover {
-            transform: translateY(-2px);
-        }
-        button:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-        }
+        button:hover { transform: translateY(-2px); }
+        button:disabled { opacity: 0.6; cursor: not-allowed; }
         .result {
             margin-top: 20px;
             padding: 15px;
@@ -96,10 +68,7 @@
             color: #721c24;
             display: block;
         }
-        .result a {
-            color: #155724;
-            word-break: break-all;
-        }
+        .result a { color: #155724; word-break: break-all; }
         .info {
             margin-top: 20px;
             padding: 15px;
@@ -108,12 +77,7 @@
             font-size: 13px;
             color: #666;
         }
-        .info code {
-            background: #e9ecef;
-            padding: 2px 5px;
-            border-radius: 5px;
-            font-size: 12px;
-        }
+        .info code { background: #e9ecef; padding: 2px 5px; border-radius: 5px; font-size: 12px; }
         .loading {
             display: inline-block;
             width: 20px;
@@ -123,15 +87,21 @@
             border-top-color: white;
             animation: spin 1s ease-in-out infinite;
         }
-        @keyframes spin {
-            to { transform: rotate(360deg); }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .connection-box {
+            background: #e9ecef;
+            border-radius: 10px;
+            padding: 10px;
+            margin: 10px 0;
         }
+        .connection-box h4 { color: #333; margin-bottom: 10px; }
+        .connection-box p { margin: 5px 0; font-size: 14px; }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>🚀 VPS Generator</h1>
-        <div class="subtitle">Tạo VPS Windows Server miễn phí từ GitHub Actions</div>
+        <h1>🚀 VPS Generator Pro</h1>
+        <div class="subtitle">Windows Server + Tailscale + noVNC | Tạo VPS miễn phí</div>
         
         <div class="input-group">
             <label>🔑 GitHub Token</label>
@@ -147,13 +117,18 @@
             1. Tạo token tại: <a href="https://github.com/settings/tokens" target="_blank">github.com/settings/tokens</a><br>
             2. Chọn quyền: <code>repo</code>, <code>workflow</code><br>
             3. Dán token vào ô trên và bấm tạo<br>
-            4. Sau 2-3 phút, click vào link noVNC để dùng Windows<br><br>
-            <strong>✅ Thông tin VPS:</strong>
-            <ul style="margin-left: 20px; margin-top: 5px;">
-                <li>🪟 Hệ điều hành: Windows Server</li>
-                <li>⏱️ Thời gian: 6 tiếng (tự động restart)</li>
-                <li>🔐 Mật khẩu: <code>VPS@123456</code></li>
-            </ul>
+            4. Đợi 2-3 phút, sau đó dùng 1 trong 2 cách bên dưới:<br><br>
+            
+            <strong>🔗 Cách 1 - Tailscale (Khuyên dùng):</strong><br>
+            - Cài Tailscale: <a href="https://tailscale.com/download" target="_blank">tailscale.com/download</a><br>
+            - Đăng nhập cùng tài khoản với VM<br>
+            - Lấy IP Tailscale từ GitHub Actions logs<br>
+            - Dùng Remote Desktop kết nối đến IP đó<br><br>
+            
+            <strong>🌐 Cách 2 - noVNC (Web):</strong><br>
+            - Click vào link noVNC sau khi tạo<br>
+            - Nhập mật khẩu: <code>VPS@123456</code><br>
+            - Bắt đầu sử dụng Windows
         </div>
     </div>
 
@@ -170,21 +145,13 @@
                 return;
             }
             
-            // Kiểm tra định dạng token
-            if (!token.startsWith('github_pat_') && !token.startsWith('ghp_') && !token.startsWith('gho_')) {
-                showResult('error', '⚠️ Token GitHub không đúng định dạng!<br><small>Token thường bắt đầu bằng <code>github_pat_</code> hoặc <code>ghp_</code></small>');
-                return;
-            }
-            
             createBtn.disabled = true;
-            createBtn.innerHTML = '<span class="loading"></span> Đang tạo VPS (có thể mất 1-2 phút)...';
+            createBtn.innerHTML = '<span class="loading"></span> Đang tạo VPS (2-3 phút)...';
             
             try {
                 const response = await fetch('/api/vpsuser', {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
+                    headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ githubToken: token })
                 });
                 
@@ -193,21 +160,34 @@
                 if (data.success) {
                     showResult('success', `
                         ✅ ${data.message}<br><br>
-                        📦 <strong>Repo:</strong> <a href="${data.repoUrl}" target="_blank">${data.repoUrl}</a><br>
-                        ⚙️ <strong>Actions:</strong> <a href="${data.actionsUrl}" target="_blank">Xem tiến trình VPS</a><br>
-                        🖥️ <strong>Link noVNC:</strong> <a href="${data.novncUrl}" target="_blank">${data.novncUrl}</a><br>
-                        🔐 <strong>Mật khẩu:</strong> <code>${data.password}</code><br><br>
-                        💡 <strong>Lưu ý:</strong> VPS cần 2-3 phút để khởi động. Click vào link noVNC sau khi thấy workflow chạy thành công!
+                        
+                        <div class="connection-box">
+                            <h4>🔗 CÁCH 1: KẾT NỐI QUA TAILSCALE (Khuyên dùng)</h4>
+                            <p>1. Cài Tailscale: <a href="https://tailscale.com/download" target="_blank">https://tailscale.com/download</a></p>
+                            <p>2. Xem IP Tailscale tại: <a href="${data.actionsUrl}" target="_blank">GitHub Actions Logs</a></p>
+                            <p>3. Mở Remote Desktop → Nhập IP Tailscale</p>
+                            <p>4. Username: <code>${data.username}</code> | Password: <code>${data.password}</code></p>
+                        </div>
+                        
+                        <div class="connection-box">
+                            <h4>🌐 CÁCH 2: KẾT NỐI QUA noVNC (Trình duyệt)</h4>
+                            <p>🔗 Link noVNC: <a href="${data.novncUrl}" target="_blank">${data.novncUrl}</a></p>
+                            <p>🔐 Mật khẩu: <code>${data.password}</code></p>
+                        </div>
+                        
+                        <div class="connection-box">
+                            <h4>📦 THÔNG TIN KHÁC</h4>
+                            <p>📦 Repo: <a href="${data.repoUrl}" target="_blank">${data.repoUrl}</a></p>
+                            <p>⚙️ Actions: <a href="${data.actionsUrl}" target="_blank">Theo dõi tiến trình</a></p>
+                        </div>
+                        
+                        💡 <strong>Lưu ý:</strong> VPS cần 2-3 phút để khởi động hoàn toàn!
                     `);
                 } else {
                     showResult('error', `❌ ${data.error}`);
                 }
             } catch (error) {
-                showResult('error', `❌ Lỗi kết nối: ${error.message}<br><br>
-                <strong>Cách khắc phục:</strong><br>
-                1. Kiểm tra token có đúng không<br>
-                2. Thử tạo token mới tại <a href="https://github.com/settings/tokens" target="_blank">github.com/settings/tokens</a><br>
-                3. Đảm bảo chọn quyền: <code>repo</code> và <code>workflow</code>`);
+                showResult('error', `❌ Lỗi: ${error.message}`);
             } finally {
                 createBtn.disabled = false;
                 createBtn.innerHTML = '✨ Tạo VPS Ngay';
