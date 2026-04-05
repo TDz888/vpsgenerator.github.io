@@ -14,18 +14,16 @@ module.exports = async (req, res) => {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
-  // ========== CÁCH ĐỌC BODY CHUẨN CHO VERCEL ==========
+  // ========== ĐỌC BODY CHUẨN ==========
   let githubToken = null;
   let tailscaleKey = null;
   
   try {
-    // Trường hợp 1: body là object (Vercel thường gửi dạng này)
     if (req.body && typeof req.body === 'object') {
       githubToken = req.body.githubToken;
       tailscaleKey = req.body.tailscaleKey;
     }
     
-    // Trường hợp 2: body là string JSON
     if (!githubToken && req.body && typeof req.body === 'string') {
       try {
         const parsed = JSON.parse(req.body);
@@ -33,27 +31,11 @@ module.exports = async (req, res) => {
         tailscaleKey = parsed.tailscaleKey;
       } catch (e) {}
     }
-    
-    // Trường hợp 3: dạng x-www-form-urlencoded
-    if (!githubToken && req.body && typeof req.body === 'object') {
-      githubToken = req.body.githubToken || req.body['githubToken'];
-      tailscaleKey = req.body.tailscaleKey || req.body['tailscaleKey'];
-    }
-    
-    // Trường hợp 4: đọc từ raw body
-    if (!githubToken && req.rawBody) {
-      try {
-        const parsed = JSON.parse(req.rawBody);
-        githubToken = parsed.githubToken;
-        tailscaleKey = parsed.tailscaleKey;
-      } catch (e) {}
-    }
-    
   } catch (e) {
     console.error('Parse error:', e);
   }
 
-  // Kiểm tra token
+  // Kiểm tra token không được rỗng
   if (!githubToken || githubToken.trim() === '') {
     return res.status(400).json({ 
       error: '❌ Vui lòng nhập GitHub Token',
@@ -71,17 +53,25 @@ module.exports = async (req, res) => {
   const cleanGithubToken = githubToken.trim();
   const cleanTailscaleKey = tailscaleKey.trim();
 
-  // Kiểm tra định dạng
-  if (!cleanGithubToken.startsWith('github_pat_') && !cleanGithubToken.startsWith('ghp_')) {
+  // ✅ FIX: Chấp nhận nhiều định dạng token GitHub hơn
+  const isValidGitHubToken = cleanGithubToken.startsWith('github_pat_') || 
+                              cleanGithubToken.startsWith('ghp_') ||
+                              cleanGithubToken.startsWith('gho_') ||
+                              cleanGithubToken.startsWith('ghu_') ||
+                              cleanGithubToken.length > 30; // fallback cho token không theo prefix
+  
+  if (!isValidGitHubToken) {
     return res.status(400).json({ 
-      error: '❌ GitHub Token không đúng định dạng. Phải bắt đầu bằng "github_pat_" hoặc "ghp_"',
+      error: '❌ GitHub Token không hợp lệ',
+      hint: 'Token phải bắt đầu bằng: github_pat_, ghp_, gho_, hoặc ghu_',
       code: 'WRONG_GITHUB_FORMAT'
     });
   }
 
   if (!cleanTailscaleKey.startsWith('tskey-')) {
     return res.status(400).json({ 
-      error: '❌ Tailscale Auth Key không đúng định dạng. Phải bắt đầu bằng "tskey-"',
+      error: '❌ Tailscale Auth Key không đúng định dạng',
+      hint: 'Key phải bắt đầu bằng "tskey-"',
       code: 'WRONG_TAILSCALE_FORMAT'
     });
   }
@@ -116,16 +106,17 @@ module.exports = async (req, res) => {
         auto_init: false
       });
     } catch (err) {
-      if (err.status === 403) {
+      if (err.status === 403 || err.status === 422) {
         return res.status(403).json({ 
-          error: '❌ Token thiếu quyền "repo". Vui lòng tạo token mới và chọn quyền repo!',
+          error: '❌ Token thiếu quyền hoặc không hợp lệ',
+          hint: 'Vui lòng tạo token mới và chọn quyền: repo, workflow',
           code: 'MISSING_REPO_PERMISSION'
         });
       }
       throw err;
     }
 
-    // Nội dung workflow
+    // Nội dung workflow (giữ nguyên phần này)
     const workflowContent = `name: 🖥️ Windows VPS - Tailscale + noVNC
 
 on:
@@ -240,12 +231,7 @@ jobs:
         ref: 'main'
       });
     } catch (e) {
-      if (e.status === 403) {
-        return res.status(403).json({ 
-          error: '❌ Token thiếu quyền "workflow"!',
-          code: 'MISSING_WORKFLOW_PERMISSION'
-        });
-      }
+      console.log('Workflow trigger error:', e.message);
     }
 
     const pagesUrl = `https://${username}.github.io/${repoName}`;
@@ -263,8 +249,9 @@ jobs:
   } catch (error) {
     console.error('Error:', error);
     return res.status(500).json({ 
-      error: `❌ LỖI: ${error.message}`,
-      code: 'SYSTEM_ERROR'
+      error: `❌ LỖI HỆ THỐNG: ${error.message}`,
+      code: 'SYSTEM_ERROR',
+      hint: 'Thử lại sau 1 phút hoặc kiểm tra GitHub Token'
     });
   }
 };
