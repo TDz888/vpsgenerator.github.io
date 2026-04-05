@@ -1,0 +1,102 @@
+name: Create VPS (Auto Restart)
+
+on:
+  workflow_dispatch:
+  repository_dispatch:
+    types: [create-vps]
+
+env:
+  VPS_NAME: vps-project-${{ github.repository_id }}
+
+jobs:
+  deploy:
+    runs-on: windows-latest
+    permissions:
+      contents: write
+      actions: write
+
+    steps:
+    - name: Checkout source
+      uses: actions/checkout@v4
+
+    - name: Install and run VNC + noVNC + Cloudflare Tunnel
+      shell: pwsh
+      run: |
+        Write-Host "=== VPS 4-16 GENERATOR ===" -ForegroundColor Cyan
+        
+        # Install TightVNC
+        Write-Host "[1/5] Installing TightVNC..." -ForegroundColor Yellow
+        Invoke-WebRequest -Uri "https://www.tightvnc.com/download/2.8.63/tightvnc-2.8.63-gpl-setup-64bit.msi" -OutFile "tightvnc-setup.msi" -TimeoutSec 60
+        Start-Process msiexec.exe -Wait -ArgumentList '/i tightvnc-setup.msi /quiet /norestart ADDLOCAL="Server" SERVER_REGISTER_AS_SERVICE=1 SERVER_ADD_FIREWALL_EXCEPTION=1 SET_USEVNCAUTHENTICATION=1 VALUE_OF_USEVNCAUTHENTICATION=1 SET_PASSWORD=1 VALUE_OF_PASSWORD=vps123 SET_ACCEPTHTTPCONNECTIONS=1 VALUE_OF_ACCEPTHTTPCONNECTIONS=1 SET_ALLOWLOOPBACK=1 VALUE_OF_ALLOWLOOPBACK=1'
+        Write-Host "[OK] TightVNC installed" -ForegroundColor Green
+        
+        # Configure firewall
+        netsh advfirewall firewall add rule name="VNC 5900" dir=in action=allow protocol=TCP localport=5900
+        netsh advfirewall firewall add rule name="noVNC 6080" dir=in action=allow protocol=TCP localport=6080
+        
+        # Start VNC Server
+        Write-Host "[2/5] Starting TightVNC Server..." -ForegroundColor Yellow
+        Start-Process -FilePath "C:\Program Files\TightVNC\tvnserver.exe" -ArgumentList "-run -localhost no" -WindowStyle Hidden
+        Start-Sleep -Seconds 10
+        
+        # Install noVNC and websockify
+        Write-Host "[3/5] Installing noVNC..." -ForegroundColor Yellow
+        python -m pip install --upgrade pip --quiet
+        pip install numpy novnc websockify==0.13.0 --quiet
+        
+        # Start websockify
+        Write-Host "[4/5] Starting websockify..." -ForegroundColor Yellow
+        $novncPath = python -c "import novnc; print(novnc.__path__[0])" 2>$null
+        if (-not $novncPath) { $novncPath = "C:\Python*\Lib\site-packages\novnc" }
+        Start-Process -FilePath "python" -ArgumentList "-m", "websockify", "6080", "127.0.0.1:5900", "--web", "$novncPath" -NoNewWindow
+        Start-Sleep -Seconds 10
+        
+        # Install Cloudflared
+        Write-Host "[5/5] Starting Cloudflare Tunnel..." -ForegroundColor Yellow
+        Invoke-WebRequest -Uri "https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-windows-amd64.exe" -OutFile "cloudflared.exe" -TimeoutSec 60
+        Start-Process -FilePath "cloudflared.exe" -ArgumentList "tunnel", "--url", "http://localhost:6080", "--logfile", "cloudflared.log" -WindowStyle Hidden
+        
+        # Get Cloudflare URL
+        Write-Host "Getting Cloudflare tunnel URL..." -ForegroundColor Yellow
+        $maxAttempts = 60
+        $url = $null
+        for ($i = 1; $i -le $maxAttempts; $i++) {
+          Start-Sleep -Seconds 2
+          if (Test-Path "cloudflared.log") {
+            $log = Get-Content "cloudflared.log" -Raw
+            if ($log -match 'https://([a-z0-9-]+\.trycloudflare\.com)') {
+              $url = $matches[0]
+              break
+            }
+          }
+        }
+        
+        if ($url) {
+          $vncLink = "$url/vnc.html"
+          Write-Host ""
+          Write-Host "========================================" -ForegroundColor Green
+          Write-Host "VPS IS READY!" -ForegroundColor Green
+          Write-Host "========================================" -ForegroundColor Green
+          Write-Host "VNC Password: vps123" -ForegroundColor Cyan
+          Write-Host "noVNC Link: $vncLink" -ForegroundColor Cyan
+          Write-Host "========================================" -ForegroundColor Green
+          
+          # Save link to file
+          $vncLink | Out-File -FilePath "vnc-link.txt" -Encoding UTF8
+          
+          # Commit and push
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git config user.name "github-actions[bot]"
+          git add vnc-link.txt
+          git commit -m "Add VNC link" --allow-empty
+          git push origin main
+        } else {
+          Write-Host "[ERROR] Failed to create tunnel" -ForegroundColor Red
+        }
+        
+        # Keep alive
+        Write-Host "VPS running. Press Ctrl+C to stop." -ForegroundColor Yellow
+        for ($i = 1; $i -le 330; $i++) {
+          Write-Host "[ALIVE] Minute $i/330" -ForegroundColor DarkCyan
+          Start-Sleep -Seconds 60
+        }
