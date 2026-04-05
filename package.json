@@ -1,14 +1,9 @@
 {
-  "name": "vps-generator",
+  "name": "vps-generator-pro",
   "version": "1.0.0",
-  "description": "Tạo VPS miễn phí từ GitHub Actions",
+  "description": "Tạo VPS Windows miễn phí với Tailscale + noVNC",
   "main": "api/vpsuser.js",
-  "scripts": {
-    "start": "node api/vpsuser.js"
-  },
   "dependencies": {
     "@octokit/rest": "^20.1.0"
-  },
-  "author": "TDz888",
-  "license": "MIT"
+  }
 }
