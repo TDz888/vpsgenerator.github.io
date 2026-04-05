@@ -1,12 +1,16 @@
 {
-  "version": 2,
   "functions": {
-    "api/*.js": {
-      "runtime": "nodejs18.x"
+    "api/vpsuser.js": {
+      "maxDuration": 10
+    },
+    "api/create-repo.js": {
+      "maxDuration": 10
+    },
+    "api/deploy-vm.js": {
+      "maxDuration": 10
     }
   },
-  "routes": [
-    { "src": "/api/(.*)", "dest": "/api/$1" },
-    { "src": "/(.*)", "dest": "/public/$1" }
+  "rewrites": [
+    { "source": "/api/(.*)", "destination": "/api/$1" }
   ]
 }
