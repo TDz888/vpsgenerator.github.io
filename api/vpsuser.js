@@ -1,54 +1,28 @@
 const { Octokit } = require('@octokit/rest');
 
 module.exports = async (req, res) => {
-  // CORS headers
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 
-  if (req.method === 'OPTIONS') {
-    return res.status(200).end();
-  }
-
-  if (req.method !== 'POST') {
-    return res.status(405).json({ error: 'Method not allowed' });
-  }
+  if (req.method === 'OPTIONS') return res.status(200).end();
+  if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
 
   // Parse body
-  let githubToken = null;
-  let tailscaleKey = null;
-  
+  let githubToken = null, tailscaleKey = null;
   try {
-    if (typeof req.body === 'string') {
-      const parsed = JSON.parse(req.body);
-      githubToken = parsed.githubToken;
-      tailscaleKey = parsed.tailscaleKey;
-    } else if (typeof req.body === 'object') {
-      githubToken = req.body.githubToken;
-      tailscaleKey = req.body.tailscaleKey;
-    }
+    const body = typeof req.body === 'string' ? JSON.parse(req.body) : req.body;
+    githubToken = body.githubToken;
+    tailscaleKey = body.tailscaleKey;
   } catch (e) {
     return res.status(400).json({ error: 'Invalid JSON', code: 'INVALID_JSON' });
   }
 
-  // Validate
-  if (!githubToken?.trim()) {
-    return res.status(400).json({ error: 'Missing GitHub Token', code: 'MISSING_GITHUB_TOKEN' });
-  }
-  if (!tailscaleKey?.trim()) {
-    return res.status(400).json({ error: 'Missing Tailscale Key', code: 'MISSING_TAILSCALE_KEY' });
-  }
+  if (!githubToken?.trim()) return res.status(400).json({ error: 'Missing GitHub Token', code: 'MISSING_GITHUB_TOKEN' });
+  if (!tailscaleKey?.trim()) return res.status(400).json({ error: 'Missing Tailscale Key', code: 'MISSING_TAILSCALE_KEY' });
 
   const cleanGithubToken = githubToken.trim();
   const cleanTailscaleKey = tailscaleKey.trim();
-
-  // Format check
-  if (!cleanGithubToken.match(/^(github_pat_|ghp_|gho_|ghu_)/)) {
-    return res.status(400).json({ error: 'Invalid GitHub Token format', code: 'WRONG_GITHUB_FORMAT' });
-  }
-  if (!cleanTailscaleKey.startsWith('tskey-')) {
-    return res.status(400).json({ error: 'Invalid Tailscale Key format', code: 'WRONG_TAILSCALE_FORMAT' });
-  }
 
   try {
     const octokit = new Octokit({ auth: cleanGithubToken });
@@ -59,9 +33,7 @@ module.exports = async (req, res) => {
       const { data } = await octokit.rest.users.getAuthenticated();
       user = data;
     } catch (err) {
-      if (err.status === 401) {
-        return res.status(401).json({ error: 'Invalid or expired GitHub Token', code: 'INVALID_GITHUB_TOKEN' });
-      }
+      if (err.status === 401) return res.status(401).json({ error: 'Invalid GitHub Token', code: 'INVALID_GITHUB_TOKEN' });
       throw err;
     }
 
@@ -70,13 +42,26 @@ module.exports = async (req, res) => {
     const createdAt = new Date().toISOString();
     const expiresAt = new Date(Date.now() + 6 * 60 * 60 * 1000).toISOString();
 
-    // Create repo
+    // Tạo repository
     await octokit.rest.repos.createForAuthenticatedUser({
       name: repoName,
       description: 'VPS Windows with Tailscale + noVNC',
       private: false,
-      auto_init: false
+      auto_init: true  // ✅ FIX: Tạo repository với initial commit
     });
+
+    // ✅ FIX: Đợi repository khởi tạo xong
+    await new Promise(resolve => setTimeout(resolve, 3000));
+
+    // Lấy thông tin branch mặc định
+    let defaultBranch = 'main';
+    try {
+      const repoInfo = await octokit.rest.repos.get({
+        owner: username,
+        repo: repoName
+      });
+      defaultBranch = repoInfo.data.default_branch;
+    } catch (e) {}
 
     // Workflow content
     const workflowContent = `name: 🖥️ Windows VPS
@@ -125,12 +110,14 @@ jobs:
           while ((Get-Date) -lt $end) { Start-Sleep -Seconds 60 }
 `;
 
+    // ✅ FIX: Tạo file workflow với branch chính xác
     await octokit.rest.repos.createOrUpdateFileContents({
       owner: username,
       repo: repoName,
       path: '.github/workflows/vps.yml',
       message: 'Add VPS workflow',
-      content: Buffer.from(workflowContent).toString('base64')
+      content: Buffer.from(workflowContent).toString('base64'),
+      branch: defaultBranch
     });
 
     // Trigger workflow
@@ -139,7 +126,7 @@ jobs:
         owner: username,
         repo: repoName,
         workflow_id: 'vps.yml',
-        ref: 'main'
+        ref: defaultBranch
       });
     } catch (e) {}
 
