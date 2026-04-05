@@ -1,6 +1,6 @@
 {
   "name": "vps-generator-pro",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "description": "Tạo VPS Windows miễn phí với Tailscale + noVNC",
   "main": "api/vpsuser.js",
   "dependencies": {
