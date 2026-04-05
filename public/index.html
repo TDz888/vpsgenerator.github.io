@@ -2,201 +2,490 @@
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>VPS Generator - Windows + Tailscale + noVNC</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>VPS Generator Pro | Tạo VPS Windows Miễn Phí</title>
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
         body {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%);
+            font-family: 'Segoe UI', 'Poppins', system-ui, -apple-system, sans-serif;
             min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
             padding: 20px;
+            animation: fadeIn 0.5s ease-out;
         }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes slideUp {
+            from { transform: translateY(30px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.02); }
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
         .container {
-            background: white;
-            border-radius: 20px;
-            padding: 40px;
-            max-width: 650px;
-            width: 100%;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            max-width: 900px;
+            margin: 0 auto;
+            animation: slideUp 0.6s ease-out;
         }
-        h1 { text-align: center; color: #333; margin-bottom: 10px; }
-        .subtitle { text-align: center; color: #666; margin-bottom: 30px; font-size: 14px; }
-        .input-group { margin-bottom: 20px; }
-        label { display: block; margin-bottom: 8px; color: #333; font-weight: 500; }
-        input {
+
+        /* Header */
+        .header {
+            text-align: center;
+            padding: 40px 20px;
+            background: rgba(255,255,255,0.08);
+            backdrop-filter: blur(10px);
+            border-radius: 40px;
+            margin-bottom: 30px;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            background: linear-gradient(135deg, #fff, #a8b5ff);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin-bottom: 10px;
+        }
+
+        .header .badge {
+            display: inline-block;
+            background: rgba(255,255,255,0.15);
+            padding: 5px 15px;
+            border-radius: 50px;
+            font-size: 0.8rem;
+            color: #a8b5ff;
+            margin-top: 10px;
+        }
+
+        .header p {
+            color: rgba(255,255,255,0.7);
+            margin-top: 10px;
+        }
+
+        /* Card */
+        .card {
+            background: rgba(255,255,255,0.95);
+            border-radius: 30px;
+            padding: 35px;
+            margin-bottom: 25px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 30px 50px rgba(0,0,0,0.25);
+        }
+
+        .card h2 {
+            color: #333;
+            margin-bottom: 20px;
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .card h2 i {
+            font-size: 1.8rem;
+        }
+
+        /* Input Group */
+        .input-group {
+            margin-bottom: 25px;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .input-group label .required {
+            color: #e74c3c;
+            margin-left: 5px;
+        }
+
+        .input-group input {
             width: 100%;
-            padding: 12px 15px;
+            padding: 14px 18px;
             border: 2px solid #e0e0e0;
-            border-radius: 10px;
-            font-size: 16px;
+            border-radius: 16px;
+            font-size: 14px;
+            font-family: 'Monaco', 'Courier New', monospace;
             transition: all 0.3s;
+            background: #f8f9fa;
         }
-        input:focus { outline: none; border-color: #667eea; }
-        button {
+
+        .input-group input:focus {
+            outline: none;
+            border-color: #667eea;
+            background: white;
+            box-shadow: 0 0 0 3px rgba(102,126,234,0.1);
+        }
+
+        .input-group .hint {
+            font-size: 0.75rem;
+            color: #888;
+            margin-top: 5px;
+        }
+
+        .input-group .hint a {
+            color: #667eea;
+            text-decoration: none;
+        }
+
+        /* Button */
+        .btn {
             width: 100%;
-            padding: 14px;
+            padding: 16px;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
             border: none;
-            border-radius: 10px;
-            font-size: 16px;
+            border-radius: 20px;
+            font-size: 1rem;
             font-weight: bold;
             cursor: pointer;
-            transition: transform 0.2s;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
         }
-        button:hover { transform: translateY(-2px); }
-        button:disabled { opacity: 0.6; cursor: not-allowed; }
-        .result {
-            margin-top: 20px;
-            padding: 15px;
-            border-radius: 10px;
-            display: none;
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102,126,234,0.4);
         }
-        .result.success {
-            background: #d4edda;
-            border: 1px solid #c3e6cb;
-            color: #155724;
-            display: block;
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
         }
-        .result.error {
-            background: #f8d7da;
-            border: 1px solid #f5c6cb;
-            color: #721c24;
-            display: block;
-        }
-        .result a { color: #155724; word-break: break-all; }
-        .info {
-            margin-top: 20px;
-            padding: 15px;
-            background: #f8f9fa;
-            border-radius: 10px;
-            font-size: 13px;
-            color: #666;
-        }
-        .info code { background: #e9ecef; padding: 2px 5px; border-radius: 5px; font-size: 12px; }
-        .loading {
+
+        .btn .spinner {
             display: inline-block;
             width: 20px;
             height: 20px;
-            border: 3px solid rgba(255,255,255,.3);
+            border: 2px solid rgba(255,255,255,0.3);
             border-radius: 50%;
             border-top-color: white;
-            animation: spin 1s ease-in-out infinite;
+            animation: spin 0.8s linear infinite;
+            vertical-align: middle;
+            margin-right: 8px;
         }
-        @keyframes spin { to { transform: rotate(360deg); } }
-        .connection-box {
-            background: #e9ecef;
-            border-radius: 10px;
-            padding: 10px;
-            margin: 10px 0;
+
+        /* Result */
+        .result {
+            margin-top: 25px;
+            padding: 20px;
+            border-radius: 20px;
+            display: none;
+            animation: slideUp 0.3s ease-out;
         }
-        .connection-box h4 { color: #333; margin-bottom: 10px; }
-        .connection-box p { margin: 5px 0; font-size: 14px; }
+
+        .result.success {
+            background: linear-gradient(135deg, #d4edda, #c3e6cb);
+            border: 1px solid #9fdfa4;
+            color: #155724;
+            display: block;
+        }
+
+        .result.error {
+            background: linear-gradient(135deg, #f8d7da, #f5c6cb);
+            border: 1px solid #f1aeb5;
+            color: #721c24;
+            display: block;
+        }
+
+        .result.info {
+            background: linear-gradient(135deg, #d1ecf1, #bee5eb);
+            border: 1px solid #a4d3df;
+            color: #0c5460;
+            display: block;
+        }
+
+        .result h4 {
+            margin-bottom: 12px;
+            font-size: 1.1rem;
+        }
+
+        .result .connection-box {
+            background: rgba(255,255,255,0.7);
+            border-radius: 14px;
+            padding: 15px;
+            margin: 12px 0;
+        }
+
+        .result code {
+            background: rgba(0,0,0,0.08);
+            padding: 3px 8px;
+            border-radius: 8px;
+            font-size: 0.85rem;
+        }
+
+        .result a {
+            color: #155724;
+            word-break: break-all;
+        }
+
+        /* Features */
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .feature {
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(5px);
+            border-radius: 20px;
+            padding: 15px;
+            text-align: center;
+            color: white;
+            transition: all 0.3s;
+        }
+
+        .feature:hover {
+            background: rgba(255,255,255,0.2);
+            transform: translateY(-3px);
+        }
+
+        .feature .emoji {
+            font-size: 2rem;
+            margin-bottom: 8px;
+        }
+
+        .feature h3 {
+            font-size: 0.9rem;
+            margin-bottom: 5px;
+        }
+
+        .feature p {
+            font-size: 0.75rem;
+            opacity: 0.8;
+        }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: 20px;
+            color: rgba(255,255,255,0.5);
+            font-size: 0.8rem;
+        }
+
+        @media (max-width: 600px) {
+            .card { padding: 25px; }
+            .header h1 { font-size: 1.8rem; }
+            .features { grid-template-columns: 1fr; }
+        }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>🚀 VPS Generator Pro</h1>
-        <div class="subtitle">Windows Server + Tailscale + noVNC | Tạo VPS miễn phí</div>
-        
-        <div class="input-group">
-            <label>🔑 GitHub Token</label>
-            <input type="password" id="token" placeholder="Nhập GitHub Personal Access Token">
+        <!-- Header -->
+        <div class="header">
+            <h1>🚀 VPS Generator Pro</h1>
+            <div class="badge">⚡ Windows Server + Tailscale + noVNC</div>
+            <p>Tạo VPS miễn phí từ GitHub Actions • 6 tiếng hoạt động</p>
         </div>
-        
-        <button id="createBtn">✨ Tạo VPS Ngay</button>
-        
-        <div id="result" class="result"></div>
-        
-        <div class="info">
-            <strong>📌 Hướng dẫn:</strong><br>
-            1. Tạo token tại: <a href="https://github.com/settings/tokens" target="_blank">github.com/settings/tokens</a><br>
-            2. Chọn quyền: <code>repo</code>, <code>workflow</code><br>
-            3. Dán token vào ô trên và bấm tạo<br>
-            4. Đợi 2-3 phút, sau đó dùng 1 trong 2 cách bên dưới:<br><br>
-            
-            <strong>🔗 Cách 1 - Tailscale (Khuyên dùng):</strong><br>
-            - Cài Tailscale: <a href="https://tailscale.com/download" target="_blank">tailscale.com/download</a><br>
-            - Đăng nhập cùng tài khoản với VM<br>
-            - Lấy IP Tailscale từ GitHub Actions logs<br>
-            - Dùng Remote Desktop kết nối đến IP đó<br><br>
-            
-            <strong>🌐 Cách 2 - noVNC (Web):</strong><br>
-            - Click vào link noVNC sau khi tạo<br>
-            - Nhập mật khẩu: <code>VPS@123456</code><br>
-            - Bắt đầu sử dụng Windows
+
+        <!-- Main Card -->
+        <div class="card">
+            <h2>
+                <span>🔑</span> Thông tin xác thực
+            </h2>
+
+            <div class="input-group">
+                <label>GitHub Token <span class="required">*</span></label>
+                <input type="password" id="githubToken" placeholder="github_pat_xxxxxxxxxxxx">
+                <div class="hint">
+                    📌 <a href="https://github.com/settings/tokens" target="_blank">Tạo token tại đây</a> • Chọn quyền: <code>repo</code>, <code>workflow</code>
+                </div>
+            </div>
+
+            <div class="input-group">
+                <label>Tailscale Auth Key <span class="required">*</span></label>
+                <input type="password" id="tailscaleKey" placeholder="tskey-xxxxxxxxxxxx">
+                <div class="hint">
+                    📌 <a href="https://login.tailscale.com/admin/authkeys" target="_blank">Tạo key tại đây</a> • Cần quyền <code>Reusable</code>
+                </div>
+            </div>
+
+            <button class="btn" id="createBtn">
+                ✨ Tạo VPS Ngay
+            </button>
+
+            <div id="result" class="result"></div>
+        </div>
+
+        <!-- Features -->
+        <div class="features">
+            <div class="feature">
+                <div class="emoji">🖥️</div>
+                <h3>Windows 11</h3>
+                <p>Giao diện đầy đủ, mượt mà</p>
+            </div>
+            <div class="feature">
+                <div class="emoji">🔗</div>
+                <h3>Tailscale</h3>
+                <p>Kết nối an toàn, riêng tư</p>
+            </div>
+            <div class="feature">
+                <div class="emoji">🌐</div>
+                <h3>noVNC</h3>
+                <p>Truy cập qua trình duyệt</p>
+            </div>
+            <div class="feature">
+                <div class="emoji">⏱️</div>
+                <h3>6 tiếng</h3>
+                <p>Tự động restart</p>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="footer">
+            © 2024 VPS Generator Pro • Tạo VPS miễn phí từ GitHub Actions
         </div>
     </div>
 
     <script>
         const createBtn = document.getElementById('createBtn');
-        const tokenInput = document.getElementById('token');
+        const githubTokenInput = document.getElementById('githubToken');
+        const tailscaleKeyInput = document.getElementById('tailscaleKey');
         const resultDiv = document.getElementById('result');
 
         createBtn.addEventListener('click', async () => {
-            let token = tokenInput.value.trim();
+            const githubToken = githubTokenInput.value.trim();
+            const tailscaleKey = tailscaleKeyInput.value.trim();
             
-            if (!token) {
-                showResult('error', '❌ Vui lòng nhập GitHub Token!');
+            // Validate
+            if (!githubToken) {
+                showResult('error', '❌ Vui lòng nhập GitHub Token!', 'MISSING_GITHUB_TOKEN');
                 return;
             }
             
+            if (!tailscaleKey) {
+                showResult('error', '❌ Vui lòng nhập Tailscale Auth Key!', 'MISSING_TAILSCALE_KEY');
+                return;
+            }
+            
+            // Validate format
+            if (!githubToken.startsWith('github_pat_') && !githubToken.startsWith('ghp_')) {
+                showResult('error', '❌ GitHub Token không đúng định dạng! Phải bắt đầu bằng <code>github_pat_</code> hoặc <code>ghp_</code>', 'WRONG_FORMAT');
+                return;
+            }
+            
+            if (!tailscaleKey.startsWith('tskey-')) {
+                showResult('error', '❌ Tailscale Key không đúng định dạng! Phải bắt đầu bằng <code>tskey-</code>', 'WRONG_FORMAT');
+                return;
+            }
+            
+            // Disable button and show loading
             createBtn.disabled = true;
-            createBtn.innerHTML = '<span class="loading"></span> Đang tạo VPS (2-3 phút)...';
+            createBtn.innerHTML = '<span class="spinner"></span> Đang tạo VPS (2-3 phút)...';
             
             try {
                 const response = await fetch('/api/vpsuser', {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ githubToken: token })
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ 
+                        githubToken: githubToken,
+                        tailscaleKey: tailscaleKey
+                    })
                 });
                 
                 const data = await response.json();
                 
                 if (data.success) {
                     showResult('success', `
-                        ✅ ${data.message}<br><br>
+                        <h4>✅ ${data.message}</h4>
                         
                         <div class="connection-box">
-                            <h4>🔗 CÁCH 1: KẾT NỐI QUA TAILSCALE (Khuyên dùng)</h4>
-                            <p>1. Cài Tailscale: <a href="https://tailscale.com/download" target="_blank">https://tailscale.com/download</a></p>
-                            <p>2. Xem IP Tailscale tại: <a href="${data.actionsUrl}" target="_blank">GitHub Actions Logs</a></p>
-                            <p>3. Mở Remote Desktop → Nhập IP Tailscale</p>
-                            <p>4. Username: <code>${data.username}</code> | Password: <code>${data.password}</code></p>
+                            <strong>🔗 CÁCH 1: KẾT NỐI QUA TAILSCALE (Khuyên dùng)</strong><br><br>
+                            1️⃣ Cài Tailscale: <a href="https://tailscale.com/download" target="_blank">https://tailscale.com/download</a><br>
+                            2️⃣ Đăng nhập cùng tài khoản đã tạo Auth Key<br>
+                            3️⃣ Xem IP Tailscale tại: <a href="${data.actionsUrl}" target="_blank">GitHub Actions Logs</a><br>
+                            4️⃣ Mở Remote Desktop → Nhập IP Tailscale<br>
+                            5️⃣ <strong>Username:</strong> <code>${data.username}</code> | <strong>Password:</strong> <code>${data.password}</code>
                         </div>
                         
                         <div class="connection-box">
-                            <h4>🌐 CÁCH 2: KẾT NỐI QUA noVNC (Trình duyệt)</h4>
-                            <p>🔗 Link noVNC: <a href="${data.novncUrl}" target="_blank">${data.novncUrl}</a></p>
-                            <p>🔐 Mật khẩu: <code>${data.password}</code></p>
+                            <strong>🌐 CÁCH 2: KẾT NỐI QUA noVNC (Trình duyệt)</strong><br><br>
+                            🔗 Link: <a href="${data.novncUrl}" target="_blank">${data.novncUrl}</a><br>
+                            🔐 Mật khẩu: <code>${data.password}</code>
                         </div>
                         
                         <div class="connection-box">
-                            <h4>📦 THÔNG TIN KHÁC</h4>
-                            <p>📦 Repo: <a href="${data.repoUrl}" target="_blank">${data.repoUrl}</a></p>
-                            <p>⚙️ Actions: <a href="${data.actionsUrl}" target="_blank">Theo dõi tiến trình</a></p>
+                            <strong>📦 THÔNG TIN KHÁC</strong><br><br>
+                            📦 Repo: <a href="${data.repoUrl}" target="_blank">${data.repoUrl}</a><br>
+                            ⚙️ Actions: <a href="${data.actionsUrl}" target="_blank">Theo dõi tiến trình</a>
                         </div>
                         
-                        💡 <strong>Lưu ý:</strong> VPS cần 2-3 phút để khởi động hoàn toàn!
+                        <hr>
+                        💡 <strong>Lưu ý:</strong> VPS cần 2-3 phút để khởi động hoàn toàn. IP Tailscale sẽ hiển thị trong GitHub Actions logs sau khi VPS chạy!
                     `);
                 } else {
-                    showResult('error', `❌ ${data.error}`);
+                    let errorMessage = data.error;
+                    let suggestion = '';
+                    
+                    if (data.code === 'MISSING_GITHUB_TOKEN') {
+                        suggestion = '👉 Vui lòng nhập GitHub Token';
+                    } else if (data.code === 'MISSING_TAILSCALE_KEY') {
+                        suggestion = '👉 Vui lòng nhập Tailscale Auth Key';
+                    } else if (data.code === 'INVALID_GITHUB_TOKEN') {
+                        suggestion = '👉 Tạo token mới tại <a href="https://github.com/settings/tokens" target="_blank">github.com/settings/tokens</a>';
+                    } else if (data.code === 'MISSING_REPO_PERMISSION' || data.code === 'MISSING_WORKFLOW_PERMISSION') {
+                        suggestion = '👉 Khi tạo token, hãy chọn quyền <code>repo</code> và <code>workflow</code>';
+                    } else if (data.code === 'WRONG_TAILSCALE_FORMAT') {
+                        suggestion = '👉 Tạo key mới tại <a href="https://login.tailscale.com/admin/authkeys" target="_blank">login.tailscale.com/admin/authkeys</a>';
+                    } else {
+                        suggestion = '👉 Kiểm tra lại thông tin và thử lại';
+                    }
+                    
+                    showResult('error', `
+                        <h4>❌ ${errorMessage}</h4>
+                        <p>${suggestion}</p>
+                        <p style="margin-top:10px;font-size:0.85rem;">🔍 Mã lỗi: <code>${data.code || 'UNKNOWN'}</code></p>
+                    `);
                 }
             } catch (error) {
-                showResult('error', `❌ Lỗi: ${error.message}`);
+                showResult('error', `
+                    <h4>❌ Lỗi kết nối</h4>
+                    <p>Không thể kết nối đến server. Vui lòng thử lại sau.</p>
+                    <p style="margin-top:10px;font-size:0.85rem;">Chi tiết: ${error.message}</p>
+                `);
             } finally {
                 createBtn.disabled = false;
                 createBtn.innerHTML = '✨ Tạo VPS Ngay';
             }
         });
-
-        function showResult(type, message) {
+        
+        function showResult(type, message, code = null) {
             resultDiv.className = `result ${type}`;
             resultDiv.innerHTML = message;
+            resultDiv.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
         }
     </script>
 </body>
