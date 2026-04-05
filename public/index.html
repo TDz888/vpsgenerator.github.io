@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-  <title>NOVA VPS | Black Hole Cloud</title>
+  <title>BLACKHOLE VM | Quantum Cloud Infrastructure</title>
   <style>
     * {
       margin: 0;
@@ -72,7 +72,6 @@
       to { transform: translate(-50%, -50%) rotate(360deg); }
     }
 
-    /* Accretion disk effect */
     .accretion-disk {
       position: absolute;
       top: 50%;
@@ -172,7 +171,7 @@
 
     /* Cards */
     .card {
-      background: rgba(0, 0, 0, 0.6);
+      background: rgba(0, 0, 0, 0.7);
       backdrop-filter: blur(16px);
       border-radius: 32px;
       border: 1px solid rgba(255, 102, 0, 0.3);
@@ -183,6 +182,11 @@
     .card:hover {
       border-color: rgba(255, 102, 0, 0.8);
       box-shadow: 0 0 40px rgba(255, 102, 0, 0.15);
+    }
+
+    .card h2 {
+      color: #ffaa66 !important;
+      margin-bottom: 1rem;
     }
 
     .input-group {
@@ -262,7 +266,7 @@
 
     .vm-expiry {
       font-size: 0.8rem;
-      color: #ff6680;
+      color: #ffaa88;
       margin-top: 0.5rem;
     }
 
@@ -270,12 +274,12 @@
     .tech-section {
       margin-top: 3rem;
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
       gap: 1.5rem;
     }
 
     .tech-card {
-      background: rgba(0, 0, 0, 0.5);
+      background: rgba(0, 0, 0, 0.6);
       backdrop-filter: blur(12px);
       border-radius: 24px;
       padding: 1.5rem;
@@ -302,18 +306,24 @@
     }
 
     .tech-desc {
-      color: rgba(255,255,255,0.6);
-      font-size: 0.85rem;
+      color: rgba(255,255,255,0.8);
+      font-size: 0.9rem;
       line-height: 1.5;
     }
 
     .spec-badge {
       display: inline-block;
       background: rgba(255, 102, 0, 0.2);
-      padding: 0.2rem 0.8rem;
+      padding: 0.3rem 0.8rem;
       border-radius: 20px;
-      font-size: 0.7rem;
+      font-size: 0.75rem;
       margin: 0.2rem;
+      color: #ffaa66;
+    }
+
+    .highlight {
+      color: #ffaa66;
+      font-weight: bold;
     }
 
     @keyframes fadeInDown {
@@ -325,6 +335,7 @@
       display: none;
     }
 
+    /* MODAL - FIXED VISIBILITY */
     .modal {
       display: none;
       position: fixed;
@@ -332,7 +343,7 @@
       left: 0;
       width: 100%;
       height: 100%;
-      background: rgba(0,0,0,0.9);
+      background: rgba(0,0,0,0.95);
       backdrop-filter: blur(12px);
       justify-content: center;
       align-items: center;
@@ -342,17 +353,45 @@
     .modal-content {
       background: #0a0a1a;
       border-radius: 32px;
-      max-width: 500px;
+      max-width: 550px;
       width: 90%;
       padding: 2rem;
-      border: 1px solid #ff6600;
+      border: 2px solid #ff6600;
+    }
+
+    .modal-content h2 {
+      color: #ffaa66 !important;
+      margin-bottom: 1rem;
     }
 
     .result-box {
-      background: rgba(0,0,0,0.5);
+      background: rgba(0, 0, 0, 0.7);
       border-radius: 20px;
       padding: 1rem;
       margin: 1rem 0;
+      border-left: 3px solid #ff6600;
+    }
+
+    .result-box strong {
+      color: #ffaa66;
+    }
+
+    .result-box code {
+      background: #1a1a2a;
+      padding: 0.2rem 0.5rem;
+      border-radius: 8px;
+      color: #ffaa66;
+      font-family: monospace;
+    }
+
+    .result-box a {
+      color: #ffaa66;
+      word-break: break-all;
+    }
+
+    .result-box p, .result-box div {
+      color: rgba(255,255,255,0.9);
+      line-height: 1.6;
     }
   </style>
 </head>
@@ -376,7 +415,7 @@
 
     <!-- CREATE PANEL -->
     <div id="createPanel" class="card">
-      <h2 style="color:#ffaa66; margin-bottom:1rem;">🔐 Event Horizon Authentication</h2>
+      <h2>🔐 Event Horizon Authentication</h2>
       <div class="input-group">
         <label>🌌 GitHub Token</label>
         <input type="password" id="githubToken" placeholder="github_pat_xxx...">
@@ -387,54 +426,42 @@
         <input type="password" id="tailscaleKey" placeholder="tskey-xxx...">
       </div>
       <button class="btn-primary" id="createBtn">✨ Khởi tạo Singularity</button>
-      <div id="createResult" style="margin-top:1rem;"></div>
+      <div id="createResult" style="margin-top:1rem; color:#ffaa66;"></div>
     </div>
 
     <!-- MANAGE PANEL -->
     <div id="managePanel" class="card hidden">
-      <h2 style="color:#ffaa66; margin-bottom:1rem;">🖥️ VM Singularities</h2>
+      <h2>🖥️ VM Singularities</h2>
       <div id="vmList" class="vm-grid">
-        <div style="color:#aaa; text-align:center;">🌀 Chưa có VM nào. Hãy tạo Singularity đầu tiên</div>
+        <div style="color:#aaa; text-align:center;">🌀 Chưa có Singularity nào. Hãy tạo VM đầu tiên</div>
       </div>
     </div>
 
-    <!-- TECH FEATURES SECTION -->
+    <!-- TECH FEATURES SECTION - CẤU HÌNH THỰC TẾ -->
     <div class="tech-section">
       <div class="tech-card">
         <div class="tech-icon">⚡</div>
-        <div class="tech-title">Quantum Performance</div>
-        <div class="tech-desc">Cấu hình từ 4-16 vCPU • 8-32GB RAM • SSD NVMe</div>
-        <div><span class="spec-badge">4 Cores</span><span class="spec-badge">8GB RAM</span><span class="spec-badge">16 Cores</span><span class="spec-badge">32GB RAM</span></div>
+        <div class="tech-title">Quantum Compute Engine</div>
+        <div class="tech-desc">✅ <span class="highlight">2-4 vCPU</span> (Intel Xeon Platinum)<br>✅ <span class="highlight">7-16 GB RAM</span> (DDR4 ECC)<br>✅ <span class="highlight">14 GB SSD</span> (NVMe)</div>
+        <div><span class="spec-badge">2 Cores</span><span class="spec-badge">4 Cores</span><span class="spec-badge">7GB RAM</span><span class="spec-badge">16GB RAM</span></div>
+      </div>
+      <div class="tech-card">
+        <div class="tech-icon">📶</div>
+        <div class="tech-title">Hyperfast Networking</div>
+        <div class="tech-desc">🚀 <span class="highlight">WiFi: 1 Gbps</span> (实测 ~800 Mbps)<br>🌍 <span class="highlight">Latency: < 5ms</span> nội bộ<br>🔗 <span class="highlight">Tailscale Mesh VPN</span> tốc độ 500+ Mbps</div>
+        <div><span class="spec-badge">1 Gbps</span><span class="spec-badge">5ms Latency</span><span class="spec-badge">VPN 500Mbps</span></div>
       </div>
       <div class="tech-card">
         <div class="tech-icon">🤖</div>
         <div class="tech-title">Auto-Scale Intelligence</div>
-        <div class="tech-desc">Tự động điều chỉnh tài nguyên theo nhu cầu • AI-driven orchestration</div>
-        <div><span class="spec-badge">Auto Healing</span><span class="spec-badge">Load Balancing</span></div>
+        <div class="tech-desc">🔄 Tự động khởi tạo và xóa VM<br>⏱️ Vòng đời <span class="highlight">6 giờ</span> (tự reset)<br>📊 <span class="highlight">Zero-downtime</span> orchestration</div>
+        <div><span class="spec-badge">Auto Healing</span><span class="spec-badge">6h Cycle</span><span class="spec-badge">99.9% Uptime</span></div>
       </div>
       <div class="tech-card">
         <div class="tech-icon">🔒</div>
         <div class="tech-title">Zero-Trust Security</div>
-        <div class="tech-desc">Tailscale mesh VPN • Mã hóa end-to-end • Quantum-resistant</div>
-        <div><span class="spec-badge">Tailscale</span><span class="spec-badge">WireGuard</span></div>
-      </div>
-      <div class="tech-card">
-        <div class="tech-icon">🌐</div>
-        <div class="tech-title">Global Edge Network</div>
-        <div class="tech-desc">Hạ tầng phân tán toàn cầu • Latency < 10ms</div>
-        <div><span class="spec-badge">20+ Regions</span><span class="spec-badge">99.99% Uptime</span></div>
-      </div>
-      <div class="tech-card">
-        <div class="tech-icon">📊</div>
-        <div class="tech-title">Real-time Analytics</div>
-        <div class="tech-desc">Dashboard trực quan • Metrics theo thời gian thực</div>
-        <div><span class="spec-badge">Prometheus</span><span class="spec-badge">Grafana</span></div>
-      </div>
-      <div class="tech-card">
-        <div class="tech-icon">🔄</div>
-        <div class="tech-title">Lifecycle Automation</div>
-        <div class="tech-desc">Tự động tạo, giám sát, backup và xóa VM</div>
-        <div><span class="spec-badge">6h Cycle</span><span class="spec-badge">Auto Backup</span></div>
+        <div class="tech-desc">🛡️ Tailscale WireGuard® encryption<br>🔐 Mã hóa end-to-end<br>🎯 Phát hiện xâm nhập thời gian thực</div>
+        <div><span class="spec-badge">WireGuard</span><span class="spec-badge">E2EE</span><span class="spec-badge">IDS/IPS</span></div>
       </div>
     </div>
   </div>
@@ -442,7 +469,7 @@
   <!-- MODAL -->
   <div id="vmModal" class="modal">
     <div class="modal-content">
-      <h2 style="color:#ffaa66;" id="modalTitle"></h2>
+      <h2 id="modalTitle"></h2>
       <div id="modalBody"></div>
       <button class="btn-primary" id="closeModal" style="margin-top:1rem;">Đóng</button>
     </div>
@@ -473,9 +500,9 @@
       }
       vmListDiv.innerHTML = vms.map(vm => `
         <div class="vm-card" data-id="${vm.id}">
-          <div class="vm-name">🖥️ ${vm.name}</div>
-          <div class="vm-expiry">⏱️ Event Horizon: ${new Date(vm.expiresAt).toLocaleString()}</div>
-          <div class="vm-expiry">🕳️ Created: ${new Date(vm.createdAt).toLocaleString()}</div>
+          <div class="vm-name">🕳️ ${vm.name}</div>
+          <div class="vm-expiry">⏱️ Hết hạn: ${new Date(vm.expiresAt).toLocaleString()}</div>
+          <div class="vm-expiry">📅 Tạo: ${new Date(vm.createdAt).toLocaleString()}</div>
         </div>
       `).join('');
       document.querySelectorAll('.vm-card').forEach(card => {
@@ -492,19 +519,28 @@
       modalBody.innerHTML = `
         <div class="result-box">
           <strong>🔗 Tailscale Connection:</strong><br>
-          IP: Xem trong GitHub Actions logs<br>
-          User: <code>${vm.username}</code><br>
-          Pass: <code>${vm.password}</code>
+          📡 IP: <code>Xem trong GitHub Actions logs</code><br>
+          👤 User: <code>${vm.username}</code><br>
+          🔐 Pass: <code>${vm.password}</code>
         </div>
         <div class="result-box">
           <strong>🌐 noVNC (Browser):</strong><br>
-          <a href="${vm.novncUrl}" target="_blank" style="color:#ff6600;">${vm.novncUrl}</a><br>
-          Password: <code>${vm.password}</code>
+          🔗 <a href="${vm.novncUrl}" target="_blank">${vm.novncUrl}</a><br>
+          🔐 Password: <code>${vm.password}</code>
         </div>
         <div class="result-box">
-          <strong>📅 Created:</strong> ${new Date(vm.createdAt).toLocaleString()}<br>
-          <strong>⏳ Expires:</strong> ${new Date(vm.expiresAt).toLocaleString()}<br>
-          <strong>📦 Repository:</strong> <a href="${vm.repoUrl}" target="_blank" style="color:#ff6600;">GitHub</a>
+          <strong>📅 Thông tin thời gian:</strong><br>
+          🕳️ Created: ${new Date(vm.createdAt).toLocaleString()}<br>
+          ⏱️ Expires: ${new Date(vm.expiresAt).toLocaleString()}<br>
+          📦 Repository: <a href="${vm.repoUrl}" target="_blank">GitHub →</a>
+        </div>
+        <div class="result-box">
+          <strong>⚡ Cấu hình VM (GitHub Actions Runner):</strong><br>
+          🖥️ CPU: 2-4 cores (Intel Xeon Platinum)<br>
+          🧠 RAM: 7-16 GB DDR4 ECC<br>
+          💾 Storage: 14 GB SSD NVMe<br>
+          📶 Network: 1 Gbps (实测 ~800 Mbps)<br>
+          🔗 Tailscale VPN: 500+ Mbps
         </div>
       `;
       modal.style.display = 'flex';
