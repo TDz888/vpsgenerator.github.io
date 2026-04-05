@@ -1,459 +1,474 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>VPS Generator Pro | Tạo VPS Windows Miễn Phí</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>NOVA VPS | Future Cloud Infrastructure</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
 
-        body {
-            background: linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%);
-            font-family: 'Segoe UI', 'Poppins', system-ui, sans-serif;
-            min-height: 100vh;
-            padding: 20px;
-        }
+    body {
+      min-height: 100vh;
+      background: radial-gradient(ellipse at 20% 30%, #0a0f1e, #03050b);
+      font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
+      padding: 2rem;
+      position: relative;
+      overflow-x: hidden;
+    }
 
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
+    /* Animated tech background */
+    body::before {
+      content: "";
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-image: url('https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=2072&auto=format');
+      background-size: cover;
+      background-position: center;
+      opacity: 0.15;
+      pointer-events: none;
+      z-index: 0;
+      filter: blur(2px) brightness(0.6);
+    }
 
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
+    /* Grid overlay effect */
+    body::after {
+      content: "";
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-image: 
+        linear-gradient(rgba(0, 255, 255, 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0, 255, 255, 0.03) 1px, transparent 1px);
+      background-size: 40px 40px;
+      pointer-events: none;
+      z-index: 0;
+    }
 
-        .container {
-            max-width: 900px;
-            margin: 0 auto;
-            animation: fadeIn 0.5s ease-out;
-        }
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+      position: relative;
+      z-index: 2;
+    }
 
-        /* Header */
-        .header {
-            text-align: center;
-            padding: 40px 20px;
-            background: rgba(255,255,255,0.08);
-            backdrop-filter: blur(10px);
-            border-radius: 40px;
-            margin-bottom: 30px;
-            border: 1px solid rgba(255,255,255,0.1);
-        }
+    /* Header futuristic */
+    .header {
+      text-align: center;
+      margin-bottom: 3rem;
+      animation: fadeInDown 0.8s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+    }
 
-        .header h1 {
-            font-size: 2.5rem;
-            background: linear-gradient(135deg, #fff, #a8b5ff);
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-            margin-bottom: 10px;
-        }
+    .glow-text {
+      font-size: 3.5rem;
+      font-weight: 800;
+      background: linear-gradient(135deg, #ffffff, #00e0ff, #7a2eff);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      letter-spacing: -0.02em;
+      text-shadow: 0 0 30px rgba(0, 224, 255, 0.3);
+    }
 
-        .header .badge {
-            display: inline-block;
-            background: rgba(255,255,255,0.15);
-            padding: 5px 15px;
-            border-radius: 50px;
-            font-size: 0.8rem;
-            color: #a8b5ff;
-            margin-top: 10px;
-        }
+    .sub {
+      color: rgba(255,255,255,0.6);
+      margin-top: 0.5rem;
+      font-size: 1rem;
+      letter-spacing: 1px;
+    }
 
-        .header p {
-            color: rgba(255,255,255,0.7);
-            margin-top: 10px;
-        }
+    /* Toggle Switch Futuristic */
+    .toggle-container {
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+      margin-bottom: 2.5rem;
+    }
 
-        /* Card */
-        .card {
-            background: rgba(255,255,255,0.95);
-            border-radius: 30px;
-            padding: 35px;
-            margin-bottom: 25px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
-            transition: transform 0.3s;
-        }
+    .toggle-btn {
+      background: rgba(10, 20, 40, 0.6);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(0, 255, 255, 0.3);
+      padding: 0.8rem 2rem;
+      border-radius: 60px;
+      font-weight: 600;
+      color: rgba(255,255,255,0.7);
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-size: 1rem;
+      letter-spacing: 1px;
+    }
 
-        .card:hover {
-            transform: translateY(-3px);
-        }
+    .toggle-btn.active {
+      background: linear-gradient(135deg, #00e0ff, #7a2eff);
+      border-color: transparent;
+      color: white;
+      box-shadow: 0 0 20px rgba(0, 224, 255, 0.5);
+    }
 
-        .card h2 {
-            color: #333;
-            margin-bottom: 20px;
-            font-size: 1.5rem;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
+    /* Cards */
+    .card {
+      background: rgba(15, 25, 45, 0.65);
+      backdrop-filter: blur(16px);
+      border-radius: 32px;
+      border: 1px solid rgba(0, 255, 255, 0.2);
+      padding: 2rem;
+      transition: all 0.3s ease;
+      animation: fadeInUp 0.6s ease;
+    }
 
-        /* Input Group */
-        .input-group {
-            margin-bottom: 25px;
-        }
+    .card:hover {
+      border-color: rgba(0, 255, 255, 0.6);
+      box-shadow: 0 0 30px rgba(0, 224, 255, 0.1);
+    }
 
-        .input-group label {
-            display: block;
-            margin-bottom: 8px;
-            color: #333;
-            font-weight: 600;
-            font-size: 0.9rem;
-        }
+    /* Inputs */
+    .input-group {
+      margin-bottom: 1.5rem;
+    }
 
-        .input-group label .required {
-            color: #e74c3c;
-            margin-left: 5px;
-        }
+    .input-group label {
+      display: block;
+      color: #a0f0ff;
+      margin-bottom: 0.5rem;
+      font-weight: 500;
+      letter-spacing: 0.5px;
+    }
 
-        .input-group input {
-            width: 100%;
-            padding: 14px 18px;
-            border: 2px solid #e0e0e0;
-            border-radius: 16px;
-            font-size: 14px;
-            font-family: 'Monaco', 'Courier New', monospace;
-            transition: all 0.3s;
-            background: #f8f9fa;
-        }
+    .input-group input {
+      width: 100%;
+      padding: 1rem;
+      background: rgba(0, 0, 0, 0.5);
+      border: 1px solid rgba(0, 255, 255, 0.3);
+      border-radius: 20px;
+      color: white;
+      font-family: 'Monaco', monospace;
+      transition: all 0.2s;
+    }
 
-        .input-group input:focus {
-            outline: none;
-            border-color: #667eea;
-            background: white;
-            box-shadow: 0 0 0 3px rgba(102,126,234,0.1);
-        }
+    .input-group input:focus {
+      outline: none;
+      border-color: #00e0ff;
+      box-shadow: 0 0 12px rgba(0, 224, 255, 0.3);
+    }
 
-        .input-group .hint {
-            font-size: 0.75rem;
-            color: #888;
-            margin-top: 5px;
-        }
+    .btn-primary {
+      width: 100%;
+      padding: 1rem;
+      background: linear-gradient(135deg, #00e0ff, #7a2eff);
+      border: none;
+      border-radius: 40px;
+      color: white;
+      font-weight: bold;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
 
-        .input-group .hint a {
-            color: #667eea;
-            text-decoration: none;
-        }
+    .btn-primary:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
 
-        .input-group .hint code {
-            background: #e9ecef;
-            padding: 2px 6px;
-            border-radius: 6px;
-            font-size: 0.7rem;
-        }
+    /* VM Grid */
+    .vm-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 1.5rem;
+      margin-top: 1.5rem;
+    }
 
-        /* Button */
-        .btn {
-            width: 100%;
-            padding: 16px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border: none;
-            border-radius: 20px;
-            font-size: 1rem;
-            font-weight: bold;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
+    .vm-card {
+      background: rgba(10, 18, 30, 0.8);
+      backdrop-filter: blur(12px);
+      border-radius: 24px;
+      border: 1px solid rgba(0, 255, 255, 0.25);
+      padding: 1.5rem;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
 
-        .btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 25px rgba(102,126,234,0.4);
-        }
+    .vm-card:hover {
+      transform: translateY(-4px);
+      border-color: #00e0ff;
+      box-shadow: 0 10px 30px rgba(0, 224, 255, 0.2);
+    }
 
-        .btn:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-            transform: none;
-        }
+    .vm-name {
+      font-size: 1.3rem;
+      font-weight: bold;
+      color: #00e0ff;
+    }
 
-        .btn .spinner {
-            display: inline-block;
-            width: 20px;
-            height: 20px;
-            border: 2px solid rgba(255,255,255,0.3);
-            border-radius: 50%;
-            border-top-color: white;
-            animation: spin 0.8s linear infinite;
-            vertical-align: middle;
-            margin-right: 8px;
-        }
+    .vm-expiry {
+      font-size: 0.8rem;
+      color: #ffaa44;
+      margin-top: 0.5rem;
+    }
 
-        /* Result */
-        .result {
-            margin-top: 25px;
-            padding: 20px;
-            border-radius: 20px;
-            display: none;
-            animation: fadeIn 0.3s ease-out;
-        }
+    .vm-status {
+      display: inline-block;
+      margin-top: 0.8rem;
+      font-size: 0.7rem;
+      padding: 0.2rem 0.8rem;
+      border-radius: 20px;
+      background: rgba(0,255,0,0.2);
+      color: #0f0;
+    }
 
-        .result.success {
-            background: linear-gradient(135deg, #d4edda, #c3e6cb);
-            border: 1px solid #9fdfa4;
-            color: #155724;
-            display: block;
-        }
+    /* Modal */
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.8);
+      backdrop-filter: blur(8px);
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+    }
 
-        .result.error {
-            background: linear-gradient(135deg, #f8d7da, #f5c6cb);
-            border: 1px solid #f1aeb5;
-            color: #721c24;
-            display: block;
-        }
+    .modal-content {
+      background: #0a1220;
+      border-radius: 32px;
+      max-width: 500px;
+      width: 90%;
+      padding: 2rem;
+      border: 1px solid #00e0ff;
+    }
 
-        .result h4 {
-            margin-bottom: 12px;
-            font-size: 1.1rem;
-        }
+    .result-box {
+      background: rgba(0,0,0,0.5);
+      border-radius: 20px;
+      padding: 1rem;
+      margin: 1rem 0;
+    }
 
-        .result .connection-box {
-            background: rgba(255,255,255,0.7);
-            border-radius: 14px;
-            padding: 15px;
-            margin: 12px 0;
-        }
+    @keyframes fadeInDown {
+      from { opacity: 0; transform: translateY(-30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
 
-        .result code {
-            background: rgba(0,0,0,0.08);
-            padding: 3px 8px;
-            border-radius: 8px;
-            font-size: 0.85rem;
-        }
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
 
-        .result a {
-            color: #155724;
-            word-break: break-all;
-        }
-
-        .result hr {
-            margin: 15px 0;
-            border: none;
-            border-top: 1px solid rgba(0,0,0,0.1);
-        }
-
-        /* Features */
-        .features {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 15px;
-            margin-top: 20px;
-        }
-
-        .feature {
-            background: rgba(255,255,255,0.1);
-            backdrop-filter: blur(5px);
-            border-radius: 20px;
-            padding: 15px;
-            text-align: center;
-            color: white;
-            transition: all 0.3s;
-        }
-
-        .feature:hover {
-            background: rgba(255,255,255,0.2);
-            transform: translateY(-3px);
-        }
-
-        .feature .emoji {
-            font-size: 2rem;
-            margin-bottom: 8px;
-        }
-
-        .feature h3 {
-            font-size: 0.9rem;
-            margin-bottom: 5px;
-        }
-
-        .feature p {
-            font-size: 0.75rem;
-            opacity: 0.8;
-        }
-
-        /* Footer */
-        .footer {
-            text-align: center;
-            padding: 20px;
-            color: rgba(255,255,255,0.5);
-            font-size: 0.8rem;
-        }
-
-        @media (max-width: 600px) {
-            .card { padding: 25px; }
-            .header h1 { font-size: 1.8rem; }
-            .features { grid-template-columns: 1fr; }
-        }
-    </style>
+    .hidden {
+      display: none;
+    }
+  </style>
 </head>
 <body>
-    <div class="container">
-        <div class="header">
-            <h1>🚀 VPS Generator Pro</h1>
-            <div class="badge">⚡ Windows Server + Tailscale + noVNC</div>
-            <p>Tạo VPS miễn phí từ GitHub Actions • 6 tiếng hoạt động</p>
-        </div>
+<div class="container">
+  <div class="header">
+    <div class="glow-text">✦ NOVA VPS ✦</div>
+    <div class="sub">Next‑Gen Cloud Infrastructure • 120Hz Neural Engine</div>
+  </div>
 
-        <div class="card">
-            <h2>🔑 Thông tin xác thực</h2>
+  <div class="toggle-container">
+    <div class="toggle-btn active" data-mode="create">🛸 Tạo VM</div>
+    <div class="toggle-btn" data-mode="manage">📡 Quản lý VM</div>
+  </div>
 
-            <div class="input-group">
-                <label>GitHub Token <span class="required">*</span></label>
-                <input type="password" id="githubToken" placeholder="github_pat_xxxxxxxxxxxx">
-                <div class="hint">
-                    📌 <a href="https://github.com/settings/tokens" target="_blank">Tạo token tại đây</a> • Chọn quyền: <code>repo</code>, <code>workflow</code>
-                </div>
-            </div>
-
-            <div class="input-group">
-                <label>Tailscale Auth Key <span class="required">*</span></label>
-                <input type="password" id="tailscaleKey" placeholder="tskey-xxxxxxxxxxxx">
-                <div class="hint">
-                    📌 <a href="https://login.tailscale.com/admin/authkeys" target="_blank">Tạo key tại đây</a> • Cần quyền <code>Reusable</code>
-                </div>
-            </div>
-
-            <button class="btn" id="createBtn">✨ Tạo VPS Ngay</button>
-
-            <div id="result" class="result"></div>
-        </div>
-
-        <div class="features">
-            <div class="feature">
-                <div class="emoji">🖥️</div>
-                <h3>Windows 11</h3>
-                <p>Giao diện đầy đủ, mượt mà</p>
-            </div>
-            <div class="feature">
-                <div class="emoji">🔗</div>
-                <h3>Tailscale</h3>
-                <p>Kết nối an toàn, riêng tư</p>
-            </div>
-            <div class="feature">
-                <div class="emoji">🌐</div>
-                <h3>noVNC</h3>
-                <p>Truy cập qua trình duyệt</p>
-            </div>
-            <div class="feature">
-                <div class="emoji">⏱️</div>
-                <h3>6 tiếng</h3>
-                <p>Tự động restart</p>
-            </div>
-        </div>
-
-        <div class="footer">
-            © 2024 VPS Generator Pro • Tạo VPS miễn phí từ GitHub Actions
-        </div>
+  <!-- CREATE VM PANEL -->
+  <div id="createPanel" class="card">
+    <h2 style="color:#00e0ff; margin-bottom:1rem;">🔐 Xác thực quyền truy cập</h2>
+    <div class="input-group">
+      <label>GitHub Token</label>
+      <input type="password" id="githubToken" placeholder="github_pat_xxx...">
+      <div style="font-size:0.7rem; color:#aaa; margin-top:5px;">Quyền: repo, workflow</div>
     </div>
+    <div class="input-group">
+      <label>Tailscale Auth Key</label>
+      <input type="password" id="tailscaleKey" placeholder="tskey-xxx...">
+    </div>
+    <button class="btn-primary" id="createBtn">✨ Khởi tạo VM ngay</button>
+    <div id="createResult" style="margin-top:1rem;"></div>
+  </div>
 
-    <script>
-        const createBtn = document.getElementById('createBtn');
-        const githubTokenInput = document.getElementById('githubToken');
-        const tailscaleKeyInput = document.getElementById('tailscaleKey');
-        const resultDiv = document.getElementById('result');
+  <!-- MANAGE VM PANEL -->
+  <div id="managePanel" class="card hidden">
+    <h2 style="color:#00e0ff; margin-bottom:1rem;">🖥️ Hạ tầng VM đang hoạt động</h2>
+    <div id="vmList" class="vm-grid">
+      <div style="color:#aaa; text-align:center;">Chưa có VM nào. Hãy tạo VM đầu tiên ✨</div>
+    </div>
+  </div>
+</div>
 
-        createBtn.addEventListener('click', async () => {
-            const githubToken = githubTokenInput.value.trim();
-            const tailscaleKey = tailscaleKeyInput.value.trim();
-            
-            if (!githubToken) {
-                showResult('error', '❌ Vui lòng nhập GitHub Token!');
-                return;
-            }
-            
-            if (!tailscaleKey) {
-                showResult('error', '❌ Vui lòng nhập Tailscale Auth Key!');
-                return;
-            }
-            
-            createBtn.disabled = true;
-            createBtn.innerHTML = '<span class="spinner"></span> Đang tạo VPS (2-3 phút)...';
-            
-            try {
-                // Gửi request dạng JSON chuẩn
-                const response = await fetch('/api/vpsuser', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ 
-                        githubToken: githubToken,
-                        tailscaleKey: tailscaleKey
-                    })
-                });
-                
-                const data = await response.json();
-                
-                if (data.success) {
-                    showResult('success', `
-                        <h4>✅ ${data.message}</h4>
-                        
-                        <div class="connection-box">
-                            <strong>🔗 CÁCH 1: KẾT NỐI QUA TAILSCALE (Khuyên dùng)</strong><br><br>
-                            1️⃣ Cài Tailscale: <a href="https://tailscale.com/download" target="_blank">https://tailscale.com/download</a><br>
-                            2️⃣ Đăng nhập cùng tài khoản đã tạo Auth Key<br>
-                            3️⃣ Xem IP Tailscale tại: <a href="${data.actionsUrl}" target="_blank">GitHub Actions Logs</a><br>
-                            4️⃣ Mở Remote Desktop → Nhập IP Tailscale<br>
-                            5️⃣ <strong>Username:</strong> <code>${data.username}</code> | <strong>Password:</strong> <code>${data.password}</code>
-                        </div>
-                        
-                        <div class="connection-box">
-                            <strong>🌐 CÁCH 2: KẾT NỐI QUA noVNC (Trình duyệt)</strong><br><br>
-                            🔗 Link: <a href="${data.novncUrl}" target="_blank">${data.novncUrl}</a><br>
-                            🔐 Mật khẩu: <code>${data.password}</code>
-                        </div>
-                        
-                        <div class="connection-box">
-                            <strong>📦 THÔNG TIN KHÁC</strong><br><br>
-                            📦 Repo: <a href="${data.repoUrl}" target="_blank">${data.repoUrl}</a><br>
-                            ⚙️ Actions: <a href="${data.actionsUrl}" target="_blank">Theo dõi tiến trình</a>
-                        </div>
-                        
-                        <hr>
-                        💡 <strong>Lưu ý:</strong> VPS cần 2-3 phút để khởi động hoàn toàn. IP Tailscale sẽ hiển thị trong GitHub Actions logs sau khi VPS chạy!
-                    `);
-                } else {
-                    let suggestion = '';
-                    if (data.code === 'MISSING_GITHUB_TOKEN') {
-                        suggestion = '👉 Vui lòng nhập GitHub Token';
-                    } else if (data.code === 'MISSING_TAILSCALE_KEY') {
-                        suggestion = '👉 Vui lòng nhập Tailscale Auth Key';
-                    } else if (data.code === 'INVALID_GITHUB_TOKEN') {
-                        suggestion = '👉 Token không hợp lệ. Tạo token mới tại <a href="https://github.com/settings/tokens" target="_blank">github.com/settings/tokens</a>';
-                    } else if (data.code === 'MISSING_REPO_PERMISSION' || data.code === 'MISSING_WORKFLOW_PERMISSION') {
-                        suggestion = '👉 Khi tạo token, hãy chọn quyền <code>repo</code> và <code>workflow</code>';
-                    } else if (data.code === 'WRONG_TAILSCALE_FORMAT') {
-                        suggestion = '👉 Key phải bắt đầu bằng "tskey-". Tạo key mới tại <a href="https://login.tailscale.com/admin/authkeys" target="_blank">login.tailscale.com/admin/authkeys</a>';
-                    } else {
-                        suggestion = '👉 Kiểm tra lại thông tin và thử lại';
-                    }
-                    
-                    showResult('error', `
-                        <h4>❌ ${data.error}</h4>
-                        <p>${suggestion}</p>
-                        <p style="margin-top:10px;font-size:0.85rem;">🔍 Mã lỗi: <code>${data.code || 'UNKNOWN'}</code></p>
-                    `);
-                }
-            } catch (error) {
-                showResult('error', `
-                    <h4>❌ Lỗi kết nối</h4>
-                    <p>Không thể kết nối đến server. Vui lòng thử lại sau.</p>
-                    <p style="margin-top:10px;font-size:0.85rem;">Chi tiết: ${error.message}</p>
-                    <p style="margin-top:10px;">🔧 Cách fix: Đảm bảo bạn đã deploy lại lên Vercel với lệnh <code>npx vercel --prod</code></p>
-                `);
-            } finally {
-                createBtn.disabled = false;
-                createBtn.innerHTML = '✨ Tạo VPS Ngay';
-            }
-        });
-        
-        function showResult(type, message) {
-            resultDiv.className = `result ${type}`;
-            resultDiv.innerHTML = message;
-            resultDiv.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-        }
-    </script>
+<!-- Modal chi tiết VM -->
+<div id="vmModal" class="modal">
+  <div class="modal-content">
+    <h2 style="color:#00e0ff;" id="modalTitle"></h2>
+    <div id="modalBody"></div>
+    <button class="btn-primary" id="closeModal" style="margin-top:1rem;">Đóng</button>
+  </div>
+</div>
+
+<script>
+  // === STATE ===
+  let currentMode = 'create';
+  let vms = JSON.parse(localStorage.getItem('nova_vms') || '[]');
+
+  // === DOM elements ===
+  const createPanel = document.getElementById('createPanel');
+  const managePanel = document.getElementById('managePanel');
+  const createBtn = document.getElementById('createBtn');
+  const githubTokenInput = document.getElementById('githubToken');
+  const tailscaleKeyInput = document.getElementById('tailscaleKey');
+  const createResultDiv = document.getElementById('createResult');
+  const vmListDiv = document.getElementById('vmList');
+  const modal = document.getElementById('vmModal');
+  const modalTitle = document.getElementById('modalTitle');
+  const modalBody = document.getElementById('modalBody');
+
+  // === SAVE VM ===
+  function saveVMs() {
+    localStorage.setItem('nova_vms', JSON.stringify(vms));
+  }
+
+  // === RENDER VM LIST ===
+  function renderVMList() {
+    if (!vmListDiv) return;
+    if (vms.length === 0) {
+      vmListDiv.innerHTML = '<div style="color:#aaa; text-align:center;">✨ Chưa có VM nào. Hãy tạo VM đầu tiên</div>';
+      return;
+    }
+    vmListDiv.innerHTML = vms.map(vm => `
+      <div class="vm-card" data-id="${vm.id}">
+        <div class="vm-name">🖥️ ${vm.name}</div>
+        <div class="vm-expiry">⏱️ Hết hạn: ${new Date(vm.expiresAt).toLocaleString()}</div>
+        <div class="vm-status">● ${vm.status === 'creating' ? 'Đang khởi tạo' : 'Đang chạy'}</div>
+      </div>
+    `).join('');
+
+    document.querySelectorAll('.vm-card').forEach(card => {
+      card.addEventListener('click', () => {
+        const id = card.getAttribute('data-id');
+        const vm = vms.find(v => v.id === id);
+        if (vm) showVMDetails(vm);
+      });
+    });
+  }
+
+  // === SHOW VM DETAILS ===
+  function showVMDetails(vm) {
+    modalTitle.innerText = `🖥️ ${vm.name}`;
+    modalBody.innerHTML = `
+      <div class="result-box">
+        <strong>🔗 Kết nối qua Tailscale:</strong><br>
+        IP: Xem trong GitHub Actions logs<br>
+        User: ${vm.username}<br>
+        Pass: ${vm.password}
+      </div>
+      <div class="result-box">
+        <strong>🌐 noVNC (Trình duyệt):</strong><br>
+        <a href="${vm.novncUrl}" target="_blank" style="color:#0ff;">${vm.novncUrl}</a><br>
+        Mật khẩu: ${vm.password}
+      </div>
+      <div class="result-box">
+        <strong>📅 Thời gian tạo:</strong> ${new Date(vm.createdAt).toLocaleString()}<br>
+        <strong>⏳ Kết thúc:</strong> ${new Date(vm.expiresAt).toLocaleString()}<br>
+        <strong>📦 Repo:</strong> <a href="${vm.repoUrl}" target="_blank" style="color:#0ff;">GitHub</a>
+      </div>
+    `;
+    modal.style.display = 'flex';
+  }
+
+  // === CREATE VM ===
+  createBtn.addEventListener('click', async () => {
+    const githubToken = githubTokenInput.value.trim();
+    const tailscaleKey = tailscaleKeyInput.value.trim();
+
+    if (!githubToken || !tailscaleKey) {
+      createResultDiv.innerHTML = '<div style="color:#ff7777;">❌ Vui lòng nhập đầy đủ token và key</div>';
+      return;
+    }
+
+    createBtn.disabled = true;
+    createBtn.innerText = '🌀 Đang khởi tạo...';
+
+    try {
+      const res = await fetch('/api/vpsuser', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ githubToken, tailscaleKey })
+      });
+      const data = await res.json();
+
+      if (data.success) {
+        const newVM = {
+          id: data.id,
+          name: data.name,
+          repoUrl: data.repoUrl,
+          actionsUrl: data.actionsUrl,
+          novncUrl: data.novncUrl,
+          username: data.username,
+          password: data.password,
+          createdAt: data.createdAt,
+          expiresAt: data.expiresAt,
+          status: data.status
+        };
+        vms.unshift(newVM);
+        saveVMs();
+        renderVMList();
+
+        createResultDiv.innerHTML = `<div style="color:#0f0;">✅ ${data.name} đã được tạo! Vào phần Quản lý VM để xem chi tiết.</div>`;
+        githubTokenInput.value = '';
+        tailscaleKeyInput.value = '';
+
+        // Chuyển sang tab quản lý
+        document.querySelector('[data-mode="manage"]').click();
+      } else {
+        createResultDiv.innerHTML = `<div style="color:#ff7777;">❌ Lỗi: ${data.error} (${data.code || 'UNKNOWN'})</div>`;
+      }
+    } catch (err) {
+      createResultDiv.innerHTML = `<div style="color:#ff7777;">❌ Lỗi kết nối: ${err.message}</div>`;
+    } finally {
+      createBtn.disabled = false;
+      createBtn.innerText = '✨ Khởi tạo VM ngay';
+    }
+  });
+
+  // === TOGGLE MODE ===
+  document.querySelectorAll('.toggle-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.toggle-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      currentMode = btn.getAttribute('data-mode');
+
+      if (currentMode === 'create') {
+        createPanel.classList.remove('hidden');
+        managePanel.classList.add('hidden');
+      } else {
+        createPanel.classList.add('hidden');
+        managePanel.classList.remove('hidden');
+        renderVMList();
+      }
+    });
+  });
+
+  // Modal close
+  document.getElementById('closeModal').addEventListener('click', () => {
+    modal.style.display = 'none';
+  });
+  window.addEventListener('click', (e) => {
+    if (e.target === modal) modal.style.display = 'none';
+  });
+
+  // Initial render
+  renderVMList();
+</script>
 </body>
 </html>
