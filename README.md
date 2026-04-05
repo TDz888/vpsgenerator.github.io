@@ -1,17 +1,23 @@
-# VPS Generator
+# 🚀 VPS Generator Pro
 
-Tạo VPS miễn phí từ GitHub Actions
+Tạo VPS Windows miễn phí từ GitHub Actions với Tailscale + noVNC
 
-## Deploy lên Vercel
+## ✨ Tính năng
 
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/yourusername/vps-github)
+- 🖥️ **Windows 11** - Giao diện đầy đủ
+- 🔗 **Tailscale** - Kết nối an toàn, riêng tư
+- 🌐 **noVNC** - Truy cập qua trình duyệt
+- ⏱️ **6 tiếng** - Tự động restart
 
-## Cách dùng
+## 📋 Yêu cầu
 
-1. Tạo GitHub Token với quyền `repo` và `workflow`
-2. Dán token vào web
-3. Bấm tạo VPS
+1. **GitHub Token** (quyền: `repo`, `workflow`)
+2. **Tailscale Auth Key** (quyền: Reusable)
 
-## Demo
+## 🚀 Deploy
 
-https://vps-github.vercel.app
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/TDz888/vpsgenerator.github.io)
+
+## 📝 License
+
+MIT
