@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-  <title>BLACKHOLE VM | Quantum Cloud Infrastructure</title>
+  <title>BLACKHOLE VM | Quantum Cloud</title>
   <style>
     * {
       margin: 0;
@@ -14,7 +14,7 @@
     body {
       min-height: 100vh;
       background: #000000;
-      font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
+      font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
       padding: 2rem;
       position: relative;
       overflow-x: hidden;
@@ -116,28 +116,60 @@
       z-index: 2;
     }
 
+    /* LANGUAGE SWITCH - GÓC MÀN HÌNH */
+    .lang-switch {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      z-index: 100;
+      background: rgba(0, 0, 0, 0.7);
+      backdrop-filter: blur(12px);
+      border-radius: 40px;
+      padding: 0.5rem 1rem;
+      display: flex;
+      gap: 0.5rem;
+      border: 1px solid rgba(255, 102, 0, 0.4);
+    }
+
+    .lang-btn {
+      background: transparent;
+      border: none;
+      color: rgba(255,255,255,0.6);
+      font-size: 0.9rem;
+      font-weight: bold;
+      cursor: pointer;
+      padding: 0.3rem 0.8rem;
+      border-radius: 30px;
+      transition: all 0.2s;
+    }
+
+    .lang-btn.active {
+      background: linear-gradient(135deg, #ff6600, #ff00aa);
+      color: white;
+      box-shadow: 0 0 10px rgba(255, 102, 0, 0.5);
+    }
+
     /* Header */
     .header {
       text-align: center;
-      margin-bottom: 3rem;
+      margin-bottom: 2rem;
       animation: fadeInDown 0.8s cubic-bezier(0.2, 0.9, 0.4, 1.1);
     }
 
     .glow-text {
-      font-size: 4rem;
+      font-size: 3.5rem;
       font-weight: 800;
       background: linear-gradient(135deg, #ffffff, #ff6600, #ff00aa, #6600ff);
       -webkit-background-clip: text;
       background-clip: text;
       color: transparent;
-      letter-spacing: -0.02em;
       text-shadow: 0 0 40px rgba(255, 102, 0, 0.5);
     }
 
     .sub {
       color: rgba(255,255,255,0.7);
       margin-top: 0.5rem;
-      font-size: 1rem;
+      font-size: 0.9rem;
       letter-spacing: 2px;
     }
 
@@ -146,7 +178,7 @@
       display: flex;
       justify-content: center;
       gap: 1rem;
-      margin-bottom: 2.5rem;
+      margin-bottom: 2rem;
     }
 
     .toggle-btn {
@@ -177,6 +209,7 @@
       border: 1px solid rgba(255, 102, 0, 0.3);
       padding: 2rem;
       transition: all 0.3s ease;
+      margin-bottom: 2rem;
     }
 
     .card:hover {
@@ -189,6 +222,12 @@
       margin-bottom: 1rem;
     }
 
+    .card h3 {
+      color: #ffaa66 !important;
+      margin: 1rem 0 0.5rem 0;
+    }
+
+    /* Input */
     .input-group {
       margin-bottom: 1.5rem;
     }
@@ -259,7 +298,7 @@
     }
 
     .vm-name {
-      font-size: 1.3rem;
+      font-size: 1.2rem;
       font-weight: bold;
       color: #ffaa66;
     }
@@ -270,11 +309,11 @@
       margin-top: 0.5rem;
     }
 
-    /* Tech Features Section */
+    /* Tech Features */
     .tech-section {
-      margin-top: 3rem;
+      margin-top: 2rem;
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
       gap: 1.5rem;
     }
 
@@ -306,8 +345,8 @@
     }
 
     .tech-desc {
-      color: rgba(255,255,255,0.8);
-      font-size: 0.9rem;
+      color: rgba(255,255,255,0.85);
+      font-size: 0.85rem;
       line-height: 1.5;
     }
 
@@ -316,26 +355,59 @@
       background: rgba(255, 102, 0, 0.2);
       padding: 0.3rem 0.8rem;
       border-radius: 20px;
-      font-size: 0.75rem;
+      font-size: 0.7rem;
       margin: 0.2rem;
       color: #ffaa66;
     }
 
-    .highlight {
-      color: #ffaa66;
+    /* Guide Steps */
+    .guide-steps {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .step {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      padding: 0.8rem;
+      background: rgba(255, 102, 0, 0.1);
+      border-radius: 20px;
+      flex-wrap: wrap;
+    }
+
+    .step-number {
+      width: 35px;
+      height: 35px;
+      background: linear-gradient(135deg, #ff6600, #ff00aa);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
       font-weight: bold;
+      color: white;
     }
 
-    @keyframes fadeInDown {
-      from { opacity: 0; transform: translateY(-30px); }
-      to { opacity: 1; transform: translateY(0); }
+    .step-text {
+      flex: 1;
+      color: rgba(255,255,255,0.9);
     }
 
-    .hidden {
-      display: none;
+    .step-text a {
+      color: #ffaa66;
     }
 
-    /* MODAL - FIXED VISIBILITY */
+    .code-block {
+      background: #0a0a1a;
+      padding: 0.3rem 0.8rem;
+      border-radius: 12px;
+      font-family: monospace;
+      font-size: 0.8rem;
+      color: #ffaa66;
+    }
+
+    /* Modal - FIXED VISIBILITY */
     .modal {
       display: none;
       position: fixed;
@@ -353,10 +425,12 @@
     .modal-content {
       background: #0a0a1a;
       border-radius: 32px;
-      max-width: 550px;
+      max-width: 600px;
       width: 90%;
       padding: 2rem;
       border: 2px solid #ff6600;
+      max-height: 85vh;
+      overflow-y: auto;
     }
 
     .modal-content h2 {
@@ -393,76 +467,196 @@
       color: rgba(255,255,255,0.9);
       line-height: 1.6;
     }
+
+    /* Footer */
+    .footer {
+      margin-top: 3rem;
+      text-align: center;
+      padding: 1.5rem;
+      border-top: 1px solid rgba(255, 102, 0, 0.2);
+      color: rgba(255,255,255,0.5);
+      font-size: 0.8rem;
+    }
+
+    .footer a {
+      color: #ffaa66;
+      text-decoration: none;
+    }
+
+    .beta-badge {
+      background: rgba(255, 102, 0, 0.2);
+      display: inline-block;
+      padding: 0.2rem 0.8rem;
+      border-radius: 20px;
+      font-size: 0.7rem;
+      margin-left: 0.5rem;
+    }
+
+    @keyframes fadeInDown {
+      from { opacity: 0; transform: translateY(-30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    @media (max-width: 768px) {
+      body { padding: 1rem; }
+      .glow-text { font-size: 2rem; }
+      .step { flex-direction: column; text-align: center; }
+    }
   </style>
 </head>
 <body>
-  <!-- BLACK HOLE BACKGROUND -->
   <div class="black-hole-bg">
     <div class="stars"></div>
     <div class="accretion-disk"></div>
   </div>
 
+  <!-- LANGUAGE SWITCH -->
+  <div class="lang-switch">
+    <button class="lang-btn active" data-lang="vi">🇻🇳 VI</button>
+    <button class="lang-btn" data-lang="en">🇬🇧 EN</button>
+  </div>
+
   <div class="container">
     <div class="header">
       <div class="glow-text">🌀 BLACK HOLE VM</div>
-      <div class="sub">Singularity Cloud Engine • 120Hz Neural Fabric</div>
+      <div class="sub" id="subText">Singularity Cloud Engine • 120Hz Neural Fabric</div>
     </div>
 
     <div class="toggle-container">
-      <div class="toggle-btn active" data-mode="create">🛸 Tạo VM</div>
-      <div class="toggle-btn" data-mode="manage">📡 Quản lý VM</div>
+      <div class="toggle-btn active" data-mode="create" id="createTabBtn">🛸 <span data-key="createVM">Tạo VM</span></div>
+      <div class="toggle-btn" data-mode="manage" id="manageTabBtn">📡 <span data-key="manageVM">Quản lý VM</span></div>
+    </div>
+
+    <!-- HƯỚNG DẪN LẤY TOKEN -->
+    <div class="card" id="guideCard">
+      <h2 data-key="guideTitle">📖 Hướng dẫn lấy thông tin xác thực</h2>
+      
+      <div class="guide-steps">
+        <div class="step">
+          <div class="step-number">1</div>
+          <div class="step-text">
+            <strong data-key="step1Title">🔑 Lấy GitHub Token</strong><br>
+            <span data-key="step1Desc">Truy cập</span> <a href="https://github.com/settings/tokens" target="_blank">github.com/settings/tokens</a><br>
+            <span data-key="step1Desc2">→ Chọn "Generate new token (classic)" → Tích chọn quyền</span> <code class="code-block">repo</code> <span data-key="step1And">và</span> <code class="code-block">workflow</code><br>
+            <span data-key="step1Desc3">→ Copy token bắt đầu bằng</span> <code class="code-block">github_pat_</code>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-number">2</div>
+          <div class="step-text">
+            <strong data-key="step2Title">🔗 Lấy Tailscale Auth Key</strong><br>
+            <span data-key="step2Desc">Truy cập</span> <a href="https://login.tailscale.com/admin/authkeys" target="_blank">login.tailscale.com/admin/authkeys</a><br>
+            <span data-key="step2Desc2">→ Chọn "Generate auth key" → Chọn quyền</span> <code class="code-block">Reusable</code><br>
+            <span data-key="step2Desc3">→ Copy key bắt đầu bằng</span> <code class="code-block">tskey-</code>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-number">3</div>
+          <div class="step-text">
+            <strong data-key="step3Title">🚀 Tạo VPS</strong><br>
+            <span data-key="step3Desc">Dán token và key vào ô bên dưới → Nhấn "Khởi tạo VM" → Đợi 2-3 phút</span>
+          </div>
+        </div>
+      </div>
     </div>
 
     <!-- CREATE PANEL -->
     <div id="createPanel" class="card">
-      <h2>🔐 Event Horizon Authentication</h2>
+      <h2 data-key="authTitle">🔐 Xác thực quyền truy cập</h2>
       <div class="input-group">
-        <label>🌌 GitHub Token</label>
+        <label>🌌 <span data-key="githubTokenLabel">GitHub Token</span></label>
         <input type="password" id="githubToken" placeholder="github_pat_xxx...">
-        <div style="font-size:0.7rem; color:#ffaa66; margin-top:5px;">⚡ Quyền: repo, workflow</div>
       </div>
       <div class="input-group">
-        <label>🌀 Tailscale Auth Key</label>
+        <label>🌀 <span data-key="tailscaleLabel">Tailscale Auth Key</span></label>
         <input type="password" id="tailscaleKey" placeholder="tskey-xxx...">
       </div>
-      <button class="btn-primary" id="createBtn">✨ Khởi tạo Singularity</button>
+      <button class="btn-primary" id="createBtn"><span data-key="createBtnText">✨ Khởi tạo Singularity</span></button>
       <div id="createResult" style="margin-top:1rem; color:#ffaa66;"></div>
     </div>
 
     <!-- MANAGE PANEL -->
     <div id="managePanel" class="card hidden">
-      <h2>🖥️ VM Singularities</h2>
+      <h2 data-key="manageTitle">🖥️ VM Singularities</h2>
       <div id="vmList" class="vm-grid">
-        <div style="color:#aaa; text-align:center;">🌀 Chưa có Singularity nào. Hãy tạo VM đầu tiên</div>
+        <div style="color:#aaa; text-align:center;" data-key="noVM">🌀 Chưa có Singularity nào. Hãy tạo VM đầu tiên</div>
       </div>
     </div>
 
-    <!-- TECH FEATURES SECTION - CẤU HÌNH THỰC TẾ -->
+    <!-- HƯỚNG DẪN SỬ DỤNG SAU KHI TẠO VM -->
+    <div class="card">
+      <h2 data-key="howtoTitle">📡 Cách kết nối và sử dụng VM</h2>
+      
+      <div class="guide-steps">
+        <div class="step">
+          <div class="step-number">1</div>
+          <div class="step-text">
+            <strong data-key="howto1Title">🔗 Kết nối qua Tailscale (Khuyên dùng)</strong><br>
+            <span data-key="howto1Desc">Cài Tailscale tại</span> <a href="https://tailscale.com/download" target="_blank">tailscale.com/download</a><br>
+            <span data-key="howto1Desc2">→ Đăng nhập cùng tài khoản đã tạo Auth Key</span><br>
+            <span data-key="howto1Desc3">→ Mở Remote Desktop (Windows) hoặc Microsoft Remote Desktop (Mac)</span><br>
+            <span data-key="howto1Desc4">→ Nhập IP Tailscale (xem trong GitHub Actions logs)</span><br>
+            <span data-key="howto1Desc5">→ User:</span> <code class="code-block">runneradmin</code> <span data-key="howto1Desc6">Pass:</span> <code class="code-block">VPS@123456</code>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-number">2</div>
+          <div class="step-text">
+            <strong data-key="howto2Title">🌐 Kết nối qua noVNC (Trình duyệt)</strong><br>
+            <span data-key="howto2Desc">Truy cập link noVNC được cung cấp sau khi tạo VM</span><br>
+            <span data-key="howto2Desc2">→ Nhập mật khẩu:</span> <code class="code-block">VPS@123456</code><br>
+            <span data-key="howto2Desc3">→ Trải nghiệm Windows ngay trên trình duyệt!</span>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-number">3</div>
+          <div class="step-text">
+            <strong data-key="howto3Title">📊 Theo dõi trạng thái</strong><br>
+            <span data-key="howto3Desc">Vào GitHub Repository vừa tạo → Tab "Actions" để xem log và IP Tailscale</span><br>
+            <span data-key="howto3Desc2">VM sẽ tự động chạy trong 6 tiếng và restart</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TECH FEATURES -->
     <div class="tech-section">
       <div class="tech-card">
         <div class="tech-icon">⚡</div>
-        <div class="tech-title">Quantum Compute Engine</div>
-        <div class="tech-desc">✅ <span class="highlight">2-4 vCPU</span> (Intel Xeon Platinum)<br>✅ <span class="highlight">7-16 GB RAM</span> (DDR4 ECC)<br>✅ <span class="highlight">14 GB SSD</span> (NVMe)</div>
+        <div class="tech-title" data-key="tech1Title">Quantum Compute Engine</div>
+        <div class="tech-desc" data-key="tech1Desc">✅ 2-4 vCPU (Intel Xeon Platinum)<br>✅ 7-16 GB RAM (DDR4 ECC)<br>✅ 14 GB SSD (NVMe)</div>
         <div><span class="spec-badge">2 Cores</span><span class="spec-badge">4 Cores</span><span class="spec-badge">7GB RAM</span><span class="spec-badge">16GB RAM</span></div>
       </div>
       <div class="tech-card">
         <div class="tech-icon">📶</div>
-        <div class="tech-title">Hyperfast Networking</div>
-        <div class="tech-desc">🚀 <span class="highlight">WiFi: 1 Gbps</span> (实测 ~800 Mbps)<br>🌍 <span class="highlight">Latency: < 5ms</span> nội bộ<br>🔗 <span class="highlight">Tailscale Mesh VPN</span> tốc độ 500+ Mbps</div>
+        <div class="tech-title" data-key="tech2Title">Hyperfast Networking</div>
+        <div class="tech-desc" data-key="tech2Desc">🚀 1 Gbps (实测 ~800 Mbps)<br>🌍 Latency: < 5ms nội bộ<br>🔗 Tailscale VPN 500+ Mbps</div>
         <div><span class="spec-badge">1 Gbps</span><span class="spec-badge">5ms Latency</span><span class="spec-badge">VPN 500Mbps</span></div>
       </div>
       <div class="tech-card">
         <div class="tech-icon">🤖</div>
-        <div class="tech-title">Auto-Scale Intelligence</div>
-        <div class="tech-desc">🔄 Tự động khởi tạo và xóa VM<br>⏱️ Vòng đời <span class="highlight">6 giờ</span> (tự reset)<br>📊 <span class="highlight">Zero-downtime</span> orchestration</div>
+        <div class="tech-title" data-key="tech3Title">Auto-Scale Intelligence</div>
+        <div class="tech-desc" data-key="tech3Desc">🔄 Tự động khởi tạo và xóa VM<br>⏱️ Vòng đời 6 giờ (tự reset)<br>📊 Zero-downtime orchestration</div>
         <div><span class="spec-badge">Auto Healing</span><span class="spec-badge">6h Cycle</span><span class="spec-badge">99.9% Uptime</span></div>
       </div>
       <div class="tech-card">
         <div class="tech-icon">🔒</div>
-        <div class="tech-title">Zero-Trust Security</div>
-        <div class="tech-desc">🛡️ Tailscale WireGuard® encryption<br>🔐 Mã hóa end-to-end<br>🎯 Phát hiện xâm nhập thời gian thực</div>
+        <div class="tech-title" data-key="tech4Title">Zero-Trust Security</div>
+        <div class="tech-desc" data-key="tech4Desc">🛡️ Tailscale WireGuard® encryption<br>🔐 Mã hóa end-to-end<br>🎯 Phát hiện xâm nhập thời gian thực</div>
         <div><span class="spec-badge">WireGuard</span><span class="spec-badge">E2EE</span><span class="spec-badge">IDS/IPS</span></div>
       </div>
+    </div>
+
+    <!-- FOOTER -->
+    <div class="footer">
+      <span data-key="footerText">📧 Liên hệ hỗ trợ:</span> <a href="mailto:thienantran1268@gmail.com">thienantran1268@gmail.com</a><br>
+      <span data-key="betaText">⚠️ Đây là phiên bản Beta, có thể gặp lỗi trong quá trình sử dụng</span><br>
+      <span data-key="creditText">🚀 Tạo ra từ SuperDzAn (chủ dự án) với công nghệ Black Hole Cloud</span>
+      <span class="beta-badge">BETA v1.0</span>
     </div>
   </div>
 
@@ -471,11 +665,173 @@
     <div class="modal-content">
       <h2 id="modalTitle"></h2>
       <div id="modalBody"></div>
-      <button class="btn-primary" id="closeModal" style="margin-top:1rem;">Đóng</button>
+      <button class="btn-primary" id="closeModal" data-key="closeBtn">Đóng</button>
     </div>
   </div>
 
   <script>
+    // ==================== NGÔN NGỮ ====================
+    const translations = {
+      vi: {
+        subText: "Singularity Cloud Engine • 120Hz Neural Fabric",
+        createVM: "Tạo VM",
+        manageVM: "Quản lý VM",
+        guideTitle: "📖 Hướng dẫn lấy thông tin xác thực",
+        step1Title: "🔑 Lấy GitHub Token",
+        step1Desc: "Truy cập",
+        step1Desc2: "→ Chọn 'Generate new token (classic)' → Tích chọn quyền",
+        step1And: "và",
+        step1Desc3: "→ Copy token bắt đầu bằng",
+        step2Title: "🔗 Lấy Tailscale Auth Key",
+        step2Desc: "Truy cập",
+        step2Desc2: "→ Chọn 'Generate auth key' → Chọn quyền",
+        step2Desc3: "→ Copy key bắt đầu bằng",
+        step3Title: "🚀 Tạo VPS",
+        step3Desc: "Dán token và key vào ô bên dưới → Nhấn 'Khởi tạo VM' → Đợi 2-3 phút",
+        authTitle: "🔐 Xác thực quyền truy cập",
+        githubTokenLabel: "GitHub Token",
+        tailscaleLabel: "Tailscale Auth Key",
+        createBtnText: "✨ Khởi tạo Singularity",
+        manageTitle: "🖥️ VM Singularities",
+        noVM: "🌀 Chưa có Singularity nào. Hãy tạo VM đầu tiên",
+        howtoTitle: "📡 Cách kết nối và sử dụng VM",
+        howto1Title: "🔗 Kết nối qua Tailscale (Khuyên dùng)",
+        howto1Desc: "Cài Tailscale tại",
+        howto1Desc2: "→ Đăng nhập cùng tài khoản đã tạo Auth Key",
+        howto1Desc3: "→ Mở Remote Desktop (Windows) hoặc Microsoft Remote Desktop (Mac)",
+        howto1Desc4: "→ Nhập IP Tailscale (xem trong GitHub Actions logs)",
+        howto1Desc5: "→ User:",
+        howto1Desc6: "Pass:",
+        howto2Title: "🌐 Kết nối qua noVNC (Trình duyệt)",
+        howto2Desc: "Truy cập link noVNC được cung cấp sau khi tạo VM",
+        howto2Desc2: "→ Nhập mật khẩu:",
+        howto2Desc3: "→ Trải nghiệm Windows ngay trên trình duyệt!",
+        howto3Title: "📊 Theo dõi trạng thái",
+        howto3Desc: "Vào GitHub Repository vừa tạo → Tab 'Actions' để xem log và IP Tailscale",
+        howto3Desc2: "VM sẽ tự động chạy trong 6 tiếng và restart",
+        tech1Title: "Quantum Compute Engine",
+        tech1Desc: "✅ 2-4 vCPU (Intel Xeon Platinum)\n✅ 7-16 GB RAM (DDR4 ECC)\n✅ 14 GB SSD (NVMe)",
+        tech2Title: "Hyperfast Networking",
+        tech2Desc: "🚀 1 Gbps (实测 ~800 Mbps)\n🌍 Latency: < 5ms nội bộ\n🔗 Tailscale VPN 500+ Mbps",
+        tech3Title: "Auto-Scale Intelligence",
+        tech3Desc: "🔄 Tự động khởi tạo và xóa VM\n⏱️ Vòng đời 6 giờ (tự reset)\n📊 Zero-downtime orchestration",
+        tech4Title: "Zero-Trust Security",
+        tech4Desc: "🛡️ Tailscale WireGuard® encryption\n🔐 Mã hóa end-to-end\n🎯 Phát hiện xâm nhập thời gian thực",
+        footerText: "📧 Liên hệ hỗ trợ:",
+        betaText: "⚠️ Đây là phiên bản Beta, có thể gặp lỗi trong quá trình sử dụng",
+        creditText: "🚀 Tạo ra từ SuperDzAn (chủ dự án) với công nghệ Black Hole Cloud",
+        closeBtn: "Đóng",
+        modalConnection: "🔗 Tailscale Connection:",
+        modalIP: "📡 IP:",
+        modalUser: "👤 User:",
+        modalPass: "🔐 Pass:",
+        modalNovnc: "🌐 noVNC (Browser):",
+        modalPassword: "🔐 Password:",
+        modalTime: "📅 Thông tin thời gian:",
+        modalCreated: "🕳️ Created:",
+        modalExpires: "⏱️ Expires:",
+        modalRepo: "📦 Repository:",
+        modalConfig: "⚡ Cấu hình VM (GitHub Actions Runner):",
+        modalCPU: "🖥️ CPU: 2-4 cores (Intel Xeon Platinum)",
+        modalRAM: "🧠 RAM: 7-16 GB DDR4 ECC",
+        modalStorage: "💾 Storage: 14 GB SSD NVMe",
+        modalNetwork: "📶 Network: 1 Gbps (实测 ~800 Mbps)",
+        modalVPN: "🔗 Tailscale VPN: 500+ Mbps"
+      },
+      en: {
+        subText: "Singularity Cloud Engine • 120Hz Neural Fabric",
+        createVM: "Create VM",
+        manageVM: "Manage VM",
+        guideTitle: "📖 Authentication Guide",
+        step1Title: "🔑 Get GitHub Token",
+        step1Desc: "Visit",
+        step1Desc2: "→ Click 'Generate new token (classic)' → Select permissions",
+        step1And: "and",
+        step1Desc3: "→ Copy token starting with",
+        step2Title: "🔗 Get Tailscale Auth Key",
+        step2Desc: "Visit",
+        step2Desc2: "→ Click 'Generate auth key' → Select",
+        step2Desc3: "→ Copy key starting with",
+        step3Title: "🚀 Create VPS",
+        step3Desc: "Paste token and key below → Click 'Create VM' → Wait 2-3 minutes",
+        authTitle: "🔐 Authentication",
+        githubTokenLabel: "GitHub Token",
+        tailscaleLabel: "Tailscale Auth Key",
+        createBtnText: "✨ Create Singularity",
+        manageTitle: "🖥️ VM Singularities",
+        noVM: "🌀 No Singularity yet. Create your first VM",
+        howtoTitle: "📡 How to connect and use VM",
+        howto1Title: "🔗 Connect via Tailscale (Recommended)",
+        howto1Desc: "Install Tailscale at",
+        howto1Desc2: "→ Login with the same account that created Auth Key",
+        howto1Desc3: "→ Open Remote Desktop (Windows) or Microsoft Remote Desktop (Mac)",
+        howto1Desc4: "→ Enter Tailscale IP (see in GitHub Actions logs)",
+        howto1Desc5: "→ User:",
+        howto1Desc6: "Pass:",
+        howto2Title: "🌐 Connect via noVNC (Browser)",
+        howto2Desc: "Access the noVNC link provided after VM creation",
+        howto2Desc2: "→ Enter password:",
+        howto2Desc3: "→ Experience Windows right in your browser!",
+        howto3Title: "📊 Monitor Status",
+        howto3Desc: "Go to GitHub Repository → 'Actions' tab to see logs and Tailscale IP",
+        howto3Desc2: "VM will run for 6 hours and auto-restart",
+        tech1Title: "Quantum Compute Engine",
+        tech1Desc: "✅ 2-4 vCPU (Intel Xeon Platinum)\n✅ 7-16 GB RAM (DDR4 ECC)\n✅ 14 GB SSD (NVMe)",
+        tech2Title: "Hyperfast Networking",
+        tech2Desc: "🚀 1 Gbps (实测 ~800 Mbps)\n🌍 Latency: < 5ms internal\n🔗 Tailscale VPN 500+ Mbps",
+        tech3Title: "Auto-Scale Intelligence",
+        tech3Desc: "🔄 Auto create and destroy VM\n⏱️ 6-hour lifecycle (auto reset)\n📊 Zero-downtime orchestration",
+        tech4Title: "Zero-Trust Security",
+        tech4Desc: "🛡️ Tailscale WireGuard® encryption\n🔐 End-to-end encryption\n🎯 Real-time intrusion detection",
+        footerText: "📧 Contact support:",
+        betaText: "⚠️ This is a Beta version, may have issues during use",
+        creditText: "🚀 Created by SuperDzAn (project owner) with Black Hole Cloud technology",
+        closeBtn: "Close",
+        modalConnection: "🔗 Tailscale Connection:",
+        modalIP: "📡 IP:",
+        modalUser: "👤 User:",
+        modalPass: "🔐 Pass:",
+        modalNovnc: "🌐 noVNC (Browser):",
+        modalPassword: "🔐 Password:",
+        modalTime: "📅 Time Information:",
+        modalCreated: "🕳️ Created:",
+        modalExpires: "⏱️ Expires:",
+        modalRepo: "📦 Repository:",
+        modalConfig: "⚡ VM Configuration (GitHub Actions Runner):",
+        modalCPU: "🖥️ CPU: 2-4 cores (Intel Xeon Platinum)",
+        modalRAM: "🧠 RAM: 7-16 GB DDR4 ECC",
+        modalStorage: "💾 Storage: 14 GB SSD NVMe",
+        modalNetwork: "📶 Network: 1 Gbps (实测 ~800 Mbps)",
+        modalVPN: "🔗 Tailscale VPN: 500+ Mbps"
+      }
+    };
+
+    let currentLang = 'vi';
+
+    function updateLanguage() {
+      const langData = translations[currentLang];
+      document.querySelectorAll('[data-key]').forEach(el => {
+        const key = el.getAttribute('data-key');
+        if (langData[key]) el.innerHTML = langData[key];
+      });
+      document.getElementById('subText').innerText = langData.subText;
+      
+      // Update modal content if open
+      if (window.currentModalVM) {
+        showVMDetails(window.currentModalVM);
+      }
+    }
+
+    document.querySelectorAll('.lang-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        currentLang = btn.getAttribute('data-lang');
+        updateLanguage();
+      });
+    });
+
+    // ==================== VM MANAGEMENT ====================
     let currentMode = 'create';
     let vms = JSON.parse(localStorage.getItem('nova_vms') || '[]');
 
@@ -489,20 +845,22 @@
     const modal = document.getElementById('vmModal');
     const modalTitle = document.getElementById('modalTitle');
     const modalBody = document.getElementById('modalBody');
+    window.currentModalVM = null;
 
     function saveVMs() { localStorage.setItem('nova_vms', JSON.stringify(vms)); }
 
     function renderVMList() {
       if (!vmListDiv) return;
       if (vms.length === 0) {
-        vmListDiv.innerHTML = '<div style="color:#aaa; text-align:center;">🌀 Chưa có Singularity nào. Hãy tạo VM đầu tiên</div>';
+        vmListDiv.innerHTML = `<div style="color:#aaa; text-align:center;" data-key="noVM">${translations[currentLang].noVM}</div>`;
+        document.querySelector('[data-key="noVM"]')?.setAttribute('data-key', 'noVM');
         return;
       }
       vmListDiv.innerHTML = vms.map(vm => `
         <div class="vm-card" data-id="${vm.id}">
           <div class="vm-name">🕳️ ${vm.name}</div>
-          <div class="vm-expiry">⏱️ Hết hạn: ${new Date(vm.expiresAt).toLocaleString()}</div>
-          <div class="vm-expiry">📅 Tạo: ${new Date(vm.createdAt).toLocaleString()}</div>
+          <div class="vm-expiry">⏱️ ${currentLang === 'vi' ? 'Hết hạn' : 'Expires'}: ${new Date(vm.expiresAt).toLocaleString()}</div>
+          <div class="vm-expiry">📅 ${currentLang === 'vi' ? 'Tạo' : 'Created'}: ${new Date(vm.createdAt).toLocaleString()}</div>
         </div>
       `).join('');
       document.querySelectorAll('.vm-card').forEach(card => {
@@ -515,32 +873,34 @@
     }
 
     function showVMDetails(vm) {
+      window.currentModalVM = vm;
+      const lang = translations[currentLang];
       modalTitle.innerText = `🕳️ ${vm.name}`;
       modalBody.innerHTML = `
         <div class="result-box">
-          <strong>🔗 Tailscale Connection:</strong><br>
-          📡 IP: <code>Xem trong GitHub Actions logs</code><br>
-          👤 User: <code>${vm.username}</code><br>
-          🔐 Pass: <code>${vm.password}</code>
+          <strong>${lang.modalConnection}</strong><br>
+          ${lang.modalIP} <code>${currentLang === 'vi' ? 'Xem trong GitHub Actions logs' : 'See in GitHub Actions logs'}</code><br>
+          ${lang.modalUser} <code>${vm.username}</code><br>
+          ${lang.modalPass} <code>${vm.password}</code>
         </div>
         <div class="result-box">
-          <strong>🌐 noVNC (Browser):</strong><br>
+          <strong>${lang.modalNovnc}</strong><br>
           🔗 <a href="${vm.novncUrl}" target="_blank">${vm.novncUrl}</a><br>
-          🔐 Password: <code>${vm.password}</code>
+          ${lang.modalPassword} <code>${vm.password}</code>
         </div>
         <div class="result-box">
-          <strong>📅 Thông tin thời gian:</strong><br>
-          🕳️ Created: ${new Date(vm.createdAt).toLocaleString()}<br>
-          ⏱️ Expires: ${new Date(vm.expiresAt).toLocaleString()}<br>
-          📦 Repository: <a href="${vm.repoUrl}" target="_blank">GitHub →</a>
+          <strong>${lang.modalTime}</strong><br>
+          ${lang.modalCreated} ${new Date(vm.createdAt).toLocaleString()}<br>
+          ${lang.modalExpires} ${new Date(vm.expiresAt).toLocaleString()}<br>
+          ${lang.modalRepo} <a href="${vm.repoUrl}" target="_blank">${currentLang === 'vi' ? 'GitHub →' : 'GitHub →'}</a>
         </div>
         <div class="result-box">
-          <strong>⚡ Cấu hình VM (GitHub Actions Runner):</strong><br>
-          🖥️ CPU: 2-4 cores (Intel Xeon Platinum)<br>
-          🧠 RAM: 7-16 GB DDR4 ECC<br>
-          💾 Storage: 14 GB SSD NVMe<br>
-          📶 Network: 1 Gbps (实测 ~800 Mbps)<br>
-          🔗 Tailscale VPN: 500+ Mbps
+          <strong>${lang.modalConfig}</strong><br>
+          ${lang.modalCPU}<br>
+          ${lang.modalRAM}<br>
+          ${lang.modalStorage}<br>
+          ${lang.modalNetwork}<br>
+          ${lang.modalVPN}
         </div>
       `;
       modal.style.display = 'flex';
@@ -551,12 +911,12 @@
       const tailscaleKey = tailscaleKeyInput.value.trim();
 
       if (!githubToken || !tailscaleKey) {
-        createResultDiv.innerHTML = '<div style="color:#ff7777;">❌ Vui lòng nhập đầy đủ token và key</div>';
+        createResultDiv.innerHTML = `<div style="color:#ff7777;">❌ ${currentLang === 'vi' ? 'Vui lòng nhập đầy đủ token và key' : 'Please enter token and key'}</div>`;
         return;
       }
 
       createBtn.disabled = true;
-      createBtn.innerText = '🌀 Đang khởi tạo Singularity...';
+      createBtn.innerHTML = currentLang === 'vi' ? '🌀 Đang khởi tạo Singularity...' : '🌀 Creating Singularity...';
 
       try {
         const res = await fetch('/api/vpsuser', {
@@ -582,18 +942,18 @@
           vms.unshift(newVM);
           saveVMs();
           renderVMList();
-          createResultDiv.innerHTML = `<div style="color:#0f0;">✅ ${data.name} đã được khởi tạo! Vào Quản lý VM để xem chi tiết.</div>`;
+          createResultDiv.innerHTML = `<div style="color:#0f0;">✅ ${currentLang === 'vi' ? 'VM đã được khởi tạo! Vào Quản lý VM để xem chi tiết.' : 'VM created! Go to Manage VM for details.'}</div>`;
           githubTokenInput.value = '';
           tailscaleKeyInput.value = '';
           document.querySelector('[data-mode="manage"]').click();
         } else {
-          createResultDiv.innerHTML = `<div style="color:#ff7777;">❌ Lỗi: ${data.error}</div>`;
+          createResultDiv.innerHTML = `<div style="color:#ff7777;">❌ ${currentLang === 'vi' ? 'Lỗi' : 'Error'}: ${data.error}</div>`;
         }
       } catch (err) {
-        createResultDiv.innerHTML = `<div style="color:#ff7777;">❌ Lỗi kết nối: ${err.message}</div>`;
+        createResultDiv.innerHTML = `<div style="color:#ff7777;">❌ ${currentLang === 'vi' ? 'Lỗi kết nối' : 'Connection error'}: ${err.message}</div>`;
       } finally {
         createBtn.disabled = false;
-        createBtn.innerText = '✨ Khởi tạo Singularity';
+        createBtn.innerHTML = translations[currentLang].createBtnText;
       }
     });
 
@@ -615,12 +975,17 @@
 
     document.getElementById('closeModal').addEventListener('click', () => {
       modal.style.display = 'none';
+      window.currentModalVM = null;
     });
     window.addEventListener('click', (e) => {
-      if (e.target === modal) modal.style.display = 'none';
+      if (e.target === modal) {
+        modal.style.display = 'none';
+        window.currentModalVM = null;
+      }
     });
 
     renderVMList();
+    updateLanguage();
   </script>
 </body>
 </html>
