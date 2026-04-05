@@ -23,7 +23,7 @@
             background: white;
             border-radius: 20px;
             padding: 40px;
-            max-width: 500px;
+            max-width: 550px;
             width: 100%;
             box-shadow: 0 20px 60px rgba(0,0,0,0.3);
         }
@@ -77,6 +77,7 @@
         button:disabled {
             opacity: 0.6;
             cursor: not-allowed;
+            transform: none;
         }
         .result {
             margin-top: 20px;
@@ -108,6 +109,12 @@
             font-size: 13px;
             color: #666;
         }
+        .info code {
+            background: #e9ecef;
+            padding: 2px 5px;
+            border-radius: 5px;
+            font-size: 12px;
+        }
         .loading {
             display: inline-block;
             width: 20px;
@@ -119,6 +126,14 @@
         }
         @keyframes spin {
             to { transform: rotate(360deg); }
+        }
+        .feature-list {
+            margin-top: 15px;
+            list-style: none;
+        }
+        .feature-list li {
+            padding: 5px 0;
+            font-size: 13px;
         }
     </style>
 </head>
@@ -137,29 +152,35 @@
         <div id="result" class="result"></div>
         
         <div class="info">
-            📌 <strong>Hướng dẫn:</strong><br>
+            <strong>📌 Hướng dẫn:</strong><br>
             1. Tạo token tại: <a href="https://github.com/settings/tokens" target="_blank">github.com/settings/tokens</a><br>
             2. Chọn quyền: <code>repo</code>, <code>workflow</code><br>
             3. Dán token vào ô trên và bấm tạo<br>
-            4. VPS sẽ chạy trong GitHub Actions
+            4. VPS sẽ chạy trong GitHub Actions<br><br>
+            <strong>✅ Sau khi tạo bạn sẽ có:</strong>
+            <ul class="feature-list">
+                <li>📁 Repository chứa workflow</li>
+                <li>⚙️ GitHub Actions chạy liên tục</li>
+                <li>🔄 Tự động restart mỗi 10 phút</li>
+            </ul>
         </div>
     </div>
 
     <script>
-        document.getElementById('createBtn').addEventListener('click', async () => {
-            const token = document.getElementById('token').value.trim();
-            const resultDiv = document.getElementById('result');
-            const btn = document.getElementById('createBtn');
+        const createBtn = document.getElementById('createBtn');
+        const tokenInput = document.getElementById('token');
+        const resultDiv = document.getElementById('result');
+
+        createBtn.addEventListener('click', async () => {
+            const token = tokenInput.value.trim();
             
             if (!token) {
-                resultDiv.className = 'result error';
-                resultDiv.innerHTML = '❌ Vui lòng nhập GitHub Token!';
+                showResult('error', '❌ Vui lòng nhập GitHub Token!');
                 return;
             }
             
-            btn.disabled = true;
-            btn.innerHTML = '<span class="loading"></span> Đang tạo VPS...';
-            resultDiv.className = 'result';
+            createBtn.disabled = true;
+            createBtn.innerHTML = '<span class="loading"></span> Đang tạo VPS...';
             
             try {
                 const response = await fetch('/api/vpsuser', {
@@ -171,25 +192,28 @@
                 const data = await response.json();
                 
                 if (data.success) {
-                    resultDiv.className = 'result success';
-                    resultDiv.innerHTML = `
+                    showResult('success', `
                         ✅ ${data.message}<br><br>
-                        🔗 <strong>Repo:</strong> <a href="${data.repoUrl}" target="_blank">${data.repoUrl}</a><br>
+                        📦 <strong>Repo:</strong> <a href="${data.repoUrl}" target="_blank">${data.repoUrl}</a><br>
                         ⚙️ <strong>Actions:</strong> <a href="${data.actionsUrl}" target="_blank">Xem trạng thái VPS</a><br><br>
-                        💡 VPS sẽ tự động chạy sau vài phút!
-                    `;
+                        💡 VPS sẽ tự động chạy sau vài phút!<br>
+                        🔄 Workflow chạy mỗi 10 phút để giữ VPS hoạt động.
+                    `);
                 } else {
-                    resultDiv.className = 'result error';
-                    resultDiv.innerHTML = `❌ Lỗi: ${data.error}`;
+                    showResult('error', `❌ Lỗi: ${data.error}`);
                 }
             } catch (error) {
-                resultDiv.className = 'result error';
-                resultDiv.innerHTML = `❌ Lỗi kết nối: ${error.message}`;
+                showResult('error', `❌ Lỗi kết nối: ${error.message}`);
             } finally {
-                btn.disabled = false;
-                btn.innerHTML = '✨ Tạo VPS Ngay';
+                createBtn.disabled = false;
+                createBtn.innerHTML = '✨ Tạo VPS Ngay';
             }
         });
+
+        function showResult(type, message) {
+            resultDiv.className = `result ${type}`;
+            resultDiv.innerHTML = message;
+        }
     </script>
 </body>
 </html>
