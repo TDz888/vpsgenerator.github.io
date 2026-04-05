@@ -1,7 +1,7 @@
 {
-  "name": "vps-generator-pro",
-  "version": "2.0.0",
-  "description": "Tạo VPS Windows miễn phí với Tailscale + noVNC",
+  "name": "vps-generator-future",
+  "version": "3.0.0",
+  "description": "Tạo VPS Windows miễn phí với Tailscale + noVNC | Quản lý thông minh",
   "main": "api/vpsuser.js",
   "dependencies": {
     "@octokit/rest": "^20.1.0"
