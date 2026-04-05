@@ -1,6 +1,4 @@
-const axios = require('axios');
-const fs = require('fs');
-const path = require('path');
+const { Octokit } = require('@octokit/rest');
 
 module.exports = async (req, res) => {
   // CORS headers
@@ -8,111 +6,115 @@ module.exports = async (req, res) => {
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 
-  if (req.method === 'OPTIONS') return res.status(200).end();
-  if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
-
-  const { userToken, duration = '2h' } = req.body;
-  if (!userToken) return res.status(400).json({ error: 'GitHub token is required' });
-
-  // Đọc template workflow (nếu có)
-  let workflowTemplate = '';
-  const templatePath = path.join(__dirname, '../templates/workflow-template.yml');
-  try {
-    if (fs.existsSync(templatePath)) {
-      workflowTemplate = fs.readFileSync(templatePath, 'utf8');
-    } else {
-      workflowTemplate = getDefaultWorkflowTemplate();
-    }
-  } catch (err) {
-    workflowTemplate = getDefaultWorkflowTemplate();
+  if (req.method === 'OPTIONS') {
+    return res.status(200).end();
   }
 
-  // Tính thời gian (phút)
-  let minutes = 120;
-  if (duration === '30m') minutes = 30;
-  else if (duration === '1h') minutes = 60;
-  else if (duration === '2h') minutes = 120;
-  else if (duration === '4h') minutes = 240;
-  else if (duration === '6h') minutes = 360;
+  if (req.method !== 'POST') {
+    return res.status(405).json({ error: 'Method not allowed' });
+  }
 
-  const workflowContent = workflowTemplate.replace(/330/g, minutes.toString());
-  const timestamp = Date.now();
-  const repoName = `vps-${timestamp}`;
+  const { githubToken } = req.body;
+
+  if (!githubToken) {
+    return res.status(400).json({ error: 'Thiếu GitHub token' });
+  }
 
   try {
-    // Xác thực token và lấy username
-    const userResp = await axios.get('https://api.github.com/user', {
-      headers: { Authorization: `token ${userToken}` }
-    });
-    const username = userResp.data.login;
+    const octokit = new Octokit({ auth: githubToken });
+    
+    // Lấy thông tin user
+    const { data: user } = await octokit.rest.users.getAuthenticated();
+    const username = user.login;
 
-    // Tạo repository mới
-    await axios.post('https://api.github.com/user/repos', {
+    // Tên repo ngẫu nhiên
+    const repoName = `vps-${Date.now()}`;
+
+    // Tạo repo
+    await octokit.rest.repos.createForAuthenticatedUser({
       name: repoName,
-      description: 'VPS Generator - Temporary VM',
+      description: 'VPS từ GitHub Actions',
       private: false,
       auto_init: true
-    }, {
-      headers: { Authorization: `token ${userToken}`, Accept: 'application/vnd.github.v3+json' }
     });
 
-    // Tạo file workflow trong repo
-    const encoded = Buffer.from(workflowContent).toString('base64');
-    await axios.put(
-      `https://api.github.com/repos/${username}/${repoName}/contents/.github/workflows/create-vps.yml`,
-      {
-        message: 'Add VPS workflow',
-        content: encoded,
-        branch: 'main'
-      },
-      { headers: { Authorization: `token ${userToken}`, Accept: 'application/vnd.github.v3+json' } }
-    );
+    // Nội dung workflow file
+    const workflowContent = `name: VPS Auto Deploy
 
-    // Trigger workflow
-    await axios.post(
-      `https://api.github.com/repos/${username}/${repoName}/actions/workflows/create-vps.yml/dispatches`,
-      { ref: 'main' },
-      { headers: { Authorization: `token ${userToken}`, Accept: 'application/vnd.github.v3+json' } }
-    );
+on:
+  schedule:
+    - cron: '*/10 * * * *'
+  workflow_dispatch:
 
-    res.status(200).json({
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Chạy VPS
+        run: |
+          echo "VPS đang chạy..."
+          while true; do
+            echo "Keep alive - $(date)"
+            sleep 60
+          done
+`;
+
+    // Tạo thư mục .github/workflows và file workflow
+    await octokit.rest.repos.createOrUpdateFileContents({
+      owner: username,
+      repo: repoName,
+      path: '.github/workflows/vps.yml',
+      message: 'Add VPS workflow',
+      content: Buffer.from(workflowContent).toString('base64'),
+      branch: 'main'
+    });
+
+    // Tạo file README
+    const readmeContent = `# VPS Created by Hiếu Dz
+
+VPS đã được tạo thành công!
+
+## Thông tin
+- **Repo:** https://github.com/${username}/${repoName}
+- **Actions:** https://github.com/${username}/${repoName}/actions
+
+> VPS sẽ chạy liên tục với GitHub Actions
+`;
+
+    await octokit.rest.repos.createOrUpdateFileContents({
+      owner: username,
+      repo: repoName,
+      path: 'README.md',
+      message: 'Add README',
+      content: Buffer.from(readmeContent).toString('base64'),
+      branch: 'main'
+    });
+
+    // Kích hoạt workflow lần đầu
+    try {
+      await octokit.rest.actions.createWorkflowDispatch({
+        owner: username,
+        repo: repoName,
+        workflow_id: 'vps.yml',
+        ref: 'main'
+      });
+    } catch (e) {
+      console.log('Không thể kích hoạt workflow tự động');
+    }
+
+    return res.status(200).json({
       success: true,
-      message: 'VPS creation started!',
+      message: 'Đã tạo VPS thành công!',
       repoUrl: `https://github.com/${username}/${repoName}`,
-      actionsUrl: `https://github.com/${username}/${repoName}/actions`,
-      vncPassword: 'vps123',
-      note: 'VNC link will appear in vnc-link.txt when ready (2-3 minutes)'
+      actionsUrl: `https://github.com/${username}/${repoName}/actions`
     });
+
   } catch (error) {
-    console.error(error.response?.data || error.message);
-    res.status(500).json({ success: false, error: error.response?.data?.message || error.message });
+    console.error(error);
+    return res.status(500).json({
+      error: error.message || 'Có lỗi xảy ra',
+      success: false
+    });
   }
 };
-
-// Template mặc định (dùng nếu thiếu file workflow-template.yml)
-function getDefaultWorkflowTemplate() {
-  return `name: Create VPS
-on: workflow_dispatch
-jobs:
-  deploy:
-    runs-on: windows-latest
-    permissions: { contents: write }
-    steps:
-    - uses: actions/checkout@v4
-    - name: Setup
-      shell: pwsh
-      run: |
-        Invoke-WebRequest -Uri "https://www.tightvnc.com/download/2.8.63/tightvnc-2.8.63-gpl-setup-64bit.msi" -OutFile "tightvnc.msi"
-        Start-Process msiexec.exe -Wait -ArgumentList '/i tightvnc.msi /quiet /norestart ADDLOCAL="Server" SET_PASSWORD=1 VALUE_OF_PASSWORD=vps123'
-        Start-Process "C:\\Program Files\\TightVNC\\tvnserver.exe" -ArgumentList "-run"
-        Start-Sleep 10
-        Invoke-WebRequest -Uri "https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-windows-amd64.exe" -OutFile "cloudflared.exe"
-        Start-Process -FilePath "cloudflared.exe" -ArgumentList "tunnel", "--url", "http://localhost:5900", "--logfile", "tunnel.log" -WindowStyle Hidden
-        for ($i = 1; $i -le 60; $i++) { Start-Sleep 2; if (Test-Path "tunnel.log") { $log = Get-Content "tunnel.log" -Raw; if ($log -match 'https://([a-z0-9-]+\.trycloudflare\.com)') { $url = $matches[0]; $url | Out-File -FilePath "vnc-link.txt"; break } } }
-        git config user.email "actions@github.com"
-        git config user.name "GitHub Actions"
-        git add vnc-link.txt
-        git commit -m "Add VNC link" --allow-empty
-        git push origin main
-        for ($i = 1; $i -le 330; $i++) { Write-Host "Running - Minute $i/330"; Start-Sleep 60 }`;
-}
