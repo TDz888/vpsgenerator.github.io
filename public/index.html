@@ -84,12 +84,22 @@
 
     /* Heaven Design - Light & Clean */
     body.light {
-      background: linear-gradient(145deg, #f4f9ff 0%, #e2ecff 100%);
+      background: linear-gradient(145deg, #f0f4ff 0%, #e0eaff 100%);
       color: #121826;
     }
 
     body.light .black-hole-bg {
-      background: radial-gradient(circle at 20% 35%, rgba(255,245,220,0.4), rgba(210,230,255,0.2));
+      background: radial-gradient(circle at 20% 35%, rgba(255,250,210,0.3), rgba(200,220,255,0.2));
+    }
+
+    /* Hiệu ứng mây nhẹ cho Heaven */
+    body.light .heaven-cloud {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      background-image: radial-gradient(circle at 10% 20%, rgba(255,255,245,0.4) 1px, transparent 1px);
+      background-size: 40px 40px;
+      pointer-events: none;
     }
 
     body.light .star-field, body.light .accretion-core, body.light .accretion-ring {
@@ -99,7 +109,8 @@
     /* Performance mode (giảm tải hiệu ứng) */
     body.performance .accretion-core,
     body.performance .accretion-ring,
-    body.performance .star-field {
+    body.performance .star-field,
+    body.performance .heaven-cloud {
       animation: none !important;
       filter: blur(8px) !important;
       opacity: 0.15 !important;
@@ -149,10 +160,10 @@
     }
 
     body.light .card {
-      background: rgba(255, 255, 255, 0.78);
+      background: rgba(255, 255, 255, 0.82);
       backdrop-filter: blur(16px);
-      border: 1px solid rgba(70, 100, 200, 0.25);
-      box-shadow: 0 15px 30px -8px rgba(0, 0, 0, 0.08);
+      border: 1px solid rgba(70, 100, 200, 0.3);
+      box-shadow: 0 15px 30px -8px rgba(0, 0, 0, 0.05);
     }
 
     .card {
@@ -184,6 +195,11 @@
       font-size: 3.2rem;
       font-weight: 800;
       letter-spacing: -0.02em;
+      transition: all 0.3s ease;
+    }
+
+    /* Gradient riêng cho từng chế độ - sẽ được JS cập nhật */
+    body.dark .glow-text {
       background: linear-gradient(135deg, #ffffff, #ffaa66, #ff66cc);
       -webkit-background-clip: text;
       background-clip: text;
@@ -307,7 +323,7 @@
     }
 
     body.dark .tech-card { background: rgba(0, 0, 0, 0.55); backdrop-filter: blur(12px); border: 1px solid #ff774433; }
-    body.light .tech-card { background: rgba(255, 255, 255, 0.65); backdrop-filter: blur(12px); border: 1px solid #bcc9f0; }
+    body.light .tech-card { background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(12px); border: 1px solid #bcc9f0; }
 
     .tech-icon {
       font-size: 2.5rem;
@@ -549,6 +565,7 @@
     <div class="star-field"></div>
     <div class="accretion-core"></div>
     <div class="accretion-ring"></div>
+    <div class="heaven-cloud"></div>
   </div>
 
   <div class="settings-btn" id="settingsBtn">⚙️</div>
@@ -587,7 +604,7 @@
 
   <div class="container">
     <div class="header" style="text-align: center; margin-bottom: 1rem;">
-      <div class="glow-text" data-key="mainTitle">🌀 BLACK HOLE VM</div>
+      <div class="glow-text" id="mainTitle">🌀 BLACK HOLE VM</div>
       <div class="sub" data-key="subText">Singularity Core • Neural Fabric 120Hz</div>
     </div>
     <div class="toggle-container">
@@ -625,26 +642,152 @@
       en: { mainTitle:"🌀 BLACK HOLE VM", subText:"Singularity Core • Neural Fabric 120Hz", createVM:"Create VM", manageVM:"Manage VM", authTitle:"🔐 Authentication", githubTokenLabel:"GitHub Token", tailscaleLabel:"Tailscale Auth Key", createBtnText:"✨ Launch Singularity", manageTitle:"🖥️ VM Singularities", noVM:"🌀 No Singularity yet", tech1Title:"Quantum Compute Engine", tech1Desc:"✅ 2-4 vCPU (Intel Xeon Platinum)\n✅ 7-16 GB RAM (DDR4 ECC)\n✅ 14 GB SSD (NVMe)", tech2Title:"Hyperfast Networking", tech2Desc:"🚀 1 Gbps (~800 Mbps)\n🌍 Latency: < 5ms internal\n🔗 Tailscale VPN 500+ Mbps", tech3Title:"Auto-Scale Intelligence", tech3Desc:"🔄 Auto create and destroy VM\n⏱️ 6-hour lifecycle (auto reset)\n📊 Zero-downtime orchestration", tech4Title:"Zero-Trust Security", tech4Desc:"🛡️ Tailscale WireGuard® encryption\n🔐 End-to-end encryption\n🎯 Real-time intrusion detection", settingsDesign:"🌀 Universe Theme", settingsGraphics:"⚡ Graphics Performance", settingsGuideTitle:"📘 Singularity Guide", settingsContact:"📡 Contact & Info", guideStep1:"Get GitHub Token (repo, workflow) + Tailscale Key", guideStep2:"Paste → Click 'Create VM' → Wait 2-3 mins", guideStep3:"Connect via Tailscale (RDP) or noVNC", guideStep4:"User: runneradmin | Pass: VPS@123456", betaText:"Singularity Beta • Quantum-ready", creditText:"Black Hole Cloud Engine v2.0", closeBtn:"Close", modalConnection:"🔗 Tailscale Connection:", modalIP:"📡 IP:", modalUser:"👤 User:", modalPass:"🔐 Pass:", modalNovnc:"🌐 noVNC (Browser):", modalPassword:"🔐 Password:", modalTime:"📅 Time Information:", modalCreated:"🕳️ Created:", modalExpires:"⏱️ Expires:", modalRepo:"📦 Repository:", modalConfig:"⚡ VM Configuration (GitHub Actions Runner):", modalCPU:"🖥️ CPU: 2-4 cores (Intel Xeon Platinum)", modalRAM:"🧠 RAM: 7-16 GB DDR4 ECC", modalStorage:"💾 Storage: 14 GB SSD NVMe", modalNetwork:"📶 Network: 1 Gbps (~800 Mbps)", modalVPN:"🔗 Tailscale VPN: 500+ Mbps" }
     };
     let currentLang = 'vi', currentDesign = 'dark', currentGraphics = 'quality';
-    function applySettings() { document.body.classList.remove('dark','light','performance','quality'); document.body.classList.add(currentDesign, currentGraphics); localStorage.setItem('nova_design',currentDesign); localStorage.setItem('nova_graphics',currentGraphics); localStorage.setItem('nova_lang',currentLang); }
-    const saved=localStorage; if(saved.getItem('nova_design')) currentDesign=saved.getItem('nova_design'); if(saved.getItem('nova_graphics')) currentGraphics=saved.getItem('nova_graphics'); if(saved.getItem('nova_lang')) currentLang=saved.getItem('nova_lang'); applySettings();
-    document.querySelectorAll('[data-design]').forEach(o=>{ if(o.dataset.design===currentDesign) o.classList.add('active'); o.onclick=()=>{ currentDesign=o.dataset.design; applySettings(); document.querySelectorAll('[data-design]').forEach(x=>x.classList.remove('active')); o.classList.add('active'); } });
-    document.querySelectorAll('[data-graphics]').forEach(o=>{ if(o.dataset.graphics===currentGraphics) o.classList.add('active'); o.onclick=()=>{ currentGraphics=o.dataset.graphics; applySettings(); document.querySelectorAll('[data-graphics]').forEach(x=>x.classList.remove('active')); o.classList.add('active'); } });
-    function updateLanguage(){ let d=translations[currentLang]; document.querySelectorAll('[data-key]').forEach(el=>{ let key=el.dataset.key; if(d[key]) el.innerHTML=d[key]; }); if(window.currentModalVM) showVMDetails(window.currentModalVM); }
-    document.querySelectorAll('.lang-btn').forEach(btn=>{ btn.onclick=()=>{ document.querySelectorAll('.lang-btn').forEach(b=>b.classList.remove('active')); btn.classList.add('active'); currentLang=btn.dataset.lang; updateLanguage(); localStorage.setItem('nova_lang',currentLang); }; if(btn.dataset.lang===currentLang) btn.classList.add('active'); });
+    
+    // Hàm cập nhật tiêu đề chính theo design
+    function updateMainTitle() {
+      const titleElement = document.getElementById('mainTitle');
+      if (currentDesign === 'dark') {
+        titleElement.innerHTML = '🌀 BLACK HOLE VM';
+      } else {
+        titleElement.innerHTML = '☁️ HEAVEN CLOUD VM';
+      }
+    }
+    
+    function applySettings() { 
+      document.body.classList.remove('dark','light','performance','quality'); 
+      document.body.classList.add(currentDesign, currentGraphics); 
+      localStorage.setItem('nova_design',currentDesign); 
+      localStorage.setItem('nova_graphics',currentGraphics); 
+      localStorage.setItem('nova_lang',currentLang);
+      updateMainTitle(); // Cập nhật tiêu đề khi đổi design
+    }
+    
+    const saved=localStorage; 
+    if(saved.getItem('nova_design')) currentDesign=saved.getItem('nova_design'); 
+    if(saved.getItem('nova_graphics')) currentGraphics=saved.getItem('nova_graphics'); 
+    if(saved.getItem('nova_lang')) currentLang=saved.getItem('nova_lang'); 
+    applySettings();
+    
+    document.querySelectorAll('[data-design]').forEach(o=>{ 
+      if(o.dataset.design===currentDesign) o.classList.add('active'); 
+      o.onclick=()=>{ 
+        currentDesign=o.dataset.design; 
+        applySettings(); 
+        document.querySelectorAll('[data-design]').forEach(x=>x.classList.remove('active')); 
+        o.classList.add('active'); 
+      } 
+    });
+    
+    document.querySelectorAll('[data-graphics]').forEach(o=>{ 
+      if(o.dataset.graphics===currentGraphics) o.classList.add('active'); 
+      o.onclick=()=>{ 
+        currentGraphics=o.dataset.graphics; 
+        applySettings(); 
+        document.querySelectorAll('[data-graphics]').forEach(x=>x.classList.remove('active')); 
+        o.classList.add('active'); 
+      } 
+    });
+    
+    function updateLanguage(){ 
+      let d=translations[currentLang]; 
+      document.querySelectorAll('[data-key]').forEach(el=>{ 
+        let key=el.dataset.key; 
+        if(d[key]) el.innerHTML=d[key]; 
+      }); 
+      // Cập nhật tiêu đề theo design và ngôn ngữ
+      updateMainTitle();
+      if(window.currentModalVM) showVMDetails(window.currentModalVM); 
+    }
+    
+    document.querySelectorAll('.lang-btn').forEach(btn=>{ 
+      btn.onclick=()=>{ 
+        document.querySelectorAll('.lang-btn').forEach(b=>b.classList.remove('active')); 
+        btn.classList.add('active'); 
+        currentLang=btn.dataset.lang; 
+        updateLanguage(); 
+        localStorage.setItem('nova_lang',currentLang); 
+      }; 
+      if(btn.dataset.lang===currentLang) btn.classList.add('active'); 
+    });
+    
     document.getElementById('settingsBtn').onclick=()=>document.getElementById('settingsPanel').classList.toggle('open');
     document.addEventListener('click',(e)=>{ let panel=document.getElementById('settingsPanel'); if(!panel.contains(e.target) && e.target!==document.getElementById('settingsBtn')) panel.classList.remove('open'); });
+    
     let vms=JSON.parse(localStorage.getItem('nova_vms')||'[]');
     const createPanel=document.getElementById('createPanel'), managePanel=document.getElementById('managePanel'), createBtn=document.getElementById('createBtn');
     const githubTokenInput=document.getElementById('githubToken'), tailscaleKeyInput=document.getElementById('tailscaleKey'), createResultDiv=document.getElementById('createResult'), vmListDiv=document.getElementById('vmList');
     const modal=document.getElementById('vmModal'), modalTitle=document.getElementById('modalTitle'), modalBody=document.getElementById('modalBody');
+    
     function saveVMs(){ localStorage.setItem('nova_vms',JSON.stringify(vms)); }
-    function renderVMList(){ if(!vmListDiv) return; if(vms.length===0){ vmListDiv.innerHTML=`<div data-key="noVM">${translations[currentLang].noVM}</div>`; return; } vmListDiv.innerHTML=vms.map(vm=>`<div class="vm-card" data-id="${vm.id}"><div class="vm-name">🕳️ ${vm.name}</div><div class="vm-expiry">⏱️ Expires: ${new Date(vm.expiresAt).toLocaleString()}</div><div class="vm-expiry">📅 Created: ${new Date(vm.createdAt).toLocaleString()}</div></div>`).join(''); document.querySelectorAll('.vm-card').forEach(c=>c.addEventListener('click',()=>{ let id=c.dataset.id; let vm=vms.find(v=>v.id===id); if(vm) showVMDetails(vm); })); }
-    function showVMDetails(vm){ window.currentModalVM=vm; let t=translations[currentLang]; modalTitle.innerText=`🕳️ ${vm.name}`; modalBody.innerHTML=`<div class="result-box"><strong>${t.modalConnection}</strong><br>${t.modalIP} <code>Xem trong GitHub Actions logs</code><br>${t.modalUser} <code>${vm.username}</code><br>${t.modalPass} <code>${vm.password}</code></div><div class="result-box"><strong>${t.modalNovnc}</strong><br><a href="${vm.novncUrl}" target="_blank">${vm.novncUrl}</a><br>${t.modalPassword} <code>${vm.password}</code></div><div class="result-box"><strong>${t.modalTime}</strong><br>${t.modalCreated} ${new Date(vm.createdAt).toLocaleString()}<br>${t.modalExpires} ${new Date(vm.expiresAt).toLocaleString()}<br>${t.modalRepo} <a href="${vm.repoUrl}" target="_blank">GitHub →</a></div><div class="result-box"><strong>${t.modalConfig}</strong><br>${t.modalCPU}<br>${t.modalRAM}<br>${t.modalStorage}<br>${t.modalNetwork}<br>${t.modalVPN}</div>`; modal.style.display='flex'; }
-    createBtn.onclick=async()=>{ let githubToken=githubTokenInput.value.trim(), tailscaleKey=tailscaleKeyInput.value.trim(); if(!githubToken||!tailscaleKey){ createResultDiv.innerHTML=`<div style="color:#ff8888;">❌ ${currentLang==='vi'?'Nhập đủ token & key':'Enter token and key'}</div>`; return; } createBtn.disabled=true; createBtn.innerHTML='🌀 Đang khởi tạo...'; try{ let res=await fetch('/api/vpsuser',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({githubToken,tailscaleKey})}); let data=await res.json(); if(data.success){ let newVM={id:data.id,name:data.name,repoUrl:data.repoUrl,actionsUrl:data.actionsUrl,novncUrl:data.novncUrl,username:data.username,password:data.password,createdAt:data.createdAt,expiresAt:data.expiresAt,status:data.status}; vms.unshift(newVM); saveVMs(); renderVMList(); createResultDiv.innerHTML='<div style="color:#4cff8e;">✅ VM đã khởi tạo thành công!</div>'; githubTokenInput.value=''; tailscaleKeyInput.value=''; document.querySelector('[data-mode="manage"]').click(); } else createResultDiv.innerHTML=`<div style="color:#ff8888;">❌ Lỗi: ${data.error}</div>`; }catch(e){ createResultDiv.innerHTML=`<div style="color:#ff8888;">❌ Lỗi kết nối: ${e.message}</div>`; }finally{ createBtn.disabled=false; createBtn.innerHTML=translations[currentLang].createBtnText; } };
-    document.querySelectorAll('.toggle-btn').forEach(btn=>{ btn.onclick=()=>{ document.querySelectorAll('.toggle-btn').forEach(b=>b.classList.remove('active')); btn.classList.add('active'); let mode=btn.dataset.mode; if(mode==='create'){ createPanel.classList.remove('hidden'); managePanel.classList.add('hidden'); }else{ createPanel.classList.add('hidden'); managePanel.classList.remove('hidden'); renderVMList(); } }; });
+    
+    function renderVMList(){ 
+      if(!vmListDiv) return; 
+      if(vms.length===0){ 
+        vmListDiv.innerHTML=`<div data-key="noVM">${translations[currentLang].noVM}</div>`; 
+        return; 
+      } 
+      vmListDiv.innerHTML=vms.map(vm=>`<div class="vm-card" data-id="${vm.id}"><div class="vm-name">🕳️ ${vm.name}</div><div class="vm-expiry">⏱️ Expires: ${new Date(vm.expiresAt).toLocaleString()}</div><div class="vm-expiry">📅 Created: ${new Date(vm.createdAt).toLocaleString()}</div></div>`).join(''); 
+      document.querySelectorAll('.vm-card').forEach(c=>c.addEventListener('click',()=>{ let id=c.dataset.id; let vm=vms.find(v=>v.id===id); if(vm) showVMDetails(vm); })); 
+    }
+    
+    function showVMDetails(vm){ 
+      window.currentModalVM=vm; 
+      let t=translations[currentLang]; 
+      modalTitle.innerText=`🕳️ ${vm.name}`; 
+      modalBody.innerHTML=`<div class="result-box"><strong>${t.modalConnection}</strong><br>${t.modalIP} <code>Xem trong GitHub Actions logs</code><br>${t.modalUser} <code>${vm.username}</code><br>${t.modalPass} <code>${vm.password}</code></div><div class="result-box"><strong>${t.modalNovnc}</strong><br><a href="${vm.novncUrl}" target="_blank">${vm.novncUrl}</a><br>${t.modalPassword} <code>${vm.password}</code></div><div class="result-box"><strong>${t.modalTime}</strong><br>${t.modalCreated} ${new Date(vm.createdAt).toLocaleString()}<br>${t.modalExpires} ${new Date(vm.expiresAt).toLocaleString()}<br>${t.modalRepo} <a href="${vm.repoUrl}" target="_blank">GitHub →</a></div><div class="result-box"><strong>${t.modalConfig}</strong><br>${t.modalCPU}<br>${t.modalRAM}<br>${t.modalStorage}<br>${t.modalNetwork}<br>${t.modalVPN}</div>`; 
+      modal.style.display='flex'; 
+    }
+    
+    createBtn.onclick=async()=>{ 
+      let githubToken=githubTokenInput.value.trim(), tailscaleKey=tailscaleKeyInput.value.trim(); 
+      if(!githubToken||!tailscaleKey){ 
+        createResultDiv.innerHTML=`<div style="color:#ff8888;">❌ ${currentLang==='vi'?'Nhập đủ token & key':'Enter token and key'}</div>`; 
+        return; 
+      } 
+      createBtn.disabled=true; 
+      createBtn.innerHTML='🌀 Đang khởi tạo...'; 
+      try{ 
+        let res=await fetch('/api/vpsuser',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({githubToken,tailscaleKey})}); 
+        let data=await res.json(); 
+        if(data.success){ 
+          let newVM={id:data.id,name:data.name,repoUrl:data.repoUrl,actionsUrl:data.actionsUrl,novncUrl:data.novncUrl,username:data.username,password:data.password,createdAt:data.createdAt,expiresAt:data.expiresAt,status:data.status}; 
+          vms.unshift(newVM); 
+          saveVMs(); 
+          renderVMList(); 
+          createResultDiv.innerHTML='<div style="color:#4cff8e;">✅ VM đã khởi tạo thành công!</div>'; 
+          githubTokenInput.value=''; 
+          tailscaleKeyInput.value=''; 
+          document.querySelector('[data-mode="manage"]').click(); 
+        } else createResultDiv.innerHTML=`<div style="color:#ff8888;">❌ Lỗi: ${data.error}</div>`; 
+      }catch(e){ 
+        createResultDiv.innerHTML=`<div style="color:#ff8888;">❌ Lỗi kết nối: ${e.message}</div>`; 
+      }finally{ 
+        createBtn.disabled=false; 
+        createBtn.innerHTML=translations[currentLang].createBtnText; 
+      } 
+    };
+    
+    document.querySelectorAll('.toggle-btn').forEach(btn=>{ 
+      btn.onclick=()=>{ 
+        document.querySelectorAll('.toggle-btn').forEach(b=>b.classList.remove('active')); 
+        btn.classList.add('active'); 
+        let mode=btn.dataset.mode; 
+        if(mode==='create'){ 
+          createPanel.classList.remove('hidden'); 
+          managePanel.classList.add('hidden'); 
+        }else{ 
+          createPanel.classList.add('hidden'); 
+          managePanel.classList.remove('hidden'); 
+          renderVMList(); 
+        } 
+      }; 
+    });
+    
     document.getElementById('closeModal').onclick=()=>{ modal.style.display='none'; window.currentModalVM=null; };
     window.onclick=(e)=>{ if(e.target===modal){ modal.style.display='none'; window.currentModalVM=null; } };
-    renderVMList(); updateLanguage();
+    
+    renderVMList(); 
+    updateLanguage();
   </script>
 </body>
 </html>
