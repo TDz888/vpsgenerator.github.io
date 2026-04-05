@@ -1,10 +1,168 @@
-<script>
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VPS Generator - Tạo VPS Miễn Phí</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        .container {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 600px;
+            width: 100%;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 10px;
+        }
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 14px;
+        }
+        .input-group {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 500;
+        }
+        input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+        input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        button {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        button:hover {
+            transform: translateY(-2px);
+        }
+        button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+        .result {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 10px;
+            display: none;
+        }
+        .result.success {
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+            display: block;
+        }
+        .result.error {
+            background: #f8d7da;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+            display: block;
+        }
+        .result a {
+            color: #155724;
+            word-break: break-all;
+        }
+        .info {
+            margin-top: 20px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            font-size: 13px;
+            color: #666;
+        }
+        .info code {
+            background: #e9ecef;
+            padding: 2px 5px;
+            border-radius: 5px;
+            font-size: 12px;
+        }
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255,255,255,.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 1s ease-in-out infinite;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🚀 VPS Generator</h1>
+        <div class="subtitle">Tạo VPS Windows Server miễn phí từ GitHub Actions</div>
+        
+        <div class="input-group">
+            <label>🔑 GitHub Token</label>
+            <input type="password" id="token" placeholder="Nhập GitHub Personal Access Token">
+        </div>
+        
+        <button id="createBtn">✨ Tạo VPS Ngay</button>
+        
+        <div id="result" class="result"></div>
+        
+        <div class="info">
+            <strong>📌 Hướng dẫn:</strong><br>
+            1. Tạo token tại: <a href="https://github.com/settings/tokens" target="_blank">github.com/settings/tokens</a><br>
+            2. Chọn quyền: <code>repo</code>, <code>workflow</code><br>
+            3. Dán token vào ô trên và bấm tạo<br>
+            4. Sau 2-3 phút, click vào link noVNC để dùng Windows<br><br>
+            <strong>✅ Thông tin VPS:</strong>
+            <ul style="margin-left: 20px; margin-top: 5px;">
+                <li>🪟 Hệ điều hành: Windows Server</li>
+                <li>⏱️ Thời gian: 6 tiếng (tự động restart)</li>
+                <li>🔐 Mật khẩu: <code>VPS@123456</code></li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
         const createBtn = document.getElementById('createBtn');
         const tokenInput = document.getElementById('token');
         const resultDiv = document.getElementById('result');
 
         createBtn.addEventListener('click', async () => {
-            // ✅ Lấy token và loại bỏ khoảng trắng
             let token = tokenInput.value.trim();
             
             if (!token) {
@@ -12,20 +170,22 @@
                 return;
             }
             
-            // ✅ Kiểm tra token có đúng định dạng cơ bản không (chỉ cảnh báo, không chặn)
+            // Kiểm tra định dạng token
             if (!token.startsWith('github_pat_') && !token.startsWith('ghp_') && !token.startsWith('gho_')) {
-                showResult('error', '⚠️ Token có vẻ không đúng định dạng. Vui lòng kiểm tra lại!<br><small>Token GitHub thường bắt đầu bằng "github_pat_" hoặc "ghp_"</small>');
+                showResult('error', '⚠️ Token GitHub không đúng định dạng!<br><small>Token thường bắt đầu bằng <code>github_pat_</code> hoặc <code>ghp_</code></small>');
                 return;
             }
             
             createBtn.disabled = true;
-            createBtn.innerHTML = '<span class="loading"></span> Đang tạo VPS...';
+            createBtn.innerHTML = '<span class="loading"></span> Đang tạo VPS (có thể mất 1-2 phút)...';
             
             try {
                 const response = await fetch('/api/vpsuser', {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ githubToken: token })  // ✅ Gửi token đã trim
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ githubToken: token })
                 });
                 
                 const data = await response.json();
@@ -34,14 +194,20 @@
                     showResult('success', `
                         ✅ ${data.message}<br><br>
                         📦 <strong>Repo:</strong> <a href="${data.repoUrl}" target="_blank">${data.repoUrl}</a><br>
-                        ⚙️ <strong>Actions:</strong> <a href="${data.actionsUrl}" target="_blank">Xem trạng thái VPS</a><br><br>
-                        💡 VPS sẽ tự động chạy sau vài phút!
+                        ⚙️ <strong>Actions:</strong> <a href="${data.actionsUrl}" target="_blank">Xem tiến trình VPS</a><br>
+                        🖥️ <strong>Link noVNC:</strong> <a href="${data.novncUrl}" target="_blank">${data.novncUrl}</a><br>
+                        🔐 <strong>Mật khẩu:</strong> <code>${data.password}</code><br><br>
+                        💡 <strong>Lưu ý:</strong> VPS cần 2-3 phút để khởi động. Click vào link noVNC sau khi thấy workflow chạy thành công!
                     `);
                 } else {
-                    showResult('error', `❌ Lỗi: ${data.error}`);
+                    showResult('error', `❌ ${data.error}`);
                 }
             } catch (error) {
-                showResult('error', `❌ Lỗi kết nối: ${error.message}`);
+                showResult('error', `❌ Lỗi kết nối: ${error.message}<br><br>
+                <strong>Cách khắc phục:</strong><br>
+                1. Kiểm tra token có đúng không<br>
+                2. Thử tạo token mới tại <a href="https://github.com/settings/tokens" target="_blank">github.com/settings/tokens</a><br>
+                3. Đảm bảo chọn quyền: <code>repo</code> và <code>workflow</code>`);
             } finally {
                 createBtn.disabled = false;
                 createBtn.innerHTML = '✨ Tạo VPS Ngay';
@@ -53,3 +219,5 @@
             resultDiv.innerHTML = message;
         }
     </script>
+</body>
+</html>
