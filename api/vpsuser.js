@@ -7,55 +7,54 @@ module.exports = async (req, res) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
-  
+
   // Xử lý preflight request
   if (req.method === 'OPTIONS') {
     return res.status(200).end();
   }
-  
+
   // Chỉ cho phép POST
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
   }
-  
+
   // Lấy token từ body request
-  const { userToken, duration = '2h', target_os = 'windows' } = req.body;
-  
-  // Kiểm tra token có tồn tại không
+  const { userToken, duration = '2h' } = req.body;
+
+  // Kiểm tra token
   if (!userToken) {
     return res.status(400).json({ error: 'GitHub token is required' });
   }
-  
-  // Đọc file YML mẫu (nếu có)
+
+  // Đọc file YML mẫu
   let workflowTemplate = '';
+  const templatePath = path.join(__dirname, '../templates/workflow-template.yml');
+  
   try {
-    const templatePath = path.join(__dirname, '../templates/workflow-template.yml');
     if (fs.existsSync(templatePath)) {
       workflowTemplate = fs.readFileSync(templatePath, 'utf8');
     } else {
-      // Nếu không có file template, dùng template mặc định
       workflowTemplate = getDefaultWorkflowTemplate();
     }
   } catch (err) {
-    console.log('Template path error, using default template');
     workflowTemplate = getDefaultWorkflowTemplate();
   }
-  
-  // Tính thời gian chạy dựa trên duration
+
+  // Tính thời gian chạy
   let minutes = 120;
   if (duration === '30m') minutes = 30;
   else if (duration === '1h') minutes = 60;
   else if (duration === '2h') minutes = 120;
   else if (duration === '4h') minutes = 240;
   else if (duration === '6h') minutes = 360;
-  
+
   // Thay thế thời gian trong template
   const workflowContent = workflowTemplate.replace(/330/g, minutes.toString());
-  
+
   // Tạo tên repo ngẫu nhiên
   const timestamp = Date.now();
   const repoName = `vps-${timestamp}`;
-  
+
   try {
     // 1. Lấy username từ token
     console.log('Verifying token...');
@@ -64,7 +63,7 @@ module.exports = async (req, res) => {
     });
     const username = userResp.data.login;
     console.log(`Authenticated as: ${username}`);
-    
+
     // 2. Tạo repository mới
     console.log(`Creating repository: ${repoName}`);
     await axios.post('https://api.github.com/user/repos', {
@@ -78,11 +77,11 @@ module.exports = async (req, res) => {
         'Accept': 'application/vnd.github.v3+json'
       }
     });
-    
+
     // 3. Tạo thư mục .github/workflows và file workflow
     console.log('Creating workflow file...');
     const encodedContent = Buffer.from(workflowContent).toString('base64');
-    
+
     await axios.put(
       `https://api.github.com/repos/${username}/${repoName}/contents/.github/workflows/create-vps.yml`,
       {
@@ -97,7 +96,7 @@ module.exports = async (req, res) => {
         }
       }
     );
-    
+
     // 4. Trigger workflow chạy
     console.log('Triggering workflow...');
     await axios.post(
@@ -110,7 +109,7 @@ module.exports = async (req, res) => {
         }
       }
     );
-    
+
     // 5. Trả về kết quả thành công
     res.status(200).json({
       success: true,
@@ -120,7 +119,7 @@ module.exports = async (req, res) => {
       vncPassword: 'vps123',
       note: 'VNC link will appear in vnc-link.txt when ready (2-3 minutes)'
     });
-    
+
   } catch (error) {
     console.error('Error:', error.response?.data || error.message);
     res.status(500).json({
@@ -130,7 +129,7 @@ module.exports = async (req, res) => {
   }
 };
 
-// Hàm template mặc định (nếu không có file template)
+// Hàm template mặc định
 function getDefaultWorkflowTemplate() {
   return `name: Create VPS
 
@@ -147,7 +146,7 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v4
 
-    - name: Setup VNC + noVNC + Cloudflare
+    - name: Setup VNC + Cloudflare
       shell: pwsh
       run: |
         Write-Host "=== Installing TightVNC ==="
