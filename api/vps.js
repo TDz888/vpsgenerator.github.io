@@ -4,18 +4,19 @@ import { createWorkflowFile, triggerWorkflow, getWorkflowRuns } from './workflow
 
 let vms = global.vms || [];
 
+// FIX: Tên repository chỉ chứa chữ thường, số và dấu gạch ngang
 function generateRepoName() {
-  const prefixes = ['vm', 'cloud', 'singularity', 'vps', 'windows'];
+  const prefixes = ['vm', 'cloud', 'singularity', 'vps', 'win'];
   const prefix = prefixes[Math.floor(Math.random() * prefixes.length)];
-  const timestamp = Date.now().toString(36);
-  const random = Math.random().toString(36).substr(2, 6);
-  return `${prefix}-${timestamp}-${random}`;
+  const timestamp = Date.now().toString(36); // chỉ chữ thường và số
+  const random = Math.random().toString(36).substring(2, 8); // chỉ chữ thường và số
+  return `${prefix}-${timestamp}-${random}`.toLowerCase();
 }
 
 // Hàm theo dõi workflow và cập nhật trạng thái
 async function monitorWorkflowStatus(token, owner, repo, vmId, workflowRunId) {
   let attempts = 0;
-  const maxAttempts = 36; // 3 phút
+  const maxAttempts = 36; // 6 phút (mỗi 10 giây)
   const interval = setInterval(async () => {
     attempts++;
     try {
@@ -30,9 +31,22 @@ async function monitorWorkflowStatus(token, owner, repo, vmId, workflowRunId) {
             if (run.conclusion === 'success') {
               vms[vmIndex].status = 'running';
               vms[vmIndex].tailscaleIP = 'Đang lấy IP...';
+              // Thử lấy IP từ logs nếu có
+              try {
+                const logsResponse = await fetch(`https://api.github.com/repos/${owner}/${repo}/actions/runs/${workflowRunId}/logs`, {
+                  headers: { 'Authorization': `Bearer ${token}` }
+                });
+                if (logsResponse.ok) {
+                  const logs = await logsResponse.text();
+                  const ipMatch = logs.match(/Tailscale IP: (\d+\.\d+\.\d+\.\d+)/);
+                  if (ipMatch) {
+                    vms[vmIndex].tailscaleIP = ipMatch[1];
+                  }
+                }
+              } catch(e) {}
             } else {
               vms[vmIndex].status = 'failed';
-              vms[vmIndex].error = `Workflow thất bại: ${run.conclusion}`;
+              vms[vmIndex].error = `Workflow thất bại: ${run.conclusion}. Chi tiết: ${run.display_title || 'Lỗi không xác định'}`;
             }
             global.vms = vms;
             clearInterval(interval);
@@ -49,7 +63,7 @@ async function monitorWorkflowStatus(token, owner, repo, vmId, workflowRunId) {
       const vmIndex = vms.findIndex(v => v.id === vmId);
       if (vmIndex !== -1 && vms[vmIndex].status === 'creating') {
         vms[vmIndex].status = 'failed';
-        vms[vmIndex].error = 'Quá thời gian chờ (12 phút). GitHub Actions có thể bị timeout hoặc thiếu tài nguyên.';
+        vms[vmIndex].error = 'Quá thời gian chờ (6 phút). GitHub Actions có thể bị timeout hoặc thiếu tài nguyên. Vui lòng kiểm tra workflow logs.';
         global.vms = vms;
       }
       clearInterval(interval);
@@ -71,9 +85,12 @@ export default async function handler(req, res) {
   if (req.method === 'POST') {
     const { githubToken, tailscaleKey, vmUsername, vmPassword } = req.body;
     
+    console.log('========================================');
     console.log('📥 NEW VM CREATION REQUEST');
-    console.log(`Username: ${vmUsername}`);
+    console.log(`👤 Username: ${vmUsername}`);
+    console.log('========================================');
     
+    // Validate input
     if (!githubToken || !tailscaleKey) {
       return res.status(400).json({ success: false, error: 'Thiếu GitHub Token hoặc Tailscale Key' });
     }
@@ -84,6 +101,7 @@ export default async function handler(req, res) {
       return res.status(400).json({ success: false, error: 'Mật khẩu phải có ít nhất 5 ký tự' });
     }
     
+    // Validate GitHub Token
     const tokenValidation = await validateGitHubToken(githubToken);
     if (!tokenValidation.valid) {
       return res.status(401).json({ success: false, error: tokenValidation.error });
@@ -92,22 +110,37 @@ export default async function handler(req, res) {
     const repoName = generateRepoName();
     const owner = tokenValidation.user.login;
     
+    console.log(`📁 Repository name: ${repoName}`);
+    console.log(`👤 Owner: ${owner}`);
+    
     try {
+      // Step 1: Tạo repository
+      console.log('📁 Step 1: Creating repository...');
       const repoResult = await createRepository(githubToken, repoName, `VM created by ${vmUsername}`);
       if (!repoResult.success) {
+        console.error('❌ Create repo failed:', repoResult.error);
         return res.status(500).json({ success: false, error: `Tạo repo thất bại: ${repoResult.error}` });
       }
+      console.log('✅ Repository created successfully');
       
+      // Step 2: Tạo workflow file
+      console.log('📝 Step 2: Creating workflow file...');
       const workflowResult = await createWorkflowFile(githubToken, owner, repoName, vmUsername, vmPassword);
       if (!workflowResult.success) {
+        console.error('❌ Create workflow failed:', workflowResult.error);
         await deleteRepository(githubToken, owner, repoName);
         return res.status(500).json({ success: false, error: `Tạo workflow thất bại: ${workflowResult.error}` });
       }
+      console.log('✅ Workflow file created');
       
+      // Step 3: Trigger workflow
+      console.log('🚀 Step 3: Triggering workflow...');
       const triggerResult = await triggerWorkflow(githubToken, owner, repoName, tailscaleKey, vmUsername, vmPassword);
       if (!triggerResult.success) {
+        console.error('❌ Trigger workflow failed:', triggerResult.error);
         return res.status(500).json({ success: false, error: `Trigger workflow thất bại: ${triggerResult.error}` });
       }
+      console.log('✅ Workflow triggered');
       
       // Lấy workflow run ID
       let workflowRunId = null;
@@ -116,6 +149,7 @@ export default async function handler(req, res) {
         const runs = await getWorkflowRuns(githubToken, owner, repoName, 1);
         if (runs.length > 0) {
           workflowRunId = runs[0].id;
+          console.log(`📋 Workflow Run ID: ${workflowRunId}`);
           break;
         }
       }
@@ -132,7 +166,7 @@ export default async function handler(req, res) {
         tailscaleIP: null,
         novncUrl: null,
         repoUrl: `https://github.com/${owner}/${repoName}`,
-        workflowUrl: `https://github.com/${owner}/${repoName}/actions`,
+        workflowUrl: workflowRunId ? `https://github.com/${owner}/${repoName}/actions/runs/${workflowRunId}` : `https://github.com/${owner}/${repoName}/actions`,
         workflowRunId: workflowRunId,
         error: null
       };
@@ -141,10 +175,14 @@ export default async function handler(req, res) {
       global.vms = vms;
       if (vms.length > 20) vms.pop();
       
-      // Theo dõi workflow
+      // Theo dõi workflow nếu có run ID
       if (workflowRunId) {
         monitorWorkflowStatus(githubToken, owner, repoName, newVM.id, workflowRunId);
       }
+      
+      console.log('🎉 VM creation initiated successfully!');
+      console.log(`🔗 Repo URL: https://github.com/${owner}/${repoName}`);
+      console.log('========================================\n');
       
       return res.status(200).json({ 
         success: true, 
@@ -153,7 +191,7 @@ export default async function handler(req, res) {
       });
       
     } catch (error) {
-      console.error('Create VM error:', error);
+      console.error('❌ Create VM error:', error);
       return res.status(500).json({ success: false, error: error.message });
     }
   }
