@@ -490,8 +490,6 @@
       font-weight: 700;
       margin-bottom: 0.4rem;
     }
-    body.dark .tech-title { color: #ffaa77 !important; }
-    body.light .tech-title { color: #1e3a5f !important; }
     .tech-desc {
       font-size: 0.75rem;
       line-height: 1.4;
@@ -504,13 +502,41 @@
       margin: 0.15rem;
       font-weight: 600;
     }
-    body.dark .spec-badge {
-      background: rgba(255, 100, 50, 0.25);
-      color: #ffbb99 !important;
+
+    /* ========== FIX TECH SECTION TEXT COLORS ========== */
+    /* Dark mode - Tech section text sáng rõ */
+    body.dark .tech-card,
+    body.dark .tech-card * {
+      color-scheme: dark;
     }
-    body.light .spec-badge {
-      background: rgba(30, 58, 95, 0.1);
+    body.dark .tech-card .tech-title {
+      color: #ffaa77 !important;
+      text-shadow: 0 0 5px rgba(255, 170, 119, 0.3);
+    }
+    body.dark .tech-card .tech-desc {
+      color: #e2e8f0 !important;
+      opacity: 0.95;
+    }
+    body.dark .tech-card .spec-badge {
+      background: rgba(255, 100, 50, 0.35) !important;
+      color: #ffccaa !important;
+      border: 1px solid rgba(255, 102, 0, 0.3);
+    }
+    /* Light mode - Tech section text tối rõ */
+    body.light .tech-card .tech-title {
       color: #1e3a5f !important;
+    }
+    body.light .tech-card .tech-desc {
+      color: #334155 !important;
+    }
+    body.light .tech-card .spec-badge {
+      background: rgba(30, 58, 95, 0.12) !important;
+      color: #1e3a5f !important;
+      border: 1px solid rgba(30, 58, 95, 0.15);
+    }
+    /* Thêm hiệu ứng glow nhẹ cho tech card khi hover */
+    body.dark .tech-card:hover .tech-title {
+      text-shadow: 0 0 8px rgba(255, 170, 119, 0.5);
     }
 
     /* ========== SETTINGS PANEL ========== */
