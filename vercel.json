@@ -5,8 +5,12 @@
       "runtime": "nodejs18.x"
     }
   },
-  "rewrites": [
-    { "source": "/api/(.*)", "destination": "/api/vpsuser.js" },
-    { "source": "/(.*)", "destination": "/index.html" }
+  "builds": [
+    { "src": "api/vpsuser.js", "use": "@vercel/node" },
+    { "src": "public/index.html", "use": "@vercel/static" }
+  ],
+  "routes": [
+    { "src": "/api/(.*)", "dest": "/api/vpsuser.js" },
+    { "src": "/(.*)", "dest": "/public/index.html" }
   ]
 }
