@@ -1,17 +1,16 @@
 {
-  "name": "vpsgenerator-api",
-  "version": "3.0.0",
-  "description": "VPS Generator API - Black Hole VM",
-  "main": "api/vpsuser.js",
+  "name": "vps-generator",
+  "version": "2.0.0",
+  "description": "Tạo VPS Windows miễn phí từ GitHub Actions với Tailscale + noVNC",
+  "main": "public/index.html",
   "scripts": {
-    "start": "node api/vpsuser.js",
-    "dev": "nodemon api/vpsuser.js"
+    "dev": "npx serve .",
+    "start": "npx serve ."
   },
-  "dependencies": {
-    "@octokit/rest": "^20.1.0"
-  },
+  "keywords": ["vps", "github-actions", "tailscale", "novnc", "windows", "free-vps"],
+  "author": "TDz888",
+  "license": "MIT",
   "devDependencies": {
-    "nodemon": "^3.0.0"
-  },
-  "license": "MIT"
+    "serve": "^14.2.0"
+  }
 }
