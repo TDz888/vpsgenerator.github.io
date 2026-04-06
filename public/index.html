@@ -3,8 +3,9 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
-  <title>Singularity Cloud | Tạo VM Tự Động</title>
+  <title>Singularity Cloud | Next-Gen VM Platform</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
   <style>
     * {
       margin: 0;
@@ -14,114 +15,215 @@
 
     body {
       min-height: 100vh;
-      font-family: 'Inter', system-ui, sans-serif;
-      transition: all 0.4s ease;
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      transition: all 0.3s ease;
       overflow-x: hidden;
     }
 
-    body.dark {
-      background: #000000;
-    }
-    body.dark .bg-universe {
+    /* ========== BACKGROUND EFFECTS ========== */
+    .bg-universe {
       position: fixed;
       top: 0;
       left: 0;
       width: 100%;
       height: 100%;
-      background: radial-gradient(ellipse at 30% 40%, #0a0a1a 0%, #000000 100%);
       z-index: 0;
       pointer-events: none;
+      transition: all 0.5s ease;
     }
-    body.dark .singularity-core {
-      position: fixed;
+
+    /* DARK MODE - BLACK HOLE (Text màu sáng) */
+    body.dark {
+      background: #0a0a0a;
+    }
+    body.dark .bg-universe {
+      background: radial-gradient(ellipse at 30% 40%, #0a0a1a 0%, #000000 100%);
+    }
+    body.dark .black-hole-core {
+      position: absolute;
       top: 50%;
       left: 50%;
-      width: 70vmin;
-      height: 70vmin;
+      width: 60vmin;
+      height: 60vmin;
       background: radial-gradient(circle, #ff4400, #ff0080, #1a0033, transparent 80%);
       border-radius: 50%;
       transform: translate(-50%, -50%);
-      filter: blur(70px);
-      opacity: 0.4;
-      animation: pulse 6s infinite alternate;
-      z-index: 0;
-      pointer-events: none;
+      filter: blur(60px);
+      opacity: 0.35;
+      animation: pulseGlow 6s infinite alternate;
     }
-    body.light {
-      background: linear-gradient(145deg, #f0f4ff 0%, #e0e8ff 100%);
+    body.dark .accretion-disk {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 120vmin;
+      height: 120vmin;
+      background: conic-gradient(from 0deg, #ff4400, #ff00aa, #ff6600, #ff4400);
+      border-radius: 50%;
+      transform: translate(-50%, -50%);
+      filter: blur(40px);
+      opacity: 0.15;
+      animation: rotateDisk 20s linear infinite;
     }
-    body.light .bg-universe {
-      position: fixed;
-      top: 0;
-      left: 0;
+    body.dark .star-field {
+      position: absolute;
       width: 100%;
       height: 100%;
-      background: radial-gradient(circle at 20% 30%, rgba(255, 248, 225, 0.6), rgba(200, 220, 255, 0.3));
-      z-index: 0;
-      pointer-events: none;
+      background-image: 
+        radial-gradient(1px 1px at 15% 25%, #fff, transparent),
+        radial-gradient(2px 2px at 78% 42%, #ffcc88, transparent),
+        radial-gradient(1px 1px at 45% 80%, #fff, transparent),
+        radial-gradient(1.5px 1.5px at 90% 15%, #fff, transparent),
+        radial-gradient(1px 1px at 30% 70%, #ffaa66, transparent),
+        radial-gradient(2px 2px at 60% 55%, #fff, transparent);
+      background-repeat: no-repeat;
+      background-size: 600px 600px;
+      opacity: 0.8;
+      animation: starMove 60s linear infinite;
     }
-    body.light .singularity-core {
+
+    /* LIGHT MODE - HEAVEN (Text màu tối) */
+    body.light {
+      background: linear-gradient(135deg, #f5f7ff 0%, #e8edff 100%);
+    }
+    body.light .bg-universe {
+      background: radial-gradient(circle at 30% 40%, rgba(255, 248, 225, 0.8), rgba(200, 220, 255, 0.4));
+    }
+    body.light .black-hole-core,
+    body.light .accretion-disk,
+    body.light .star-field {
       display: none;
     }
-
-    @keyframes pulse {
-      0% { opacity: 0.3; transform: translate(-50%, -50%) scale(0.9); filter: blur(65px);}
-      100% { opacity: 0.6; transform: translate(-50%, -50%) scale(1.1); filter: blur(85px);}
+    body.light .heaven-light {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      background: radial-gradient(ellipse at 80% 20%, rgba(255, 255, 245, 0.5) 0%, transparent 60%),
+                  radial-gradient(ellipse at 20% 80%, rgba(180, 200, 255, 0.3) 0%, transparent 50%);
+      pointer-events: none;
+    }
+    body.light .floating-orb {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      background-image: 
+        radial-gradient(3px 3px at 25% 35%, #88aaff, transparent),
+        radial-gradient(2px 2px at 65% 75%, #66aaff, transparent),
+        radial-gradient(2.5px 2.5px at 85% 15%, #aaccff, transparent);
+      background-repeat: no-repeat;
+      background-size: 500px 500px;
+      opacity: 0.4;
+      animation: floatSlow 25s ease-in-out infinite;
     }
 
+    @keyframes pulseGlow {
+      0% { opacity: 0.25; transform: translate(-50%, -50%) scale(0.9); filter: blur(55px);}
+      100% { opacity: 0.5; transform: translate(-50%, -50%) scale(1.1); filter: blur(75px);}
+    }
+    @keyframes rotateDisk {
+      0% { transform: translate(-50%, -50%) rotate(0deg);}
+      100% { transform: translate(-50%, -50%) rotate(360deg);}
+    }
+    @keyframes starMove {
+      0% { transform: translateY(0px) translateX(0px);}
+      100% { transform: translateY(-150px) translateX(40px);}
+    }
+    @keyframes floatSlow {
+      0% { transform: translateY(0px) translateX(0px);}
+      50% { transform: translateY(-20px) translateX(15px);}
+      100% { transform: translateY(0px) translateX(0px);}
+    }
+
+    /* ========== MAIN CONTAINER ========== */
     .container {
-      max-width: 1400px;
+      max-width: 1300px;
       margin: 0 auto;
       position: relative;
       z-index: 20;
-      padding: 0 1.5rem;
+      padding: 0 1.8rem;
     }
 
-    .card {
-      border-radius: 36px;
+    /* ========== GLASS CARD ========== */
+    .glass-card {
+      border-radius: 32px;
       padding: 2rem;
-      margin-bottom: 2rem;
-      transition: all 0.3s;
+      transition: all 0.3s cubic-bezier(0.2, 0.9, 0.4, 1.1);
     }
-    body.dark .card {
-      background: rgba(5, 7, 20, 0.75);
+    body.dark .glass-card {
+      background: rgba(8, 10, 25, 0.7);
       backdrop-filter: blur(20px);
-      border: 1px solid rgba(255, 80, 40, 0.45);
+      border: 1px solid rgba(255, 90, 40, 0.3);
+      box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.5);
     }
-    body.light .card {
-      background: rgba(255, 255, 255, 0.7);
+    body.light .glass-card {
+      background: rgba(255, 255, 255, 0.65);
       backdrop-filter: blur(20px);
-      border: 1px solid rgba(100, 120, 200, 0.3);
+      border: 1px solid rgba(100, 120, 200, 0.25);
+      box-shadow: 0 15px 35px -12px rgba(0, 0, 0, 0.08);
     }
 
-    .glow-text {
-      font-size: 3.8rem;
-      font-weight: 800;
-      letter-spacing: -0.02em;
-      text-align: center;
+    /* ========== TYPOGRAPHY - FIXED COLORS ========== */
+    body.dark, body.dark * {
+      color-scheme: dark;
+    }
+    body.light, body.light * {
+      color-scheme: light;
+    }
+
+    /* Dark mode - Text sáng */
+    body.dark h1, body.dark h2, body.dark h3, body.dark h4 {
+      color: #ffffff !important;
+    }
+    body.dark p, body.dark span, body.dark label, body.dark .text-muted {
+      color: #e2e8f0 !important;
     }
     body.dark .glow-text {
-      background: linear-gradient(135deg, #ffffff, #ffaa66, #ff66cc, #ff3300);
+      background: linear-gradient(135deg, #ffffff, #ffaa66, #ff66cc);
       -webkit-background-clip: text;
       background-clip: text;
-      color: transparent;
+      color: transparent !important;
+    }
+    body.dark .subtitle {
+      color: #ffaa88 !important;
+    }
+    body.dark .card-title {
+      color: #ffaa77 !important;
+    }
+    
+    /* Light mode - Text tối */
+    body.light h1, body.light h2, body.light h3, body.light h4 {
+      color: #1e293b !important;
+    }
+    body.light p, body.light span, body.light label, body.light .text-muted {
+      color: #334155 !important;
     }
     body.light .glow-text {
       background: linear-gradient(135deg, #1a2a4a, #2b4c8a, #5a6eaa);
       -webkit-background-clip: text;
       background-clip: text;
-      color: transparent;
+      color: transparent !important;
+    }
+    body.light .subtitle {
+      color: #4a627a !important;
+    }
+    body.light .card-title {
+      color: #2c5282 !important;
     }
 
-    .sub {
-      font-size: 0.95rem;
-      letter-spacing: 3px;
+    .glow-text {
+      font-size: 3.5rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      text-align: center;
+    }
+    .subtitle {
+      font-size: 0.9rem;
+      letter-spacing: 2px;
       margin-top: 0.5rem;
       text-align: center;
     }
-    body.dark .sub { color: #ffaa88; }
-    body.light .sub { color: #4a627a; }
 
+    /* ========== INPUT FIELDS ========== */
     .input-group {
       margin-bottom: 1.5rem;
     }
@@ -129,170 +231,352 @@
       display: block;
       margin-bottom: 0.5rem;
       font-weight: 600;
+      font-size: 0.9rem;
     }
-    body.dark .input-group label { color: #ffaa77; }
-    body.light .input-group label { color: #2c5282; }
-    
     .input-wrapper {
       display: flex;
-      gap: 0.5rem;
+      gap: 0.6rem;
       align-items: center;
     }
     .input-wrapper input {
       flex: 1;
-      padding: 1rem 1.2rem;
-      border-radius: 32px;
+      padding: 0.9rem 1.2rem;
+      border-radius: 28px;
       font-size: 0.9rem;
+      font-family: 'SF Mono', monospace;
       border: 1px solid transparent;
-      transition: 0.2s;
+      transition: all 0.2s;
     }
     body.dark .input-wrapper input {
-      background: #0a0c18;
+      background: #0f111f;
       border-color: #ff6633aa;
-      color: #f0f3ff;
+      color: #f0f3ff !important;
+    }
+    body.dark .input-wrapper input::placeholder {
+      color: #4a5568 !important;
+    }
+    body.dark .input-wrapper input:focus {
+      border-color: #ff884d;
+      box-shadow: 0 0 0 3px rgba(255, 102, 0, 0.2);
+      outline: none;
     }
     body.light .input-wrapper input {
       background: white;
-      border-color: #c5d0f0;
-      color: #111;
+      border-color: #cbd5e1;
+      color: #1e293b;
     }
-    .input-wrapper input:focus {
-      border-color: #ff884d;
+    body.light .input-wrapper input:focus {
+      border-color: #3b82f6;
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
       outline: none;
     }
-    
+    .input-hint {
+      font-size: 0.65rem;
+      margin-top: 0.4rem;
+      opacity: 0.6;
+    }
+    body.dark .input-hint { color: #94a3b8 !important; }
+    body.light .input-hint { color: #64748b !important; }
+
+    /* Random Password Button */
     .random-btn {
-      width: 50px;
-      height: 50px;
+      width: 48px;
+      height: 48px;
       border-radius: 50%;
       border: none;
       cursor: pointer;
-      font-size: 1.5rem;
+      font-size: 1.3rem;
       transition: all 0.2s;
       background: linear-gradient(135deg, #ff6600, #ff33aa);
       color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
     .random-btn:hover {
       transform: rotate(180deg) scale(1.05);
     }
-    
+
+    /* Error Message */
     .input-error {
       color: #ef4444;
       font-size: 0.7rem;
-      margin-top: 5px;
+      margin-top: 0.3rem;
       display: none;
     }
     .input-error.show {
       display: block;
     }
 
+    /* ========== BUTTONS ========== */
     .btn-primary {
       width: 100%;
       padding: 1rem;
       border: none;
-      border-radius: 44px;
+      border-radius: 40px;
       font-weight: 700;
       font-size: 1rem;
       cursor: pointer;
       transition: all 0.25s;
+      position: relative;
+      overflow: hidden;
+    }
+    .btn-primary::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+      transition: left 0.5s;
+    }
+    .btn-primary:hover::after {
+      left: 100%;
     }
     body.dark .btn-primary {
       background: linear-gradient(95deg, #ff4d00, #ff0099);
       color: white;
+      box-shadow: 0 4px 15px rgba(255, 68, 0, 0.3);
     }
     body.light .btn-primary {
-      background: linear-gradient(95deg, #2b4c8a, #5a6eaa);
+      background: linear-gradient(95deg, #1e3a5f, #3b5a8a);
       color: white;
     }
     .btn-primary:hover {
-      transform: translateY(-3px);
+      transform: translateY(-2px);
       filter: brightness(1.05);
     }
     .btn-primary:disabled {
       opacity: 0.6;
       cursor: not-allowed;
+      transform: none;
     }
 
+    /* ========== TAB SWITCHER ========== */
+    .tab-container {
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+    .tab-btn {
+      padding: 0.7rem 2.2rem;
+      border-radius: 60px;
+      font-weight: 600;
+      cursor: pointer;
+      font-size: 1rem;
+      transition: all 0.2s;
+      border: none;
+      background: transparent;
+    }
+    body.dark .tab-btn {
+      color: #94a3b8;
+      border: 1px solid #ff663355;
+    }
+    body.light .tab-btn {
+      color: #475569;
+      border: 1px solid #cbd5e1;
+    }
+    .tab-btn.active {
+      background: linear-gradient(135deg, #ff6600, #ff33aa);
+      color: white;
+      border: none;
+    }
+    body.light .tab-btn.active {
+      background: linear-gradient(135deg, #1e3a5f, #3b5a8a);
+    }
+
+    /* ========== VM GRID ========== */
     .vm-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+      grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
       gap: 1.5rem;
       margin-top: 1.5rem;
     }
     .vm-card {
-      padding: 1.5rem;
-      border-radius: 28px;
+      padding: 1.3rem;
+      border-radius: 24px;
       cursor: pointer;
       transition: all 0.25s;
       position: relative;
     }
     body.dark .vm-card {
-      background: rgba(8, 10, 22, 0.85);
-      border: 1px solid rgba(255, 102, 0, 0.4);
+      background: rgba(12, 15, 30, 0.8);
+      border: 1px solid rgba(255, 102, 0, 0.35);
     }
     body.light .vm-card {
-      background: rgba(255, 255, 245, 0.9);
-      border: 1px solid #ccd9ff;
+      background: rgba(255, 255, 255, 0.85);
+      border: 1px solid #cbd5e1;
     }
     .vm-card:hover {
-      transform: translateY(-5px);
+      transform: translateY(-4px);
+    }
+    body.dark .vm-card:hover {
+      border-color: #ff884d;
+      box-shadow: 0 12px 25px -12px rgba(255, 68, 0, 0.3);
     }
     .vm-name {
-      font-size: 1.2rem;
-      font-weight: bold;
+      font-size: 1.1rem;
+      font-weight: 700;
       margin-bottom: 0.5rem;
     }
-    body.dark .vm-name { color: #ffaa77; }
+    body.dark .vm-name { color: #ffaa77 !important; }
+    body.light .vm-name { color: #1e3a5f !important; }
+    .vm-info {
+      font-size: 0.75rem;
+      margin: 0.25rem 0;
+    }
+    body.dark .vm-info { color: #94a3b8 !important; }
+    body.light .vm-info { color: #475569 !important; }
     .vm-status {
       display: inline-block;
       padding: 0.2rem 0.6rem;
       border-radius: 20px;
-      font-size: 0.7rem;
-      font-weight: bold;
+      font-size: 0.65rem;
+      font-weight: 600;
     }
     .status-running { background: #22c55e; color: white; }
     .status-creating { background: #eab308; color: black; }
-    .delete-btn {
+    .delete-vm-btn {
       position: absolute;
-      bottom: 1rem;
-      right: 1rem;
+      bottom: 0.8rem;
+      right: 0.8rem;
       background: rgba(220, 38, 38, 0.8);
       border: none;
       border-radius: 20px;
-      padding: 0.3rem 0.8rem;
+      padding: 0.2rem 0.7rem;
       color: white;
+      font-size: 0.65rem;
       cursor: pointer;
+      transition: all 0.2s;
+    }
+    .delete-vm-btn:hover {
+      background: #dc2626;
     }
 
+    /* ========== TECH CARDS ========== */
+    .tech-section {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 1.5rem;
+      margin: 2rem 0;
+    }
+    .tech-card {
+      padding: 1.3rem;
+      text-align: center;
+      border-radius: 24px;
+      transition: all 0.3s;
+    }
+    body.dark .tech-card {
+      background: rgba(0, 0, 0, 0.5);
+      backdrop-filter: blur(12px);
+      border: 1px solid #ff663355;
+    }
+    body.light .tech-card {
+      background: rgba(255, 255, 255, 0.6);
+      backdrop-filter: blur(12px);
+      border: 1px solid #cbd5e1;
+    }
+    .tech-card:hover {
+      transform: translateY(-3px);
+    }
+    .tech-icon {
+      font-size: 2.2rem;
+      margin-bottom: 0.6rem;
+    }
+    .tech-title {
+      font-size: 1rem;
+      font-weight: 700;
+      margin-bottom: 0.4rem;
+    }
+    body.dark .tech-title { color: #ffaa77 !important; }
+    body.light .tech-title { color: #1e3a5f !important; }
+    .tech-desc {
+      font-size: 0.75rem;
+      line-height: 1.4;
+    }
+    .spec-badge {
+      display: inline-block;
+      padding: 0.2rem 0.6rem;
+      border-radius: 20px;
+      font-size: 0.65rem;
+      margin: 0.15rem;
+      font-weight: 600;
+    }
+    body.dark .spec-badge {
+      background: rgba(255, 100, 50, 0.25);
+      color: #ffbb99 !important;
+    }
+    body.light .spec-badge {
+      background: rgba(30, 58, 95, 0.1);
+      color: #1e3a5f !important;
+    }
+
+    /* ========== SETTINGS PANEL ========== */
     .settings-btn {
       position: fixed;
       top: 20px;
       left: 20px;
       z-index: 300;
       border-radius: 50px;
-      padding: 0.7rem 1.1rem;
+      padding: 0.6rem 1rem;
       cursor: pointer;
-      background: rgba(0, 0, 0, 0.7);
+      font-size: 1.2rem;
+      transition: all 0.2s;
+    }
+    body.dark .settings-btn {
+      background: rgba(0, 0, 0, 0.6);
       backdrop-filter: blur(12px);
       border: 1px solid #ff6633aa;
+      color: #ffaa77;
+    }
+    body.light .settings-btn {
+      background: rgba(255, 255, 255, 0.7);
+      backdrop-filter: blur(12px);
+      border: 1px solid #cbd5e1;
+      color: #1e3a5f;
     }
     .settings-panel {
       position: fixed;
-      top: 85px;
+      top: 80px;
       left: 20px;
-      width: 340px;
+      width: 320px;
       z-index: 200;
-      border-radius: 32px;
+      border-radius: 28px;
       padding: 1.2rem;
       transform: translateX(-120%);
       transition: transform 0.3s;
     }
     body.dark .settings-panel {
-      background: rgba(2, 4, 18, 0.96);
+      background: rgba(5, 8, 22, 0.98);
       backdrop-filter: blur(24px);
       border: 1px solid #ff7744aa;
     }
+    body.light .settings-panel {
+      background: rgba(255, 255, 250, 0.98);
+      backdrop-filter: blur(20px);
+      border: 1px solid #cbd5e1;
+    }
     .settings-panel.open { transform: translateX(0); }
+    .settings-box {
+      margin-bottom: 1rem;
+      padding: 0.8rem;
+      border-radius: 20px;
+    }
+    body.dark .settings-box { background: #0f111faa; }
+    body.light .settings-box { background: #eef3ffaa; }
+    .design-indicator {
+      display: inline-block;
+      margin-left: 8px;
+      font-size: 0.7rem;
+      padding: 2px 8px;
+      border-radius: 20px;
+    }
+    body.dark .design-indicator {
+      background: #ff663355;
+      color: #ffaa77;
+    }
     .switch-group {
       display: flex;
       gap: 0.6rem;
@@ -304,8 +588,12 @@
       padding: 0.5rem;
       border-radius: 40px;
       cursor: pointer;
+      font-size: 0.8rem;
+      font-weight: 500;
+      transition: all 0.2s;
     }
     body.dark .switch-option { background: #1e1f2e; color: #ccccff; }
+    body.light .switch-option { background: #e3eaff; color: #1a2c44; }
     .switch-option.active {
       background: linear-gradient(135deg, #ff6600, #ff33aa);
       color: white;
@@ -313,12 +601,13 @@
     .step {
       display: flex;
       align-items: center;
-      gap: 0.8rem;
-      margin-bottom: 0.8rem;
+      gap: 0.6rem;
+      margin-bottom: 0.6rem;
+      font-size: 0.8rem;
     }
     .step-number {
-      width: 32px;
-      height: 32px;
+      width: 26px;
+      height: 26px;
       background: #ff6633;
       border-radius: 50%;
       display: inline-flex;
@@ -326,8 +615,10 @@
       justify-content: center;
       font-weight: bold;
       color: white;
+      font-size: 0.7rem;
     }
 
+    /* ========== MODAL ========== */
     .modal {
       display: none;
       position: fixed;
@@ -340,209 +631,395 @@
       align-items: center;
       z-index: 1000;
     }
+    body.dark .modal { background: rgba(0, 0, 0, 0.95); }
+    body.light .modal { background: rgba(0, 0, 0, 0.6); }
     .modal-content {
-      max-width: 650px;
+      max-width: 600px;
       width: 90%;
-      border-radius: 36px;
-      padding: 2rem;
+      border-radius: 32px;
+      padding: 1.8rem;
       max-height: 85vh;
       overflow-y: auto;
     }
     body.dark .modal-content {
-      background: #070b1c;
+      background: #0a0d1c;
       border: 1px solid #ff8844;
     }
+    body.light .modal-content {
+      background: #ffffff;
+      border: 1px solid #cbd5e1;
+    }
     .result-box {
-      border-radius: 24px;
-      padding: 1rem;
-      margin: 1rem 0;
-      border-left: 4px solid #ff6633;
+      border-radius: 20px;
+      padding: 0.8rem;
+      margin: 0.8rem 0;
+      border-left: 3px solid #ff6633;
     }
     body.dark .result-box { background: #0f172a; }
+    body.light .result-box { background: #f1f5f9; }
     code {
       font-family: monospace;
-      padding: 0.2rem 0.6rem;
-      border-radius: 12px;
+      padding: 0.2rem 0.5rem;
+      border-radius: 10px;
+      font-size: 0.8rem;
     }
     body.dark code { background: #1e293b; color: #facc15; }
+    body.light code { background: #e2e8f0; color: #1e293b; }
 
+    /* ========== FOOTER ========== */
     .footer {
-      margin-top: 3rem;
+      margin-top: 2.5rem;
       text-align: center;
-      padding: 1.5rem 0 2rem;
+      padding: 1.2rem 0;
       border-top: 1px solid;
       font-size: 0.7rem;
-      opacity: 0.6;
+      opacity: 0.5;
     }
     body.dark .footer { border-top-color: #ff774433; }
+    body.light .footer { border-top-color: #cbd5e1; }
 
+    /* ========== LANGUAGE SWITCH ========== */
+    .lang-switch {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      z-index: 300;
+      border-radius: 50px;
+      padding: 0.3rem 0.5rem;
+      display: flex;
+      gap: 0.2rem;
+    }
+    body.dark .lang-switch {
+      background: rgba(0, 0, 0, 0.6);
+      backdrop-filter: blur(12px);
+    }
+    body.light .lang-switch {
+      background: rgba(255, 255, 255, 0.7);
+      backdrop-filter: blur(12px);
+    }
+    .lang-btn {
+      background: transparent;
+      border: none;
+      padding: 0.3rem 0.8rem;
+      border-radius: 40px;
+      font-weight: 600;
+      cursor: pointer;
+      font-size: 0.8rem;
+      transition: all 0.2s;
+    }
+    body.dark .lang-btn { color: #94a3b8; }
+    body.light .lang-btn { color: #475569; }
+    .lang-btn.active {
+      background: #ff6633;
+      color: white;
+    }
+
+    /* ========== UTILITIES ========== */
+    .hidden { display: none; }
     .toast {
       position: fixed;
       bottom: 30px;
       right: 30px;
-      padding: 1rem 1.5rem;
+      padding: 0.8rem 1.2rem;
       border-radius: 50px;
       z-index: 1000;
       animation: slideIn 0.3s ease;
       color: white;
+      font-size: 0.85rem;
+      font-weight: 500;
     }
     @keyframes slideIn {
       from { transform: translateX(100%); opacity: 0; }
       to { transform: translateX(0); opacity: 1; }
     }
-    .hidden { display: none; }
     .loading-spinner {
       display: inline-block;
-      width: 20px;
-      height: 20px;
+      width: 18px;
+      height: 18px;
       border: 2px solid rgba(255,255,255,0.3);
       border-radius: 50%;
       border-top-color: white;
-      animation: spin 0.8s linear infinite;
+      animation: spin 0.6s linear infinite;
       margin-right: 8px;
+      vertical-align: middle;
     }
     @keyframes spin {
       to { transform: rotate(360deg); }
     }
-    .progress-bar {
-      width: 100%;
-      height: 4px;
-      background: rgba(255,255,255,0.2);
-      border-radius: 2px;
-      margin-top: 1rem;
-      overflow: hidden;
-    }
-    .progress-fill {
-      width: 0%;
-      height: 100%;
-      background: linear-gradient(90deg, #ff6600, #ff33aa);
-      animation: progress 2s ease-in-out infinite;
-    }
-    @keyframes progress {
-      0% { width: 0%; }
-      50% { width: 70%; }
-      100% { width: 100%; }
-    }
 
+    /* ========== RESPONSIVE ========== */
     @media (max-width: 768px) {
-      .glow-text { font-size: 2.2rem; }
+      .glow-text { font-size: 2rem; }
       .container { padding: 0 1rem; }
-      .card { padding: 1.2rem; }
+      .glass-card { padding: 1.2rem; }
+      .tab-btn { padding: 0.5rem 1.2rem; font-size: 0.85rem; }
       .vm-grid { grid-template-columns: 1fr; }
+      .tech-section { grid-template-columns: 1fr; }
+      .settings-panel { width: 280px; left: 10px; top: 75px; }
+      .input-wrapper { flex-wrap: wrap; }
+      .random-btn { width: 100%; border-radius: 28px; margin-top: 0.3rem; }
+    }
+    @media (max-width: 480px) {
+      .glow-text { font-size: 1.6rem; }
+      .tab-container { flex-direction: column; align-items: center; gap: 0.6rem; }
+      .tab-btn { width: 80%; }
     }
   </style>
 </head>
 <body class="dark">
-  <div class="bg-universe"></div>
-  <div class="singularity-core"></div>
+  <div class="bg-universe">
+    <div class="star-field"></div>
+    <div class="black-hole-core"></div>
+    <div class="accretion-disk"></div>
+    <div class="heaven-light"></div>
+    <div class="floating-orb"></div>
+  </div>
 
-  <div class="settings-btn" id="settingsBtn">⚙️</div>
+  <!-- Settings Button -->
+  <div class="settings-btn" id="settingsBtn">
+    <i class="fas fa-cog"></i>
+  </div>
+
+  <!-- Settings Panel -->
   <div class="settings-panel" id="settingsPanel">
     <div class="settings-box">
-      <h4>🌀 Chế độ</h4>
+      <h4 style="margin-bottom: 0.5rem;">🌀 Chế độ hiển thị</h4>
       <div class="switch-group">
         <div class="switch-option active" data-design="dark">🌑 Black Hole</div>
         <div class="switch-option" data-design="light">☁️ Heaven</div>
       </div>
     </div>
     <div class="settings-box">
-      <h4>📘 Hướng dẫn</h4>
-      <div class="step"><span class="step-number">1</span><span>Nhập GitHub Token (cần quyền repo, workflow)</span></div>
-      <div class="step"><span class="step-number">2</span><span>Nhập Tailscale Auth Key</span></div>
-      <div class="step"><span class="step-number">3</span><span>Nhập tên đăng nhập (tối thiểu 5 ký tự)</span></div>
+      <h4 style="margin-bottom: 0.5rem;">📘 Hướng dẫn sử dụng</h4>
+      <div class="step"><span class="step-number">1</span><span>Lấy GitHub Token (cần quyền repo, workflow)</span></div>
+      <div class="step"><span class="step-number">2</span><span>Lấy Tailscale Auth Key</span></div>
+      <div class="step"><span class="step-number">3</span><span>Nhập tên đăng nhập (≥5 ký tự)</span></div>
       <div class="step"><span class="step-number">4</span><span>Nhập mật khẩu hoặc bấm 🎲 để tạo random</span></div>
       <div class="step"><span class="step-number">5</span><span>Nhấn "Tạo VM" và chờ 2-3 phút</span></div>
     </div>
+    <div class="settings-box">
+      <h4 style="margin-bottom: 0.5rem;">📡 Liên hệ hỗ trợ</h4>
+      <div style="font-size: 0.8rem;">📧 <a href="mailto:thienantran1268@gmail.com" style="text-decoration: none;">thienantran1268@gmail.com</a></div>
+      <div style="font-size: 0.7rem; opacity: 0.6; margin-top: 0.3rem;">🔮 Singularity Beta • Quantum-ready Infrastructure</div>
+    </div>
+  </div>
+
+  <!-- Language Switch -->
+  <div class="lang-switch">
+    <button class="lang-btn active" data-lang="vi">🇻🇳 VI</button>
+    <button class="lang-btn" data-lang="en">🇬🇧 EN</button>
   </div>
 
   <div class="container">
-    <div class="header" style="margin-bottom: 1.5rem;">
-      <div class="glow-text">🌀 SINGULARITY CLOUD</div>
-      <div class="sub">Tự động tạo Virtual Machine • GitHub Actions + Tailscale</div>
+    <!-- Header -->
+    <div class="header" style="margin: 1rem 0 1.5rem 0;">
+      <div class="glow-text" id="mainTitle">🌀 SINGULARITY CLOUD</div>
+      <div class="subtitle" id="subText">Next-Gen Virtual Machine Platform • 120Hz Neural Fabric</div>
     </div>
 
-    <div class="card">
-      <h2>🔐 Khởi tạo Virtual Machine</h2>
+    <!-- Tab Switcher -->
+    <div class="tab-container">
+      <button class="tab-btn active" data-tab="create" id="createTabBtn">✨ Tạo VM</button>
+      <button class="tab-btn" data-tab="manage" id="manageTabBtn">🖥️ Quản lý VM</button>
+    </div>
+
+    <!-- Create VM Panel -->
+    <div id="createPanel" class="glass-card">
+      <h2 style="margin-bottom: 1.2rem; font-size: 1.3rem;" id="authTitle">🔐 Khởi tạo Virtual Machine</h2>
       
       <div class="input-group">
-        <label>🌌 GitHub Token</label>
-        <input type="password" id="githubToken" placeholder="github_pat_xxx...">
-        <div style="font-size:0.7rem; margin-top:5px;">Cần quyền: repo, workflow</div>
-      </div>
-
-      <div class="input-group">
-        <label>🌀 Tailscale Auth Key</label>
-        <input type="password" id="tailscaleKey" placeholder="tskey-xxx...">
-      </div>
-
-      <div class="input-group">
-        <label>👤 Tên đăng nhập VM</label>
+        <label id="githubTokenLabel">🌌 GitHub Token</label>
         <div class="input-wrapper">
-          <input type="text" id="vmUsername" placeholder="Tên đăng nhập (tối thiểu 5 ký tự)">
+          <input type="password" id="githubToken" placeholder="github_pat_xxxxx...">
+        </div>
+        <div class="input-hint" id="githubHint">Cần quyền: repo, workflow • <a href="https://github.com/settings/tokens" target="_blank" style="color: #ff6633;">Lấy token tại đây</a></div>
+      </div>
+
+      <div class="input-group">
+        <label id="tailscaleLabel">🌀 Tailscale Auth Key</label>
+        <div class="input-wrapper">
+          <input type="password" id="tailscaleKey" placeholder="tskey-auth_xxxxx...">
+        </div>
+        <div class="input-hint" id="tailscaleHint">Lấy key từ <a href="https://login.tailscale.com/admin/authkeys" target="_blank" style="color: #ff6633;">Tailscale Admin Console</a></div>
+      </div>
+
+      <div class="input-group">
+        <label id="usernameLabel">👤 Tên đăng nhập VM</label>
+        <div class="input-wrapper">
+          <input type="text" id="vmUsername" placeholder="Nhập tên đăng nhập (tối thiểu 5 ký tự)">
         </div>
         <div class="input-error" id="usernameError">Tên đăng nhập phải có ít nhất 5 ký tự</div>
       </div>
 
       <div class="input-group">
-        <label>🔐 Mật khẩu VM</label>
+        <label id="passwordLabel">🔐 Mật khẩu VM</label>
         <div class="input-wrapper">
-          <input type="text" id="vmPassword" placeholder="Mật khẩu (tối thiểu 5 ký tự)">
-          <button class="random-btn" id="randomPasswordBtn" title="Tạo mật khẩu ngẫu nhiên">🎲</button>
+          <input type="text" id="vmPassword" placeholder="Nhập mật khẩu (tối thiểu 5 ký tự)">
+          <button class="random-btn" id="randomPasswordBtn" title="Tạo mật khẩu ngẫu nhiên 24 ký tự">🎲</button>
         </div>
         <div class="input-error" id="passwordError">Mật khẩu phải có ít nhất 5 ký tự</div>
-      </div>
-
-      <div class="input-group">
-        <label>⚙️ Cấu hình VM</label>
-        <select id="vmConfig">
-          <option value="basic">Cơ bản - 2 vCPU, 7GB RAM</option>
-          <option value="standard">Tiêu chuẩn - 4 vCPU, 14GB RAM</option>
-          <option value="premium">Cao cấp - 8 vCPU, 16GB RAM</option>
-        </select>
-      </div>
-
-      <div class="input-group">
-        <label>🕐 Thời gian chạy</label>
-        <select id="vmDuration">
-          <option value="1">1 giờ</option>
-          <option value="3">3 giờ</option>
-          <option value="6" selected>6 giờ</option>
-          <option value="12">12 giờ</option>
-        </select>
+        <div class="input-hint" id="passwordHint">💡 Bấm vào biểu tượng 🎲 để tự động tạo mật khẩu mạnh</div>
       </div>
 
       <button class="btn-primary" id="createBtn">🚀 Tạo Virtual Machine</button>
       <div id="createResult" style="margin-top: 1rem;"></div>
     </div>
 
-    <div class="card">
-      <h2>🖥️ Virtual Machines của bạn</h2>
+    <!-- Manage VM Panel -->
+    <div id="managePanel" class="glass-card hidden">
+      <h2 style="margin-bottom: 1.2rem; font-size: 1.3rem;" id="manageTitle">🖥️ Danh sách Virtual Machines</h2>
       <div id="vmList" class="vm-grid">
-        <div style="text-align:center;">🌀 Đang tải danh sách...</div>
+        <div style="text-align:center; padding: 2rem;">🌀 Đang tải danh sách...</div>
       </div>
     </div>
 
+    <!-- Tech Features Section -->
+    <div class="tech-section">
+      <div class="tech-card">
+        <div class="tech-icon">⚡</div>
+        <div class="tech-title">Quantum Engine</div>
+        <div class="tech-desc">4 vCPU • 16 GB DDR5<br>NVMe SSD 56GB</div>
+        <div><span class="spec-badge">4 Cores</span><span class="spec-badge">16GB RAM</span><span class="spec-badge">56GB SSD</span></div>
+      </div>
+      <div class="tech-card">
+        <div class="tech-icon">🌐</div>
+        <div class="tech-title">Hyperfast Network</div>
+        <div class="tech-desc">1~2 Gbps • <5ms latency<br>Tailscale 500+ Mbps</div>
+        <div><span class="spec-badge">2Gbps</span><span class="spec-badge">WireGuard</span><span class="spec-badge">Tailscale</span></div>
+      </div>
+      <div class="tech-card">
+        <div class="tech-icon">⏱️</div>
+        <div class="tech-title">Auto Lifecycle</div>
+        <div class="tech-desc">Tự động reset sau 6 giờ<br>Zero-downtime orchestration</div>
+        <div><span class="spec-badge">6h Cycle</span><span class="spec-badge">99.9%</span></div>
+      </div>
+      <div class="tech-card">
+        <div class="tech-icon">🔒</div>
+        <div class="tech-title">Zero-Trust Security</div>
+        <div class="tech-desc">WireGuard® E2EE<br>IDS/IPS Protection</div>
+        <div><span class="spec-badge">E2EE</span><span class="spec-badge">WireGuard</span></div>
+      </div>
+    </div>
+
+    <!-- Footer -->
     <div class="footer">
-      ⚡ Singularity Cloud | Tạo VM tự động qua GitHub Actions
-      <div style="font-size: 0.6rem; opacity: 0.5; margin-top: 0.5rem;">Developed by SuperDzAn</div>
+      ⚡ Singularity Cloud | Next-Gen Virtual Machine Platform
+      <div style="font-size: 0.6rem; opacity: 0.5; margin-top: 0.4rem;">Developed by SuperDzAn • v3.0</div>
     </div>
   </div>
 
+  <!-- VM Detail Modal -->
   <div id="vmModal" class="modal">
     <div class="modal-content">
-      <h2 id="modalTitle"></h2>
+      <h2 id="modalTitle" style="margin-bottom: 1rem;"></h2>
       <div id="modalBody"></div>
-      <button class="btn-primary" id="closeModal">Đóng</button>
+      <button class="btn-primary" id="closeModal" style="margin-top: 1rem;">Đóng</button>
     </div>
   </div>
 
   <script>
+    // ==================== CONFIG ====================
     const API_URL = '/api/vps';
     let currentDesign = 'dark';
+    let currentLang = 'vi';
     let vms = [];
     let refreshInterval = null;
 
-    // Hàm tạo mật khẩu ngẫu nhiên 24 ký tự
+    // ==================== LANGUAGE DATA ====================
+    const translations = {
+      vi: {
+        mainTitle: "🌀 SINGULARITY CLOUD",
+        subText: "Next-Gen Virtual Machine Platform • 120Hz Neural Fabric",
+        createTab: "✨ Tạo VM",
+        manageTab: "🖥️ Quản lý VM",
+        authTitle: "🔐 Khởi tạo Virtual Machine",
+        githubLabel: "🌌 GitHub Token",
+        githubHint: "Cần quyền: repo, workflow • Lấy token tại đây",
+        tailscaleLabel: "🌀 Tailscale Auth Key",
+        tailscaleHint: "Lấy key từ Tailscale Admin Console",
+        usernameLabel: "👤 Tên đăng nhập VM",
+        passwordLabel: "🔐 Mật khẩu VM",
+        passwordHint: "💡 Bấm vào biểu tượng 🎲 để tự động tạo mật khẩu mạnh",
+        createBtn: "🚀 Tạo Virtual Machine",
+        manageTitle: "🖥️ Danh sách Virtual Machines",
+        loading: "🌀 Đang tải danh sách...",
+        noVM: "📭 Chưa có Virtual Machine nào. Hãy tạo VM đầu tiên",
+        closeBtn: "Đóng",
+        modalConnection: "🔗 Thông tin kết nối",
+        modalUser: "👤 Tên đăng nhập",
+        modalPass: "🔐 Mật khẩu",
+        modalTime: "📅 Thời gian",
+        modalCreated: "🕳️ Tạo lúc",
+        modalExpires: "⏱️ Hết hạn",
+        modalRepo: "📦 Repository",
+        modalConfig: "⚡ Cấu hình",
+        modalCPU: "🖥️ CPU: 4 vCPU (Intel Xeon)",
+        modalRAM: "🧠 RAM: 16 GB DDR5 ECC",
+        modalStorage: "💾 Ổ cứng: 56 GB NVMe SSD",
+        modalNetwork: "📶 Mạng: 1-2 Gbps",
+        modalVPN: "🔗 VPN: Tailscale + WireGuard",
+        modalNote: "🔄 VM sẽ tự động xóa sau 6 giờ. Kết nối qua Tailscale để dùng RDP.",
+        deleteConfirm: "Bạn có chắc chắn muốn xóa VM này?",
+        deleteSuccess: "✅ VM đã được xóa thành công",
+        deleteError: "❌ Lỗi khi xóa VM",
+        creating: "🔄 Đang khởi tạo VM...",
+        createSuccess: "✅ Virtual Machine đã được khởi tạo!",
+        createError: "❌ Lỗi khi tạo VM",
+        missingFields: "❌ Vui lòng nhập đầy đủ thông tin",
+        missingToken: "❌ Vui lòng nhập GitHub Token và Tailscale Key",
+        invalidUsername: "❌ Tên đăng nhập phải có ít nhất 5 ký tự",
+        invalidPassword: "❌ Mật khẩu phải có ít nhất 5 ký tự"
+      },
+      en: {
+        mainTitle: "🌀 SINGULARITY CLOUD",
+        subText: "Next-Gen Virtual Machine Platform • 120Hz Neural Fabric",
+        createTab: "✨ Create VM",
+        manageTab: "🖥️ Manage VM",
+        authTitle: "🔐 Initialize Virtual Machine",
+        githubLabel: "🌌 GitHub Token",
+        githubHint: "Required permissions: repo, workflow • Get token here",
+        tailscaleLabel: "🌀 Tailscale Auth Key",
+        tailscaleHint: "Get key from Tailscale Admin Console",
+        usernameLabel: "👤 VM Username",
+        passwordLabel: "🔐 VM Password",
+        passwordHint: "💡 Click 🎲 to generate a strong random password",
+        createBtn: "🚀 Create Virtual Machine",
+        manageTitle: "🖥️ Virtual Machines List",
+        loading: "🌀 Loading list...",
+        noVM: "📭 No Virtual Machine yet. Create your first VM",
+        closeBtn: "Close",
+        modalConnection: "🔗 Connection Info",
+        modalUser: "👤 Username",
+        modalPass: "🔐 Password",
+        modalTime: "📅 Time Information",
+        modalCreated: "🕳️ Created at",
+        modalExpires: "⏱️ Expires at",
+        modalRepo: "📦 Repository",
+        modalConfig: "⚡ Configuration",
+        modalCPU: "🖥️ CPU: 4 vCPU (Intel Xeon)",
+        modalRAM: "🧠 RAM: 16 GB DDR5 ECC",
+        modalStorage: "💾 Storage: 56 GB NVMe SSD",
+        modalNetwork: "📶 Network: 1-2 Gbps",
+        modalVPN: "🔗 VPN: Tailscale + WireGuard",
+        modalNote: "🔄 VM will auto-delete after 6 hours. Connect via Tailscale for RDP.",
+        deleteConfirm: "Are you sure you want to delete this VM?",
+        deleteSuccess: "✅ VM deleted successfully",
+        deleteError: "❌ Error deleting VM",
+        creating: "🔄 Creating VM...",
+        createSuccess: "✅ Virtual Machine created!",
+        createError: "❌ Error creating VM",
+        missingFields: "❌ Please fill all required fields",
+        missingToken: "❌ Please enter GitHub Token and Tailscale Key",
+        invalidUsername: "❌ Username must be at least 5 characters",
+        invalidPassword: "❌ Password must be at least 5 characters"
+      }
+    };
+
+    // ==================== HELPERS ====================
+    function t(key) {
+      return translations[currentLang][key] || key;
+    }
+
     function generateRandomPassword() {
       const upper = 'ABCDEFGHJKLMNPQRSTUVWXYZ';
       const lower = 'abcdefghijkmnopqrstuvwxyz';
@@ -551,22 +1028,18 @@
       const all = upper + lower + numbers + special;
       
       let password = '';
-      // Đảm bảo có ít nhất 1 ký tự mỗi loại
       password += upper[Math.floor(Math.random() * upper.length)];
       password += lower[Math.floor(Math.random() * lower.length)];
       password += numbers[Math.floor(Math.random() * numbers.length)];
       password += special[Math.floor(Math.random() * special.length)];
       
-      // Thêm 20 ký tự ngẫu nhiên
       for (let i = 0; i < 20; i++) {
         password += all[Math.floor(Math.random() * all.length)];
       }
       
-      // Trộn ngẫu nhiên
       return password.split('').sort(() => Math.random() - 0.5).join('');
     }
 
-    // Kiểm tra validation
     function validateInputs() {
       let isValid = true;
       const username = document.getElementById('vmUsername').value.trim();
@@ -592,13 +1065,36 @@
       return isValid;
     }
 
-    function applySettings() {
+    function updateUI() {
+      const langData = translations[currentLang];
+      document.getElementById('mainTitle').innerHTML = langData.mainTitle;
+      document.getElementById('subText').innerHTML = langData.subText;
+      document.getElementById('createTabBtn').innerHTML = langData.createTab;
+      document.getElementById('manageTabBtn').innerHTML = langData.manageTab;
+      document.getElementById('authTitle').innerHTML = langData.authTitle;
+      document.getElementById('githubTokenLabel').innerHTML = langData.githubLabel;
+      document.getElementById('githubHint').innerHTML = langData.githubHint;
+      document.getElementById('tailscaleLabel').innerHTML = langData.tailscaleLabel;
+      document.getElementById('tailscaleHint').innerHTML = langData.tailscaleHint;
+      document.getElementById('usernameLabel').innerHTML = langData.usernameLabel;
+      document.getElementById('passwordLabel').innerHTML = langData.passwordLabel;
+      document.getElementById('passwordHint').innerHTML = langData.passwordHint;
+      document.getElementById('createBtn').innerHTML = langData.createBtn;
+      document.getElementById('manageTitle').innerHTML = langData.manageTitle;
+      document.getElementById('closeModal').innerHTML = langData.closeBtn;
+    }
+
+    function applyDesign() {
       document.body.classList.remove('dark', 'light');
       document.body.classList.add(currentDesign);
       localStorage.setItem('singularity_design', currentDesign);
+      
       document.querySelectorAll('[data-design]').forEach(opt => {
-        if (opt.dataset.design === currentDesign) opt.classList.add('active');
-        else opt.classList.remove('active');
+        if (opt.dataset.design === currentDesign) {
+          opt.classList.add('active');
+        } else {
+          opt.classList.remove('active');
+        }
       });
     }
 
@@ -608,9 +1104,10 @@
       toast.style.background = type === 'success' ? '#22c55e' : type === 'error' ? '#ef4444' : '#3b82f6';
       toast.innerHTML = message;
       document.body.appendChild(toast);
-      setTimeout(() => toast.remove(), 5000);
+      setTimeout(() => toast.remove(), 4000);
     }
 
+    // ==================== API CALLS ====================
     async function loadVMs() {
       try {
         const response = await fetch(API_URL);
@@ -626,42 +1123,43 @@
 
     async function deleteVM(vmId, event) {
       event.stopPropagation();
-      if (!confirm('Bạn có chắc chắn muốn xóa VM này?')) return;
+      if (!confirm(t('deleteConfirm'))) return;
       try {
         const response = await fetch(`${API_URL}?id=${vmId}`, { method: 'DELETE' });
         const data = await response.json();
         if (data.success) {
           vms = vms.filter(vm => vm.id !== vmId);
           renderVMList();
-          showToast('✅ VM đã được xóa', 'success');
+          showToast(t('deleteSuccess'), 'success');
         }
       } catch (error) {
-        showToast('❌ Lỗi khi xóa VM', 'error');
+        showToast(t('deleteError'), 'error');
       }
     }
 
     function renderVMList() {
       const container = document.getElementById('vmList');
       if (!vms.length) {
-        container.innerHTML = '<div style="text-align:center; padding:2rem;">📭 Chưa có Virtual Machine nào. Hãy tạo VM đầu tiên</div>';
+        container.innerHTML = `<div style="text-align:center; padding:2rem;">${t('noVM')}</div>`;
         return;
       }
       container.innerHTML = vms.map(vm => `
         <div class="vm-card" style="position:relative;" data-id="${vm.id}">
           <div class="vm-name">🕳️ ${vm.name}</div>
-          <div class="vm-info">👤 User: ${vm.username}</div>
-          <div class="vm-info">📅 Tạo: ${new Date(vm.createdAt).toLocaleString()}</div>
-          <div class="vm-info">⏱️ Hết hạn: ${new Date(vm.expiresAt).toLocaleString()}</div>
+          <div class="vm-info">👤 ${vm.username}</div>
+          <div class="vm-info">📅 ${t('modalCreated')}: ${new Date(vm.createdAt).toLocaleString()}</div>
+          <div class="vm-info">⏱️ ${t('modalExpires')}: ${new Date(vm.expiresAt).toLocaleString()}</div>
           <div class="vm-info">🌐 IP: ${vm.tailscaleIP || 'Đang khởi tạo...'}</div>
           <div class="vm-info">
             <span class="vm-status status-${vm.status}">${vm.status === 'running' ? 'Đang chạy' : vm.status === 'creating' ? 'Đang tạo' : 'Hết hạn'}</span>
           </div>
-          <button class="delete-btn" onclick="deleteVM('${vm.id}', event)">🗑️ Xóa</button>
+          <button class="delete-vm-btn" onclick="window.deleteVM('${vm.id}', event)">🗑️ Xóa</button>
         </div>
       `).join('');
+      
       document.querySelectorAll('.vm-card').forEach(card => {
         card.addEventListener('click', (e) => {
-          if (e.target.classList.contains('delete-btn')) return;
+          if (e.target.classList.contains('delete-vm-btn')) return;
           const vm = vms.find(v => v.id === card.dataset.id);
           if (vm) showVMDetails(vm);
         });
@@ -672,30 +1170,27 @@
       document.getElementById('modalTitle').innerHTML = `🕳️ ${vm.name}`;
       document.getElementById('modalBody').innerHTML = `
         <div class="result-box">
-          <strong>🔗 Thông tin kết nối</strong><br>
-          👤 User: <code>${vm.username}</code><br>
-          🔐 Password: <code>${vm.password}</code><br>
+          <strong>${t('modalConnection')}</strong><br>
+          ${t('modalUser')}: <code>${vm.username}</code><br>
+          ${t('modalPass')}: <code>${vm.password}</code><br>
           🌐 Tailscale IP: <code>${vm.tailscaleIP || 'Đang khởi tạo...'}</code>
         </div>
         <div class="result-box">
-          <strong>🌐 noVNC (Truy cập qua trình duyệt)</strong><br>
-          <a href="${vm.novncUrl || '#'}" target="_blank">${vm.novncUrl || 'Đang khởi tạo...'}</a>
+          <strong>${t('modalTime')}</strong><br>
+          ${t('modalCreated')}: ${new Date(vm.createdAt).toLocaleString()}<br>
+          ${t('modalExpires')}: ${new Date(vm.expiresAt).toLocaleString()}<br>
+          ${t('modalRepo')}: <a href="${vm.repoUrl}" target="_blank">GitHub →</a>
         </div>
         <div class="result-box">
-          <strong>📅 Thời gian</strong><br>
-          Tạo: ${new Date(vm.createdAt).toLocaleString()}<br>
-          Hết hạn: ${new Date(vm.expiresAt).toLocaleString()}
+          <strong>${t('modalConfig')}</strong><br>
+          ${t('modalCPU')}<br>
+          ${t('modalRAM')}<br>
+          ${t('modalStorage')}<br>
+          ${t('modalNetwork')}<br>
+          ${t('modalVPN')}
         </div>
-        <div class="result-box">
-          <strong>⚡ Cấu hình</strong><br>
-          🖥️ CPU: ${vm.cpu || '2-4 cores'}<br>
-          🧠 RAM: ${vm.ram || '7-16 GB'}<br>
-          💾 Storage: ${vm.storage || '14 GB SSD'}<br>
-          📶 Network: 1 Gbps<br>
-          🔗 VPN: Tailscale + WireGuard
-        </div>
-        <p style="margin-top:1rem; padding:0.8rem; background:#ff663322; border-radius:16px;">
-          🔄 VM sẽ tự động xóa sau ${vm.duration || 6} giờ. Kết nối qua Tailscale để dùng RDP.
+        <p style="margin-top:0.8rem; padding:0.7rem; background:#ff663322; border-radius:14px; font-size:0.8rem;">
+          ${t('modalNote')}
         </p>
       `;
       document.getElementById('vmModal').style.display = 'flex';
@@ -706,40 +1201,32 @@
       const tailscaleKey = document.getElementById('tailscaleKey').value.trim();
       const vmUsername = document.getElementById('vmUsername').value.trim();
       const vmPassword = document.getElementById('vmPassword').value.trim();
-      const vmConfig = document.getElementById('vmConfig').value;
-      const vmDuration = document.getElementById('vmDuration').value;
-
-      if (!validateInputs()) {
-        showToast('❌ Vui lòng nhập tên đăng nhập và mật khẩu (tối thiểu 5 ký tự)', 'error');
-        return;
-      }
 
       if (!githubToken || !tailscaleKey) {
-        showToast('❌ Vui lòng nhập GitHub Token và Tailscale Key', 'error');
+        showToast(t('missingToken'), 'error');
+        return;
+      }
+      if (!validateInputs()) {
+        showToast(t('invalidUsername'), 'error');
         return;
       }
 
       const createBtn = document.getElementById('createBtn');
       const originalText = createBtn.innerHTML;
       createBtn.disabled = true;
-      createBtn.innerHTML = '<span class="loading-spinner"></span> Đang khởi tạo VM...';
+      createBtn.innerHTML = '<span class="loading-spinner"></span>' + t('creating');
       document.getElementById('createResult').innerHTML = `
-        <div class="progress-bar"><div class="progress-fill"></div></div>
-        <p style="margin-top:10px;">🔄 Đang tạo repository và cấu hình workflow...</p>
+        <div style="margin-top: 1rem;">
+          <div style="height: 3px; background: linear-gradient(90deg, #ff6600, #ff33aa); width: 100%; animation: progress 2s ease-in-out infinite;"></div>
+          <p style="margin-top: 0.8rem; font-size: 0.8rem;">🔄 Đang tạo repository và cấu hình workflow...</p>
+        </div>
       `;
 
       try {
         const response = await fetch(API_URL, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ 
-            githubToken, 
-            tailscaleKey,
-            vmUsername,
-            vmPassword,
-            config: vmConfig,
-            duration: parseInt(vmDuration)
-          })
+          body: JSON.stringify({ githubToken, tailscaleKey, vmUsername, vmPassword })
         });
         const data = await response.json();
         
@@ -747,89 +1234,77 @@
           vms.unshift(data);
           renderVMList();
           document.getElementById('createResult').innerHTML = `
-            <div style="color: #22c55e; padding: 1rem; background: rgba(34,197,94,0.1); border-radius: 16px;">
-              ✅ ${data.message || 'VM đã được khởi tạo thành công!'}<br>
-              🔄 Quá trình tạo VM mất 2-3 phút. Thông tin kết nối sẽ hiển thị khi VM sẵn sàng.
+            <div style="color: #22c55e; padding: 0.8rem; background: rgba(34,197,94,0.1); border-radius: 14px; margin-top: 1rem;">
+              ✅ ${t('createSuccess')}<br>
+              <span style="font-size: 0.75rem;">🔄 VM sẽ sẵn sàng trong 2-3 phút. Click vào tab "Quản lý VM" để xem trạng thái.</span>
             </div>
           `;
           document.getElementById('githubToken').value = '';
           document.getElementById('tailscaleKey').value = '';
           document.getElementById('vmUsername').value = '';
           document.getElementById('vmPassword').value = '';
-          startPolling(data.id);
+          setTimeout(() => {
+            document.getElementById('manageTabBtn').click();
+            loadVMs();
+          }, 2000);
         } else {
           document.getElementById('createResult').innerHTML = `
-            <div style="color: #ef4444; padding: 1rem; background: rgba(239,68,68,0.1); border-radius: 16px;">
-              ❌ Lỗi: ${data.error}
+            <div style="color: #ef4444; padding: 0.8rem; background: rgba(239,68,68,0.1); border-radius: 14px; margin-top: 1rem;">
+              ❌ ${data.error || t('createError')}
             </div>
           `;
-          showToast(data.error, 'error');
+          showToast(data.error || t('createError'), 'error');
         }
       } catch (error) {
         document.getElementById('createResult').innerHTML = `
-          <div style="color: #ef4444; padding: 1rem; background: rgba(239,68,68,0.1); border-radius: 16px;">
-            ❌ Lỗi kết nối: ${error.message}
+          <div style="color: #ef4444; padding: 0.8rem; background: rgba(239,68,68,0.1); border-radius: 14px; margin-top: 1rem;">
+            ❌ ${error.message}
           </div>
         `;
-        showToast('Lỗi kết nối đến server', 'error');
+        showToast(t('createError'), 'error');
       } finally {
         createBtn.disabled = false;
         createBtn.innerHTML = originalText;
         setTimeout(() => {
-          if (document.getElementById('createResult').innerHTML.includes('progress-bar')) {
+          if (document.getElementById('createResult').innerHTML.includes('progress')) {
             document.getElementById('createResult').innerHTML = '';
           }
-        }, 5000);
+        }, 8000);
       }
-    }
-
-    async function startPolling(vmId) {
-      let attempts = 0;
-      const maxAttempts = 36;
-      const interval = setInterval(async () => {
-        attempts++;
-        try {
-          const response = await fetch(API_URL);
-          const data = await response.json();
-          if (data.success) {
-            const updatedVM = data.vms.find(v => v.id === vmId);
-            if (updatedVM && updatedVM.status === 'running' && updatedVM.tailscaleIP) {
-              clearInterval(interval);
-              loadVMs();
-              showToast('✅ VM đã sẵn sàng! Click vào VM để xem thông tin kết nối', 'success');
-            }
-          }
-        } catch (error) {
-          console.error('Polling error:', error);
-        }
-        if (attempts >= maxAttempts) {
-          clearInterval(interval);
-        }
-      }, 5000);
     }
 
     function startAutoRefresh() {
       if (refreshInterval) clearInterval(refreshInterval);
-      refreshInterval = setInterval(() => loadVMs(), 10000);
+      refreshInterval = setInterval(() => {
+        if (!document.getElementById('managePanel').classList.contains('hidden')) {
+          loadVMs();
+        }
+      }, 10000);
     }
 
+    // ==================== INIT ====================
     function init() {
       const savedDesign = localStorage.getItem('singularity_design');
+      const savedLang = localStorage.getItem('singularity_lang');
       if (savedDesign) currentDesign = savedDesign;
-      applySettings();
+      if (savedLang) currentLang = savedLang;
+      
+      applyDesign();
+      updateUI();
       loadVMs();
       startAutoRefresh();
 
+      // Event Listeners
       document.getElementById('createBtn').addEventListener('click', createVM);
       document.getElementById('randomPasswordBtn').addEventListener('click', () => {
         const newPassword = generateRandomPassword();
         document.getElementById('vmPassword').value = newPassword;
-        const passwordError = document.getElementById('passwordError');
-        if (newPassword.length >= 5) {
-          passwordError.classList.remove('show');
-        }
+        document.getElementById('passwordError').classList.remove('show');
         showToast('🔐 Mật khẩu ngẫu nhiên đã được tạo!', 'success');
       });
+      
+      document.getElementById('vmUsername').addEventListener('input', validateInputs);
+      document.getElementById('vmPassword').addEventListener('input', validateInputs);
       
       document.getElementById('closeModal').addEventListener('click', () => {
         document.getElementById('vmModal').style.display = 'none';
@@ -840,9 +1315,20 @@
         }
       });
 
-      // Real-time validation
-      document.getElementById('vmUsername').addEventListener('input', validateInputs);
-      document.getElementById('vmPassword').addEventListener('input', validateInputs);
+      // Tab switching
+      document.getElementById('createTabBtn').addEventListener('click', () => {
+        document.getElementById('createTabBtn').classList.add('active');
+        document.getElementById('manageTabBtn').classList.remove('active');
+        document.getElementById('createPanel').classList.remove('hidden');
+        document.getElementById('managePanel').classList.add('hidden');
+      });
+      document.getElementById('manageTabBtn').addEventListener('click', () => {
+        document.getElementById('manageTabBtn').classList.add('active');
+        document.getElementById('createTabBtn').classList.remove('active');
+        document.getElementById('createPanel').classList.add('hidden');
+        document.getElementById('managePanel').classList.remove('hidden');
+        loadVMs();
+      });
 
       // Settings
       const settingsBtn = document.getElementById('settingsBtn');
@@ -854,10 +1340,24 @@
         }
       });
 
+      // Design switcher
       document.querySelectorAll('[data-design]').forEach(opt => {
         opt.addEventListener('click', () => {
           currentDesign = opt.dataset.design;
-          applySettings();
+          applyDesign();
+        });
+      });
+
+      // Language switcher
+      document.querySelectorAll('.lang-btn').forEach(btn => {
+        if (btn.dataset.lang === currentLang) btn.classList.add('active');
+        btn.addEventListener('click', () => {
+          document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          currentLang = btn.dataset.lang;
+          updateUI();
+          localStorage.setItem('singularity_lang', currentLang);
+          renderVMList();
         });
       });
     }
