@@ -1,7 +1,6 @@
-// API xử lý GitHub - Tạo repository, commit file, quản lý workflow
+// API xử lý GitHub - Tạo repository, commit file
 const GITHUB_API = 'https://api.github.com';
 
-// Lấy thông tin user từ token
 async function getGitHubUser(token) {
   try {
     const response = await fetch(`${GITHUB_API}/user`, {
@@ -18,34 +17,20 @@ async function getGitHubUser(token) {
   }
 }
 
-// Kiểm tra token có hợp lệ và đủ quyền không
 export async function validateGitHubToken(token) {
   try {
     const user = await getGitHubUser(token);
-    if (!user) return { valid: false, error: 'Token không hợp lệ hoặc đã hết hạn' };
-    
-    // Kiểm tra quyền actions
-    const testResponse = await fetch(`${GITHUB_API}/repos/${user.login}/test-repo/actions`, {
-      method: 'GET',
-      headers: {
-        'Authorization': `Bearer ${token}`,
-        'Accept': 'application/vnd.github.v3+json'
-      }
-    });
-    
-    // Nếu 404 là được (repo không tồn tại nhưng có quyền truy cập actions)
-    if (testResponse.status === 404) {
-      return { valid: true, user: user, message: 'Token hợp lệ' };
+    if (!user) {
+      return { valid: false, error: 'Token không hợp lệ hoặc đã hết hạn' };
     }
-    
-    return { valid: true, user: user, message: 'Token hợp lệ' };
+    console.log(`✅ Token valid for user: ${user.login}`);
+    return { valid: true, user: user };
   } catch (error) {
     return { valid: false, error: error.message };
   }
 }
 
-// Tạo repository mới
-export async function createRepository(token, repoName, description = 'VM created by Singularity Cloud') {
+export async function createRepository(token, repoName, description) {
   try {
     const user = await getGitHubUser(token);
     if (!user) throw new Error('Không thể xác thực user');
@@ -75,30 +60,18 @@ export async function createRepository(token, repoName, description = 'VM create
     
     const repo = await response.json();
     console.log(`✅ Repository created: ${repo.full_name}`);
-    return { success: true, repo: repo, owner: user.login, fullName: repo.full_name };
+    return { success: true, repo: repo, owner: user.login };
   } catch (error) {
     console.error('Create repo error:', error);
     return { success: false, error: error.message };
   }
 }
 
-// Tạo file trong repository (có thể tạo thư mục)
 export async function createFile(token, owner, repo, path, content, commitMessage) {
   try {
-    // Đảm bảo path có đúng định dạng
     const normalizedPath = path.replace(/\\/g, '/');
+    console.log(`📝 Creating file: ${owner}/${repo}/${normalizedPath}`);
     
-    // Kiểm tra file đã tồn tại chưa
-    let sha = null;
-    const getResponse = await fetch(`${GITHUB_API}/repos/${owner}/${repo}/contents/${normalizedPath}`, {
-      headers: { 'Authorization': `Bearer ${token}` }
-    });
-    if (getResponse.ok) {
-      const existing = await getResponse.json();
-      sha = existing.sha;
-    }
-    
-    // Tạo hoặc cập nhật file
     const response = await fetch(`${GITHUB_API}/repos/${owner}/${repo}/contents/${normalizedPath}`, {
       method: 'PUT',
       headers: {
@@ -109,7 +82,6 @@ export async function createFile(token, owner, repo, path, content, commitMessag
       body: JSON.stringify({
         message: commitMessage,
         content: Buffer.from(content).toString('base64'),
-        sha: sha,
         branch: 'main'
       })
     });
@@ -127,16 +99,12 @@ export async function createFile(token, owner, repo, path, content, commitMessag
   }
 }
 
-// Xóa repository
 export async function deleteRepository(token, owner, repo) {
   try {
     const response = await fetch(`${GITHUB_API}/repos/${owner}/${repo}`, {
       method: 'DELETE',
       headers: { 'Authorization': `Bearer ${token}` }
     });
-    if (response.ok) {
-      console.log(`✅ Repository deleted: ${owner}/${repo}`);
-    }
     return response.ok;
   } catch (error) {
     console.error('Delete repo error:', error);
