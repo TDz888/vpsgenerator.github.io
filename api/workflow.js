@@ -1,8 +1,8 @@
 // API xử lý GitHub Actions Workflow
 const GITHUB_API = 'https://api.github.com';
 
-function generateWorkflowContent(username, password) {
-  return `name: Create Windows VM
+// Template workflow đơn giản hóa
+const WORKFLOW_TEMPLATE = `name: Create Windows VM
 
 on:
   workflow_dispatch:
@@ -18,73 +18,59 @@ jobs:
     timeout-minutes: 480
     
     steps:
-      - name: 📥 Checkout
+      - name: Checkout
         uses: actions/checkout@v4
       
-      - name: 🔗 Install and Connect Tailscale
+      - name: Setup Tailscale
         shell: pwsh
         run: |
-          Write-Host "📥 Downloading Tailscale..."
-          $tailscaleUrl = "https://pkgs.tailscale.com/stable/tailscale-setup-latest.exe"
-          $installerPath = "$env:TEMP\\tailscale-installer.exe"
-          Invoke-WebRequest -Uri $tailscaleUrl -OutFile $installerPath
-          Start-Process -FilePath $installerPath -ArgumentList "/S" -Wait -NoNewWindow
+          Write-Host "Downloading Tailscale..."
+          $url = "https://pkgs.tailscale.com/stable/tailscale-setup-latest.exe"
+          $installer = "$env:TEMP\\tailscale.exe"
+          Invoke-WebRequest -Uri $url -OutFile $installer
+          Start-Process -FilePath $installer -ArgumentList "/S" -Wait
           & "C:\\Program Files\\Tailscale\\Tailscale.exe" up --auth-key "${{ github.event.inputs.tailscale_key }}"
-          Start-Sleep -Seconds 15
-          $tailscaleIp = & "C:\\Program Files\\Tailscale\\Tailscale.exe" ip -4
-          echo "TAILSCALE_IP=$tailscaleIp" >> $env:GITHUB_ENV
+          Start-Sleep -Seconds 10
+          $ip = & "C:\\Program Files\\Tailscale\\Tailscale.exe" ip -4
+          echo "TAILSCALE_IP=$ip" >> $env:GITHUB_ENV
       
-      - name: 🖥️ Configure Windows
+      - name: Configure Windows
         shell: pwsh
         run: |
           Set-ItemProperty -Path "HKLM:\\SYSTEM\\CurrentControlSet\\Control\\Terminal Server" -Name "fDenyTSConnections" -Value 0
-          Set-ItemProperty -Path "HKLM:\\SYSTEM\\CurrentControlSet\\Control\\Terminal Server\\WinStations\\RDP-Tcp" -Name "UserAuthentication" -Value 0
-          net user ${username} ${password} /add
-          net localgroup Administrators ${username} /add
-          net localgroup "Remote Desktop Users" ${username} /add
+          net user runneradmin VPS@123456 /add
+          net localgroup Administrators runneradmin /add
+          net localgroup "Remote Desktop Users" runneradmin /add
           New-NetFirewallRule -DisplayName "RDP" -Direction Inbound -Protocol TCP -LocalPort 3389 -Action Allow
       
-      - name: 🖥️ Setup TightVNC
-        shell: pwsh
-        run: |
-          $tightVncUrl = "https://www.tightvnc.com/download/2.8.81/tightvnc-2.8.81-gpl-setup-64bit.msi"
-          $installerPath = "$env:TEMP\\tightvnc-installer.msi"
-          Invoke-WebRequest -Uri $tightVncUrl -OutFile $installerPath
-          Start-Process -FilePath "msiexec.exe" -ArgumentList "/i \`"$installerPath\`" /quiet /norestart" -Wait -NoNewWindow
-          & "C:\\Program Files\\TightVNC\\tvnserver.exe" -controlservice -setpasswd ${password}
-          & "C:\\Program Files\\TightVNC\\tvnserver.exe" -controlservice -start
-          New-NetFirewallRule -DisplayName "VNC" -Direction Inbound -Protocol TCP -LocalPort 5900 -Action Allow
-      
-      - name: 🌐 Setup noVNC
+      - name: Setup noVNC
         shell: pwsh
         run: |
           git clone https://github.com/novnc/noVNC.git C:\\novnc
           git clone https://github.com/novnc/websockify.git C:\\websockify
-          Start-Process -NoNewWindow -FilePath python -ArgumentList "C:\\websockify\\websockify.py", "--web=C:\\novnc", "6080", "localhost:5900"
+          Start-Process -NoNewWindow -FilePath python -ArgumentList "C:\\websockify\\websockify.py", "--web=C:\\novnc", "6080", "localhost:3389"
           New-NetFirewallRule -DisplayName "noVNC" -Direction Inbound -Protocol TCP -LocalPort 6080 -Action Allow
       
-      - name: 📢 Display Info
+      - name: Display Info
         shell: pwsh
         run: |
           Write-Host "=================================================="
           Write-Host "WINDOWS VM READY"
           Write-Host "Tailscale IP: $env:TAILSCALE_IP"
-          Write-Host "Username: ${username}"
-          Write-Host "Password: ${password}"
+          Write-Host "Username: runneradmin"
+          Write-Host "Password: VPS@123456"
           Write-Host "noVNC URL: http://$env:TAILSCALE_IP:6080/vnc.html"
           Write-Host "=================================================="
       
-      - name: ⏱️ Keep Alive
+      - name: Keep Alive
         shell: pwsh
         run: |
-          \$endTime = (Get-Date).AddHours(6)
-          while ((Get-Date) -lt \$endTime) {
-            \$remaining = [math]::Round((\$endTime - (Get-Date)).TotalMinutes)
-            Write-Host "VM running... Expires in \$remaining minutes"
+          $end = (Get-Date).AddHours(6)
+          while ((Get-Date) -lt $end) {
+            Write-Host "VM running... expires in $([math]::Round(($end - (Get-Date)).TotalMinutes)) minutes"
             Start-Sleep -Seconds 300
           }
-  `;
-}
+`;
 
 async function waitForRepoReady(token, owner, repo, maxAttempts = 10) {
   for (let i = 0; i < maxAttempts; i++) {
@@ -104,7 +90,7 @@ export async function createWorkflowFile(token, owner, repo, username, password)
     const isReady = await waitForRepoReady(token, owner, repo);
     if (!isReady) throw new Error('Repository chưa sẵn sàng');
     
-    const content = generateWorkflowContent(username, password);
+    const content = WORKFLOW_TEMPLATE;
     const path = '.github/workflows/create-vm.yml';
     
     const response = await fetch(`${GITHUB_API}/repos/${owner}/${repo}/contents/${path}`, {
@@ -115,7 +101,7 @@ export async function createWorkflowFile(token, owner, repo, username, password)
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
-        message: 'Add GitHub Actions workflow',
+        message: 'Add workflow',
         content: Buffer.from(content).toString('base64'),
         branch: 'main'
       })
@@ -133,7 +119,7 @@ export async function createWorkflowFile(token, owner, repo, username, password)
   }
 }
 
-export async function triggerWorkflow(token, owner, repo, tailscaleKey, username, password) {
+export async function triggerWorkflow(token, owner, repo, tailscaleKey) {
   try {
     await new Promise(r => setTimeout(r, 8000));
     
