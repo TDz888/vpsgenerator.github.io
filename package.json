@@ -1,9 +1,19 @@
 {
-  "name": "vps-generator-future",
-  "version": "3.0.0",
-  "description": "Tạo VPS Windows miễn phí với Tailscale + noVNC | Quản lý thông minh",
+  "name": "vpsgenerator-api",
+  "version": "2.0.0",
+  "description": "VPS Generator API - Black Hole VM",
   "main": "api/vpsuser.js",
+  "scripts": {
+    "start": "node api/vpsuser.js",
+    "dev": "nodemon api/vpsuser.js"
+  },
   "dependencies": {
     "@octokit/rest": "^20.1.0"
-  }
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.0"
+  },
+  "keywords": ["vps", "github-actions", "tailscale", "novnc"],
+  "author": "TDz888",
+  "license": "MIT"
 }
