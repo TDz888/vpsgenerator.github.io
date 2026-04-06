@@ -4,91 +4,50 @@ import { createWorkflowFile, triggerWorkflow, getWorkflowRuns } from './workflow
 
 let vms = global.vms || [];
 
-// FIX HOÀN TOÀN: Tên repository CHỈ gồm a-z, 0-9, dấu gạch ngang
-function generateRepoName() {
-  // Chỉ dùng các ký tự an toàn: a-z, 0-9, -
+// Tạo tên repository hợp lệ - CHỈ a-z, 0-9, dấu gạch ngang
+function generateValidRepoName() {
   const safeChars = 'abcdefghijklmnopqrstuvwxyz0123456789';
-  
-  // Tạo chuỗi ngẫu nhiên 12 ký tự
-  let randomStr = '';
+  let result = '';
   for (let i = 0; i < 12; i++) {
-    randomStr += safeChars[Math.floor(Math.random() * safeChars.length)];
+    result += safeChars[Math.floor(Math.random() * safeChars.length)];
   }
-  
-  // Thêm timestamp ngắn gọn
-  const timestamp = Date.now().toString(36);
-  const shortTimestamp = timestamp.slice(-6);
-  
-  // Kết hợp: vm + timestamp + random
-  let repoName = `vm-${shortTimestamp}-${randomStr}`;
-  
-  // Đảm bảo không có dấu gạch ngang ở đầu hoặc cuối
-  repoName = repoName.replace(/^-+|-+$/g, '');
-  
-  // Đảm bảo không có dấu gạch ngang liên tiếp
-  repoName = repoName.replace(/--+/g, '-');
-  
-  // Giới hạn độ dài tối đa 100 ký tự
-  if (repoName.length > 100) {
-    repoName = repoName.substring(0, 100);
-    repoName = repoName.replace(/-+$/, '');
-  }
-  
-  console.log(`📁 Generated repo name: ${repoName}`);
-  return repoName;
+  const timestamp = Date.now().toString(36).slice(-6);
+  return `vm-${timestamp}-${result}`;
 }
 
-// Hàm theo dõi workflow và cập nhật trạng thái
-async function monitorWorkflowStatus(token, owner, repo, vmId, workflowRunId) {
+// Theo dõi workflow status
+async function monitorWorkflowStatus(token, owner, repo, vmId, runId) {
   let attempts = 0;
   const maxAttempts = 36;
   const interval = setInterval(async () => {
     attempts++;
     try {
-      const response = await fetch(`https://api.github.com/repos/${owner}/${repo}/actions/runs/${workflowRunId}`, {
+      const res = await fetch(`https://api.github.com/repos/${owner}/${repo}/actions/runs/${runId}`, {
         headers: { 'Authorization': `Bearer ${token}` }
       });
-      if (response.ok) {
-        const run = await response.json();
-        const vmIndex = vms.findIndex(v => v.id === vmId);
-        if (vmIndex !== -1) {
+      if (res.ok) {
+        const run = await res.json();
+        const idx = vms.findIndex(v => v.id === vmId);
+        if (idx !== -1) {
           if (run.status === 'completed') {
-            if (run.conclusion === 'success') {
-              vms[vmIndex].status = 'running';
-              // Thử lấy IP từ logs
-              try {
-                const logsResponse = await fetch(`https://api.github.com/repos/${owner}/${repo}/actions/runs/${workflowRunId}/logs`, {
-                  headers: { 'Authorization': `Bearer ${token}` }
-                });
-                if (logsResponse.ok) {
-                  const logs = await logsResponse.text();
-                  const ipMatch = logs.match(/Tailscale IP: (\d+\.\d+\.\d+\.\d+)/);
-                  if (ipMatch) {
-                    vms[vmIndex].tailscaleIP = ipMatch[1];
-                    vms[vmIndex].novncUrl = `http://${ipMatch[1]}:6080/vnc.html`;
-                  }
-                }
-              } catch(e) {}
-            } else {
-              vms[vmIndex].status = 'failed';
-              vms[vmIndex].error = `Workflow thất bại: ${run.conclusion}`;
+            vms[idx].status = run.conclusion === 'success' ? 'running' : 'failed';
+            if (run.conclusion !== 'success') {
+              vms[idx].error = `Workflow thất bại: ${run.conclusion}`;
             }
             global.vms = vms;
             clearInterval(interval);
-          } else if (run.status === 'queued' || run.status === 'in_progress') {
-            vms[vmIndex].status = 'creating';
+          } else if (run.status === 'in_progress' || run.status === 'queued') {
+            vms[idx].status = 'creating';
             global.vms = vms;
           }
         }
       }
-    } catch (error) {
-      console.error('Monitor workflow error:', error);
-    }
+    } catch (e) { console.error('Monitor error:', e); }
     if (attempts >= maxAttempts) {
-      const vmIndex = vms.findIndex(v => v.id === vmId);
-      if (vmIndex !== -1 && vms[vmIndex].status === 'creating') {
-        vms[vmIndex].status = 'failed';
-        vms[vmIndex].error = 'Quá thời gian chờ. Vui lòng kiểm tra GitHub Actions logs.';
+      const idx = vms.findIndex(v => v.id === vmId);
+      if (idx !== -1 && vms[idx].status === 'creating') {
+        vms[idx].status = 'failed';
+        vms[idx].error = 'Quá thời gian chờ (6 phút). Vui lòng kiểm tra GitHub Actions.';
         global.vms = vms;
       }
       clearInterval(interval);
@@ -115,7 +74,6 @@ export default async function handler(req, res) {
     console.log(`👤 Username: ${vmUsername}`);
     console.log('========================================');
     
-    // Validate input
     if (!githubToken || !tailscaleKey) {
       return res.status(400).json({ success: false, error: 'Thiếu GitHub Token hoặc Tailscale Key' });
     }
@@ -126,61 +84,42 @@ export default async function handler(req, res) {
       return res.status(400).json({ success: false, error: 'Mật khẩu phải có ít nhất 5 ký tự' });
     }
     
-    // Validate GitHub Token
-    const tokenValidation = await validateGitHubToken(githubToken);
-    if (!tokenValidation.valid) {
-      return res.status(401).json({ success: false, error: tokenValidation.error });
+    const tokenValid = await validateGitHubToken(githubToken);
+    if (!tokenValid.valid) {
+      return res.status(401).json({ success: false, error: tokenValid.error });
     }
     
-    const repoName = generateRepoName();
-    const owner = tokenValidation.user.login;
+    const repoName = generateValidRepoName();
+    const owner = tokenValid.user.login;
     
-    console.log(`📁 Repository name: ${repoName}`);
-    console.log(`👤 Owner: ${owner}`);
+    console.log(`📁 Repository: ${repoName}`);
     
     try {
-      // Step 1: Tạo repository
-      console.log('📁 Step 1: Creating repository...');
-      const repoResult = await createRepository(githubToken, repoName, `VM created by ${vmUsername}`);
+      const repoResult = await createRepository(githubToken, repoName, `VM by ${vmUsername}`);
       if (!repoResult.success) {
-        console.error('❌ Create repo failed:', repoResult.error);
         return res.status(500).json({ success: false, error: `Tạo repo thất bại: ${repoResult.error}` });
       }
-      console.log('✅ Repository created successfully');
       
-      // Step 2: Tạo workflow file
-      console.log('📝 Step 2: Creating workflow file...');
       const workflowResult = await createWorkflowFile(githubToken, owner, repoName, vmUsername, vmPassword);
       if (!workflowResult.success) {
-        console.error('❌ Create workflow failed:', workflowResult.error);
         await deleteRepository(githubToken, owner, repoName);
         return res.status(500).json({ success: false, error: `Tạo workflow thất bại: ${workflowResult.error}` });
       }
-      console.log('✅ Workflow file created');
       
-      // Step 3: Trigger workflow
-      console.log('🚀 Step 3: Triggering workflow...');
       const triggerResult = await triggerWorkflow(githubToken, owner, repoName, tailscaleKey);
       if (!triggerResult.success) {
-        console.error('❌ Trigger workflow failed:', triggerResult.error);
         return res.status(500).json({ success: false, error: `Trigger workflow thất bại: ${triggerResult.error}` });
       }
-      console.log('✅ Workflow triggered');
       
-      // Lấy workflow run ID
-      let workflowRunId = null;
+      let runId = null;
       for (let i = 0; i < 15; i++) {
         await new Promise(r => setTimeout(r, 2000));
         const runs = await getWorkflowRuns(githubToken, owner, repoName, 1);
-        if (runs.length > 0) {
-          workflowRunId = runs[0].id;
-          console.log(`📋 Workflow Run ID: ${workflowRunId}`);
-          break;
-        }
+        if (runs.length > 0) { runId = runs[0].id; break; }
       }
       
       const newVM = {
-        id: `vm_${Date.now()}_${Math.random().toString(36).substr(2, 8)}`,
+        id: `vm_${Date.now()}_${Math.random().toString(36).substr(2, 6)}`,
         name: repoName,
         owner: owner,
         username: vmUsername,
@@ -191,8 +130,7 @@ export default async function handler(req, res) {
         tailscaleIP: null,
         novncUrl: null,
         repoUrl: `https://github.com/${owner}/${repoName}`,
-        workflowUrl: workflowRunId ? `https://github.com/${owner}/${repoName}/actions/runs/${workflowRunId}` : `https://github.com/${owner}/${repoName}/actions`,
-        workflowRunId: workflowRunId,
+        workflowUrl: runId ? `https://github.com/${owner}/${repoName}/actions/runs/${runId}` : `https://github.com/${owner}/${repoName}/actions`,
         error: null
       };
       
@@ -200,33 +138,22 @@ export default async function handler(req, res) {
       global.vms = vms;
       if (vms.length > 20) vms.pop();
       
-      if (workflowRunId) {
-        monitorWorkflowStatus(githubToken, owner, repoName, newVM.id, workflowRunId);
-      }
+      if (runId) monitorWorkflowStatus(githubToken, owner, repoName, newVM.id, runId);
       
-      console.log('🎉 VM creation initiated successfully!');
-      console.log(`🔗 Repo URL: https://github.com/${owner}/${repoName}`);
-      console.log('========================================\n');
-      
-      return res.status(200).json({ 
-        success: true, 
-        ...newVM,
-        message: `✅ Đã tạo VM với tên đăng nhập "${vmUsername}"`
-      });
+      console.log('✅ VM created successfully');
+      return res.status(200).json({ success: true, ...newVM });
       
     } catch (error) {
-      console.error('❌ Create VM error:', error);
+      console.error('❌ Error:', error);
       return res.status(500).json({ success: false, error: error.message });
     }
   }
   
   if (req.method === 'DELETE') {
     const { id } = req.query;
-    const index = vms.findIndex(vm => vm.id === id);
-    if (index === -1) {
-      return res.status(404).json({ success: false, error: 'Không tìm thấy VM' });
-    }
-    vms.splice(index, 1);
+    const idx = vms.findIndex(vm => vm.id === id);
+    if (idx === -1) return res.status(404).json({ success: false, error: 'Không tìm thấy VM' });
+    vms.splice(idx, 1);
     global.vms = vms;
     return res.status(200).json({ success: true });
   }
