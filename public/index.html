@@ -3,7 +3,11 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
-  <title>Singularity Nexus | Black Hole Cloud</title>
+  <meta name="description" content="Tạo VPS Windows miễn phí từ GitHub Actions với Tailscale + noVNC">
+  <meta name="author" content="Singularity Cloud">
+  <title>Singularity Nexus | Black Hole Cloud VPS</title>
+  <link rel="icon" type="image/x-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌀</text></svg>">
+  
   <style>
     * {
       margin: 0;
@@ -13,12 +17,12 @@
 
     body {
       min-height: 100vh;
-      font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, 'Poppins', sans-serif;
-      transition: all 0.4s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+      font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', 'Poppins', sans-serif;
+      transition: all 0.3s ease;
       overflow-x: hidden;
     }
 
-    /* ==================== BACKGROUND SYSTEMS ==================== */
+    /* Background Systems */
     .bg-universe {
       position: fixed;
       top: 0;
@@ -27,10 +31,8 @@
       height: 100%;
       z-index: 0;
       pointer-events: none;
-      transition: all 0.5s ease;
     }
 
-    /* DARK MODE - BLACK HOLE */
     body.dark {
       background: #000000;
     }
@@ -79,20 +81,6 @@
       animation: waveExpand 4s ease-out infinite;
     }
 
-    body.dark .star-particles {
-      position: absolute;
-      width: 100%;
-      height: 100%;
-      background-image: radial-gradient(1px 1px at 15% 25%, #fff, transparent),
-                        radial-gradient(2px 2px at 78% 42%, #ffcc88, transparent),
-                        radial-gradient(1px 1px at 45% 80%, #fff, transparent);
-      background-repeat: no-repeat;
-      background-size: 450px 450px;
-      opacity: 0.9;
-      animation: starDrift 45s linear infinite;
-    }
-
-    /* LIGHT MODE - HEAVEN */
     body.light {
       background: linear-gradient(145deg, #f0f4ff 0%, #e0e8ff 100%);
     }
@@ -103,28 +91,8 @@
 
     body.light .singularity-core,
     body.light .accretion-whirl,
-    body.light .grav-wave,
-    body.light .star-particles {
+    body.light .grav-wave {
       display: none;
-    }
-
-    body.light .heaven-clouds {
-      position: absolute;
-      width: 100%;
-      height: 100%;
-      background: radial-gradient(ellipse at 80% 20%, rgba(255, 255, 245, 0.5) 0%, transparent 60%);
-      pointer-events: none;
-    }
-
-    /* PERFORMANCE MODE */
-    body.performance .singularity-core,
-    body.performance .accretion-whirl,
-    body.performance .grav-wave,
-    body.performance .star-particles,
-    body.performance .heaven-clouds {
-      animation: none !important;
-      filter: blur(15px) !important;
-      opacity: 0.1 !important;
     }
 
     @keyframes corePulse {
@@ -142,46 +110,44 @@
       100% { opacity: 0; transform: translate(-50%, -50%) scale(1.5);}
     }
 
-    @keyframes starDrift {
-      0% { transform: translateY(0px) translateX(0px);}
-      100% { transform: translateY(-200px) translateX(50px);}
-    }
-
-    /* ==================== MAIN LAYOUT ==================== */
+    /* Container */
     .container {
       max-width: 1400px;
       margin: 0 auto;
       position: relative;
       z-index: 20;
-      padding: 0 1rem;
+      padding: 0 1.5rem;
     }
 
     /* Glassmorphic Cards */
-    .card, .vm-card, .tech-card, .settings-panel {
-      transition: all 0.3s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+    .card {
+      background: rgba(5, 7, 20, 0.75);
+      backdrop-filter: blur(20px);
       border-radius: 36px;
+      padding: 2rem;
+      margin-bottom: 2rem;
+      transition: all 0.3s cubic-bezier(0.2, 0.9, 0.4, 1.1);
     }
 
     body.dark .card {
-      background: rgba(5, 7, 20, 0.75);
-      backdrop-filter: blur(20px);
       border: 1px solid rgba(255, 80, 40, 0.45);
       box-shadow: 0 25px 45px -12px rgba(0, 0, 0, 0.6);
     }
 
     body.light .card {
       background: rgba(255, 255, 255, 0.7);
-      backdrop-filter: blur(20px);
       border: 1px solid rgba(100, 120, 200, 0.3);
       box-shadow: 0 15px 35px -10px rgba(0, 0, 0, 0.08);
     }
 
-    .card {
-      padding: 2rem;
-      margin-bottom: 2rem;
+    /* Typography */
+    .glow-text {
+      font-size: 3.8rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      text-align: center;
     }
 
-    /* Typography - High Contrast */
     body.dark .glow-text {
       background: linear-gradient(135deg, #ffffff, #ffaa66, #ff66cc, #ff3300);
       -webkit-background-clip: text;
@@ -190,18 +156,7 @@
     }
 
     body.light .glow-text {
-      background: linear-gradient(135deg, #1a2a4a, #2b4c8a, #5a6eaa);
-      -webkit-background-clip: text;
-      background-clip: text;
-      color: transparent;
-    }
-
-    .glow-text {
-      font-size: 3.8rem;
-      font-weight: 800;
-      letter-spacing: -0.02em;
-      transition: all 0.3s ease;
-      text-align: center;
+      color: #1a2a4a;
     }
 
     .sub {
@@ -294,6 +249,12 @@
       filter: brightness(1.05);
     }
 
+    .btn-primary:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+    }
+
     /* VM Grid */
     .vm-grid {
       display: grid;
@@ -307,6 +268,7 @@
       cursor: pointer;
       transition: all 0.25s;
       position: relative;
+      border-radius: 28px;
     }
 
     body.dark .vm-card {
@@ -377,7 +339,7 @@
     /* Tech Section */
     .tech-section {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
       gap: 1.5rem;
       margin-top: 2rem;
     }
@@ -385,6 +347,7 @@
     .tech-card {
       padding: 1.4rem;
       text-align: center;
+      border-radius: 28px;
     }
 
     body.dark .tech-card {
@@ -482,9 +445,6 @@
       padding: 0.7rem 1.1rem;
       cursor: pointer;
       font-size: 1.2rem;
-    }
-
-    body.dark .settings-btn {
       background: rgba(0, 0, 0, 0.7);
       backdrop-filter: blur(12px);
       border: 1px solid #ff6633aa;
@@ -492,7 +452,6 @@
 
     body.light .settings-btn {
       background: rgba(255, 255, 255, 0.8);
-      backdrop-filter: blur(12px);
       border: 1px solid #a0b4e0;
     }
 
@@ -555,8 +514,6 @@
       color: white;
     }
 
-    body.light .switch-option.active { background: linear-gradient(135deg, #2c5282, #4f70a5); }
-
     /* Steps */
     .step {
       display: flex;
@@ -577,8 +534,6 @@
       color: white;
       flex-shrink: 0;
     }
-
-    body.light .step-number { background: #2c5282; }
 
     /* Modal */
     .modal {
@@ -603,6 +558,8 @@
       border-radius: 36px;
       padding: 2rem;
       border: 1px solid;
+      max-height: 85vh;
+      overflow-y: auto;
     }
 
     body.dark .modal-content { background: #070b1c; border-color: #ff8844; }
@@ -683,32 +640,38 @@
       color: white;
     }
 
-    body.light .lang-btn.active { background: #2c5282; }
-
     .hidden { display: none; }
 
-    .loading {
-      opacity: 0.7;
-      pointer-events: none;
+    .toast {
+      position: fixed;
+      bottom: 30px;
+      right: 30px;
+      padding: 1rem 1.5rem;
+      border-radius: 50px;
+      z-index: 1000;
+      animation: slideIn 0.3s ease;
+    }
+
+    @keyframes slideIn {
+      from { transform: translateX(100%); opacity: 0; }
+      to { transform: translateX(0); opacity: 1; }
     }
 
     @media (max-width: 768px) {
       .glow-text { font-size: 2.2rem; }
       .settings-panel { width: 280px; left: 10px; top: 75px; }
-      .settings-btn, .lang-switch { padding: 0.4rem 0.8rem; font-size: 1rem; }
+      .container { padding: 0 1rem; }
       .card { padding: 1.2rem; }
       .toggle-btn { padding: 0.5rem 1.2rem; font-size: 0.9rem; }
       .vm-grid { grid-template-columns: 1fr; }
     }
   </style>
 </head>
-<body class="dark quality">
+<body class="dark">
   <div class="bg-universe">
-    <div class="star-particles"></div>
     <div class="singularity-core"></div>
     <div class="accretion-whirl"></div>
     <div class="grav-wave"></div>
-    <div class="heaven-clouds"></div>
   </div>
 
   <div class="settings-btn" id="settingsBtn">⚙️</div>
@@ -719,24 +682,18 @@
         <div class="switch-option active" data-design="dark">🌑 Black Hole</div>
         <div class="switch-option" data-design="light">☁️ Heaven</div>
       </div>
-      <h4 style="margin-top: 1rem;">⚡ Hiệu năng</h4>
-      <div class="switch-group">
-        <div class="switch-option active" data-graphics="quality">✨ Quality (120FPS)</div>
-        <div class="switch-option" data-graphics="performance">💚 Performance</div>
-      </div>
     </div>
     <div class="settings-box">
       <h4>📘 Hướng dẫn</h4>
-      <div class="step"><span class="step-number">1</span><span class="step-text">Lấy GitHub Token (repo, workflow) + Tailscale Key</span></div>
-      <div class="step"><span class="step-number">2</span><span class="step-text">Dán token → Nhấn 'Khởi tạo VM' → Chờ 2-3 phút</span></div>
-      <div class="step"><span class="step-number">3</span><span class="step-text">Kết nối qua Tailscale (RDP) hoặc noVNC</span></div>
-      <div class="step"><span class="step-number">4</span><span class="step-text">User: runneradmin | Pass: VPS@123456</span></div>
+      <div class="step"><span class="step-number">1</span><span>Lấy GitHub Token (repo, workflow)</span></div>
+      <div class="step"><span class="step-number">2</span><span>Lấy Tailscale Auth Key</span></div>
+      <div class="step"><span class="step-number">3</span><span>Dán token → Nhấn 'Khởi tạo'</span></div>
+      <div class="step"><span class="step-number">4</span><span>Chờ 2-3 phút → Kết nối qua noVNC</span></div>
     </div>
     <div class="settings-box">
       <h4>📡 Liên hệ</h4>
       <div>📧 <a href="mailto:thienantran1268@gmail.com">thienantran1268@gmail.com</a></div>
       <div>🔮 Singularity Beta • Quantum-ready</div>
-      <div>⚡ Black Hole Cloud v3.0</div>
     </div>
   </div>
 
@@ -774,15 +731,14 @@
     <div id="managePanel" class="card hidden">
       <h2>🕳️ Singularities</h2>
       <div id="vmList" class="vm-grid">
-        <div style="text-align:center;">🌀 Chưa có Singularity nào</div>
+        <div style="text-align:center;">🌀 Đang tải...</div>
       </div>
     </div>
 
     <div class="tech-section">
-      <div class="tech-card"><div class="tech-icon">⚛️</div><div class="tech-title">Quantum Engine</div><div class="tech-desc">✅ 2-4 vCPU (Xeon)<br>✅ 7-16 GB DDR5<br>✅ NVMe 14GB</div><div><span class="spec-badge">2-4 Cores</span><span class="spec-badge">7-16GB</span></div></div>
-      <div class="tech-card"><div class="tech-icon">🌐</div><div class="tech-title">Hyperfast Fabric</div><div class="tech-desc">🚀 1 Gbps (~850Mbps)<br>🌍 &lt;5ms latency<br>🔗 Tailscale 500+ Mbps</div><div><span class="spec-badge">1Gbps</span><span class="spec-badge">WireGuard</span></div></div>
-      <div class="tech-card"><div class="tech-icon">🤖</div><div class="tech-title">Auto-Scale</div><div class="tech-desc">🔄 Lifecycle tự động<br>⏱️ 6h reset<br>📊 Zero-downtime</div><div><span class="spec-badge">6h Cycle</span><span class="spec-badge">99.9%</span></div></div>
-      <div class="tech-card"><div class="tech-icon">🔒</div><div class="tech-title">Zero-Trust</div><div class="tech-desc">🛡️ WireGuard®<br>🔐 E2EE<br>🎯 IDS/IPS</div><div><span class="spec-badge">E2EE</span><span class="spec-badge">Tailscale</span></div></div>
+      <div class="tech-card"><div class="tech-icon">⚛️</div><div class="tech-title">Quantum Engine</div><div>✅ 2-4 vCPU (Xeon)<br>✅ 7-16 GB DDR5<br>✅ NVMe 14GB</div><div><span class="spec-badge">2-4 Cores</span><span class="spec-badge">7-16GB</span></div></div>
+      <div class="tech-card"><div class="tech-icon">🌐</div><div class="tech-title">Hyperfast Fabric</div><div>🚀 1 Gbps (~850Mbps)<br>🌍 &lt;5ms latency<br>🔗 Tailscale 500+ Mbps</div><div><span class="spec-badge">1Gbps</span><span class="spec-badge">WireGuard</span></div></div>
+      <div class="tech-card"><div class="tech-icon">🤖</div><div class="tech-title">Auto-Scale</div><div>🔄 Lifecycle tự động<br>⏱️ 6h reset<br>📊 Zero-downtime</div><div><span class="spec-badge">6h Cycle</span><span class="spec-badge">99.9%</span></div></div>
     </div>
 
     <div class="footer">⚡ Black Hole Singularity Cloud | Next-Gen Orchestration</div>
@@ -797,16 +753,16 @@
   </div>
 
   <script>
-    // ==================== CONFIGURATION ====================
-    const API_URL = '/api/vpsuser';
+    // Configuration
+    const API_URL = '/api/vps';
     
-    // ==================== STATE ====================
+    // State
     let currentDesign = 'dark';
-    let currentGraphics = 'quality';
     let currentLang = 'vi';
     let vms = [];
+    let refreshInterval = null;
     
-    // ==================== TRANSLATIONS ====================
+    // Translations
     const translations = {
       vi: {
         mainTitle: "🌀 BLACK HOLE VM",
@@ -814,8 +770,6 @@
         createVM: "✨ Tạo VM",
         manageVM: "🖥️ Quản lý VM",
         authTitle: "🔐 Xác thực quyền truy cập",
-        githubTokenLabel: "🌌 GitHub Token",
-        tailscaleLabel: "🌀 Tailscale Auth Key",
         createBtn: "🚀 Khởi tạo Singularity",
         manageTitle: "🕳️ Singularities",
         noVM: "🌀 Chưa có Singularity nào. Hãy tạo VM đầu tiên",
@@ -825,7 +779,6 @@
         modalUser: "👤 User",
         modalPass: "🔐 Pass",
         modalNovnc: "🌐 noVNC (Browser)",
-        modalPassword: "🔐 Password",
         modalTime: "📅 Thông tin thời gian",
         modalCreated: "🕳️ Created",
         modalExpires: "⏱️ Expires",
@@ -849,8 +802,6 @@
         createVM: "✨ Create VM",
         manageVM: "🖥️ Manage VM",
         authTitle: "🔐 Authentication",
-        githubTokenLabel: "🌌 GitHub Token",
-        tailscaleLabel: "🌀 Tailscale Auth Key",
         createBtn: "🚀 Create Singularity",
         manageTitle: "🕳️ Singularities",
         noVM: "🌀 No Singularity yet. Create your first VM",
@@ -860,7 +811,6 @@
         modalUser: "👤 User",
         modalPass: "🔐 Pass",
         modalNovnc: "🌐 noVNC (Browser)",
-        modalPassword: "🔐 Password",
         modalTime: "📅 Time Information",
         modalCreated: "🕳️ Created",
         modalExpires: "⏱️ Expires",
@@ -880,34 +830,30 @@
       }
     };
     
-    // ==================== UTILITIES ====================
     function updateLanguage() {
       const t = translations[currentLang];
-      document.querySelectorAll('[data-i18n]').forEach(el => {
-        const key = el.getAttribute('data-i18n');
-        if (t[key]) el.innerHTML = t[key];
-      });
       document.getElementById('mainTitle').innerHTML = t.mainTitle;
       document.querySelector('.sub').innerHTML = t.subText;
       document.getElementById('createBtn').innerHTML = t.createBtn;
     }
     
     function applySettings() {
-      document.body.classList.remove('dark', 'light', 'performance', 'quality');
-      document.body.classList.add(currentDesign, currentGraphics);
-      localStorage.setItem('nova_design', currentDesign);
-      localStorage.setItem('nova_graphics', currentGraphics);
-      localStorage.setItem('nova_lang', currentLang);
-      
-      const titleEl = document.getElementById('mainTitle');
-      if (currentDesign === 'dark') {
-        titleEl.innerHTML = translations[currentLang].mainTitle;
-      } else {
-        titleEl.innerHTML = '☁️ HEAVEN VM';
-      }
+      document.body.classList.remove('dark', 'light');
+      document.body.classList.add(currentDesign);
+      localStorage.setItem('singularity_design', currentDesign);
+      localStorage.setItem('singularity_lang', currentLang);
     }
     
-    // ==================== VM MANAGEMENT ====================
+    function showToast(message, type = 'info') {
+      const toast = document.createElement('div');
+      toast.className = 'toast';
+      toast.style.background = type === 'success' ? '#22c55e' : type === 'error' ? '#ef4444' : '#3b82f6';
+      toast.style.color = 'white';
+      toast.innerHTML = message;
+      document.body.appendChild(toast);
+      setTimeout(() => toast.remove(), 5000);
+    }
+    
     async function loadVMs() {
       try {
         const response = await fetch(API_URL);
@@ -923,7 +869,8 @@
     
     async function deleteVM(vmId, event) {
       event.stopPropagation();
-      if (!confirm(translations[currentLang].deleteConfirm)) return;
+      const t = translations[currentLang];
+      if (!confirm(t.deleteConfirm)) return;
       
       try {
         const response = await fetch(`${API_URL}?id=${vmId}`, { method: 'DELETE' });
@@ -931,12 +878,12 @@
         if (data.success) {
           vms = vms.filter(vm => vm.id !== vmId);
           renderVMList();
-          showToast(translations[currentLang].deleteSuccess, 'success');
+          showToast(t.deleteSuccess, 'success');
         } else {
-          showToast(translations[currentLang].deleteError, 'error');
+          showToast(t.deleteError, 'error');
         }
       } catch (error) {
-        showToast(translations[currentLang].deleteError, 'error');
+        showToast(t.deleteError, 'error');
       }
     }
     
@@ -944,8 +891,8 @@
       const container = document.getElementById('vmList');
       const t = translations[currentLang];
       
-      if (vms.length === 0) {
-        container.innerHTML = `<div style="text-align:center;">${t.noVM}</div>`;
+      if (!vms.length) {
+        container.innerHTML = `<div style="text-align:center; padding:2rem;">${t.noVM}</div>`;
         return;
       }
       
@@ -972,21 +919,12 @@
     
     function showVMDetails(vm) {
       const t = translations[currentLang];
-      const modalTitle = document.getElementById('modalTitle');
-      const modalBody = document.getElementById('modalBody');
-      
-      modalTitle.innerHTML = `🕳️ ${vm.name}`;
-      modalBody.innerHTML = `
+      document.getElementById('modalTitle').innerHTML = `🕳️ ${vm.name}`;
+      document.getElementById('modalBody').innerHTML = `
         <div class="result-box">
           <strong>${t.modalConnection}</strong><br>
-          ${t.modalIP}: <code>${vm.tailscaleIP || 'Đang khởi tạo...'}</code><br>
           ${t.modalUser}: <code>${vm.username}</code><br>
           ${t.modalPass}: <code>${vm.password}</code>
-        </div>
-        <div class="result-box">
-          <strong>${t.modalNovnc}</strong><br>
-          <a href="${vm.novncUrl}" target="_blank">${vm.novncUrl}</a><br>
-          ${t.modalPassword}: <code>${vm.password}</code>
         </div>
         <div class="result-box">
           <strong>${t.modalTime}</strong><br>
@@ -1002,6 +940,9 @@
           ${t.modalNetwork}<br>
           ${t.modalVPN}
         </div>
+        <p style="margin-top:1rem; padding:0.8rem; background:#ff663322; border-radius:16px;">
+          🔄 VM sẽ tự động reset sau 6 tiếng. Kết nối qua Tailscale để truy cập RDP.
+        </p>
       `;
       document.getElementById('vmModal').style.display = 'flex';
     }
@@ -1020,7 +961,6 @@
       const originalText = createBtn.innerHTML;
       createBtn.disabled = true;
       createBtn.innerHTML = t.creating;
-      createBtn.classList.add('loading');
       
       try {
         const response = await fetch(API_URL, {
@@ -1045,34 +985,30 @@
       } finally {
         createBtn.disabled = false;
         createBtn.innerHTML = originalText;
-        createBtn.classList.remove('loading');
       }
     }
     
-    function showToast(message, type) {
-      const resultDiv = document.getElementById('createResult');
-      const color = type === 'success' ? '#4cff8e' : '#ff8888';
-      resultDiv.innerHTML = `<div style="color:${color};">${message}</div>`;
-      setTimeout(() => {
-        if (resultDiv.innerHTML === `<div style="color:${color};">${message}</div>`) {
-          resultDiv.innerHTML = '';
+    // Auto refresh VM list every 10 seconds
+    function startAutoRefresh() {
+      if (refreshInterval) clearInterval(refreshInterval);
+      refreshInterval = setInterval(() => {
+        if (!document.getElementById('managePanel').classList.contains('hidden')) {
+          loadVMs();
         }
-      }, 5000);
+      }, 10000);
     }
     
-    // ==================== INITIALIZATION ====================
+    // Initialize
     function init() {
-      // Load saved settings
-      const savedDesign = localStorage.getItem('nova_design');
-      const savedGraphics = localStorage.getItem('nova_graphics');
-      const savedLang = localStorage.getItem('nova_lang');
+      const savedDesign = localStorage.getItem('singularity_design');
+      const savedLang = localStorage.getItem('singularity_lang');
       if (savedDesign) currentDesign = savedDesign;
-      if (savedGraphics) currentGraphics = savedGraphics;
       if (savedLang) currentLang = savedLang;
       
       applySettings();
       updateLanguage();
       loadVMs();
+      startAutoRefresh();
       
       // Event listeners
       document.getElementById('createBtn').addEventListener('click', createVM);
@@ -1106,17 +1042,6 @@
         });
       });
       
-      // Graphics switcher
-      document.querySelectorAll('[data-graphics]').forEach(opt => {
-        if (opt.dataset.graphics === currentGraphics) opt.classList.add('active');
-        opt.addEventListener('click', () => {
-          currentGraphics = opt.dataset.graphics;
-          applySettings();
-          document.querySelectorAll('[data-graphics]').forEach(o => o.classList.remove('active'));
-          opt.classList.add('active');
-        });
-      });
-      
       // Language switcher
       document.querySelectorAll('.lang-btn').forEach(btn => {
         if (btn.dataset.lang === currentLang) btn.classList.add('active');
@@ -1126,7 +1051,7 @@
           currentLang = btn.dataset.lang;
           updateLanguage();
           applySettings();
-          localStorage.setItem('nova_lang', currentLang);
+          localStorage.setItem('singularity_lang', currentLang);
         });
       });
       
@@ -1142,16 +1067,13 @@
           } else {
             document.getElementById('createPanel').classList.add('hidden');
             document.getElementById('managePanel').classList.remove('hidden');
-            renderVMList();
+            loadVMs();
           }
         });
       });
     }
     
-    // Make deleteVM available globally for inline onclick
     window.deleteVM = deleteVM;
-    
-    // Start app
     init();
   </script>
 </body>
