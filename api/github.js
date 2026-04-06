@@ -1,29 +1,19 @@
-// API xử lý GitHub - Tạo repository
 const GITHUB_API = 'https://api.github.com';
 
 async function getGitHubUser(token) {
   try {
     const response = await fetch(`${GITHUB_API}/user`, {
-      headers: {
-        'Authorization': `Bearer ${token}`,
-        'Accept': 'application/vnd.github.v3+json'
-      }
+      headers: { 'Authorization': `Bearer ${token}`, 'Accept': 'application/vnd.github.v3+json' }
     });
     if (!response.ok) return null;
     return await response.json();
-  } catch (error) {
-    console.error('Get user error:', error);
-    return null;
-  }
+  } catch { return null; }
 }
 
 export async function validateGitHubToken(token) {
   try {
     const user = await getGitHubUser(token);
-    if (!user) {
-      return { valid: false, error: 'Token không hợp lệ hoặc đã hết hạn' };
-    }
-    console.log(`✅ Token valid for user: ${user.login}`);
+    if (!user) return { valid: false, error: 'Token không hợp lệ hoặc đã hết hạn' };
     return { valid: true, user: user };
   } catch (error) {
     return { valid: false, error: error.message };
@@ -34,8 +24,6 @@ export async function createRepository(token, repoName, description) {
   try {
     const user = await getGitHubUser(token);
     if (!user) throw new Error('Không thể xác thực user');
-    
-    console.log(`📁 Creating repository: ${repoName}`);
     
     const response = await fetch(`${GITHUB_API}/user/repos`, {
       method: 'POST',
@@ -61,14 +49,9 @@ export async function createRepository(token, repoName, description) {
     }
     
     const repo = await response.json();
-    console.log(`✅ Repository created: ${repo.full_name}`);
-    
-    // Đợi repository được khởi tạo hoàn tất
-    await new Promise(resolve => setTimeout(resolve, 3000));
-    
+    await new Promise(r => setTimeout(r, 3000));
     return { success: true, repo: repo, owner: user.login };
   } catch (error) {
-    console.error('Create repo error:', error);
     return { success: false, error: error.message };
   }
 }
@@ -80,15 +63,7 @@ export async function deleteRepository(token, owner, repo) {
       headers: { 'Authorization': `Bearer ${token}` }
     });
     return response.ok;
-  } catch (error) {
-    console.error('Delete repo error:', error);
-    return false;
-  }
+  } catch { return false; }
 }
 
-export default {
-  validateGitHubToken,
-  createRepository,
-  deleteRepository,
-  getGitHubUser
-};
+export default { validateGitHubToken, createRepository, deleteRepository, getGitHubUser };
