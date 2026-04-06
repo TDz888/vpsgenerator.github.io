@@ -7,7 +7,7 @@ Tạo VPS Windows miễn phí từ GitHub Actions với Tailscale + noVNC
 - 🖥️ **Windows 11** - Giao diện đầy đủ
 - 🔗 **Tailscale** - Kết nối an toàn, riêng tư
 - 🌐 **noVNC** - Truy cập qua trình duyệt
-- ⏱️ **6 tiếng** - Tự động restart
+- ⏱️ **6 tiếng** - Tự động reset
 
 ## 📋 Yêu cầu
 
@@ -21,3 +21,7 @@ Tạo VPS Windows miễn phí từ GitHub Actions với Tailscale + noVNC
 ## 📝 License
 
 MIT
+
+---
+
+**Singularity Cloud** - Next-Gen Orchestration
