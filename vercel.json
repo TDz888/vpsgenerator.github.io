@@ -1,11 +1,10 @@
 {
   "version": 2,
-  "name": "vps-generator-pro",
+  "name": "vps-generator",
   "functions": {
     "api/*.js": {
       "maxDuration": 60,
-      "memory": 1024,
-      "runtime": "nodejs20.x"
+      "memory": 1024
     }
   },
   "routes": [
@@ -20,47 +19,21 @@
       "dest": "/api/health.js"
     },
     {
-      "src": "/api/(.*)",
-      "dest": "/api/$1.js"
-    },
-    {
-      "src": "/(.*)\\.(css|js|png|jpg|jpeg|gif|svg|ico|webp)",
-      "dest": "/public/$1.$2"
-    },
-    {
       "src": "/(.*)",
-      "dest": "/index.html"
+      "dest": "/public/index.html"
     }
   ],
   "headers": [
     {
       "source": "/api/(.*)",
       "headers": [
-        { "key": "Access-Control-Allow-Credentials", "value": "true" },
         { "key": "Access-Control-Allow-Origin", "value": "*" },
-        { "key": "Access-Control-Allow-Methods", "value": "GET,OPTIONS,PATCH,DELETE,POST,PUT" },
-        { "key": "Access-Control-Allow-Headers", "value": "X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version, Authorization" }
-      ]
-    },
-    {
-      "source": "/(.*)",
-      "headers": [
-        { "key": "X-Content-Type-Options", "value": "nosniff" },
-        { "key": "X-Frame-Options", "value": "DENY" },
-        { "key": "X-XSS-Protection", "value": "1; mode=block" }
+        { "key": "Access-Control-Allow-Methods", "value": "GET, POST, DELETE, OPTIONS" },
+        { "key": "Access-Control-Allow-Headers", "value": "Content-Type" }
       ]
     }
   ],
   "env": {
-    "GITHUB_API_VERSION": "2022-11-28",
-    "VM_EXPIRY_HOURS": "6",
-    "VM_DEFAULT_CPU": "4",
-    "VM_DEFAULT_RAM": "16",
-    "VM_DEFAULT_STORAGE": "14"
-  },
-  "buildCommand": "echo 'No build required'",
-  "devCommand": "npx serve .",
-  "outputDirectory": ".",
-  "cleanUrls": true,
-  "trailingSlash": false
+    "VM_EXPIRY_HOURS": "6"
+  }
 }
