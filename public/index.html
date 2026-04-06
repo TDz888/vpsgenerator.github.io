@@ -13,7 +13,7 @@
 
     body {
       min-height: 100vh;
-      font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, BlinkMacSystemFont, 'Poppins', sans-serif;
+      font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, 'Poppins', sans-serif;
       transition: all 0.4s cubic-bezier(0.2, 0.9, 0.4, 1.1);
       overflow-x: hidden;
     }
@@ -39,7 +39,6 @@
       background: radial-gradient(ellipse at 30% 40%, #0a0a1a 0%, #000000 100%);
     }
 
-    /* Singularity Core */
     body.dark .singularity-core {
       position: absolute;
       top: 50%;
@@ -54,7 +53,6 @@
       animation: corePulse 6s infinite alternate;
     }
 
-    /* Accretion Whirlpool */
     body.dark .accretion-whirl {
       position: absolute;
       top: 50%;
@@ -69,7 +67,6 @@
       animation: whirlSpin 25s linear infinite;
     }
 
-    /* Gravitational Waves */
     body.dark .grav-wave {
       position: absolute;
       top: 50%;
@@ -82,21 +79,13 @@
       animation: waveExpand 4s ease-out infinite;
     }
 
-    body.dark .grav-wave:nth-child(2) { animation-delay: 1s; width: 120vmin; height: 120vmin; }
-    body.dark .grav-wave:nth-child(3) { animation-delay: 2s; width: 140vmin; height: 140vmin; }
-
-    /* Star Particles */
     body.dark .star-particles {
       position: absolute;
       width: 100%;
       height: 100%;
-      background-image: 
-        radial-gradient(1px 1px at 15% 25%, #fff, transparent),
-        radial-gradient(2px 2px at 78% 42%, #ffcc88, transparent),
-        radial-gradient(1px 1px at 45% 80%, #fff, transparent),
-        radial-gradient(2px 2px at 92% 13%, #ffaa66, transparent),
-        radial-gradient(1.5px 1.5px at 33% 67%, #ffffff, transparent),
-        radial-gradient(1px 1px at 68% 91%, #ff8866, transparent);
+      background-image: radial-gradient(1px 1px at 15% 25%, #fff, transparent),
+                        radial-gradient(2px 2px at 78% 42%, #ffcc88, transparent),
+                        radial-gradient(1px 1px at 45% 80%, #fff, transparent);
       background-repeat: no-repeat;
       background-size: 450px 450px;
       opacity: 0.9;
@@ -119,13 +108,11 @@
       display: none;
     }
 
-    /* Heaven Clouds */
     body.light .heaven-clouds {
       position: absolute;
       width: 100%;
       height: 100%;
-      background: radial-gradient(ellipse at 80% 20%, rgba(255, 255, 245, 0.5) 0%, transparent 60%),
-                  radial-gradient(ellipse at 20% 70%, rgba(230, 240, 255, 0.4) 0%, transparent 70%);
+      background: radial-gradient(ellipse at 80% 20%, rgba(255, 255, 245, 0.5) 0%, transparent 60%);
       pointer-events: none;
     }
 
@@ -140,13 +127,6 @@
       opacity: 0.1 !important;
     }
 
-    body.performance .card,
-    body.performance .vm-card,
-    body.performance .tech-card {
-      backdrop-filter: blur(8px) !important;
-    }
-
-    /* Animations */
     @keyframes corePulse {
       0% { opacity: 0.35; transform: translate(-50%, -50%) scale(0.9); filter: blur(65px);}
       100% { opacity: 0.65; transform: translate(-50%, -50%) scale(1.1); filter: blur(85px);}
@@ -154,13 +134,12 @@
 
     @keyframes whirlSpin {
       0% { transform: translate(-50%, -50%) rotate(0deg); opacity: 0.15;}
-      50% { opacity: 0.3;}
       100% { transform: translate(-50%, -50%) rotate(360deg); opacity: 0.15;}
     }
 
     @keyframes waveExpand {
-      0% { opacity: 0.6; transform: translate(-50%, -50%) scale(0.8); border-width: 3px;}
-      100% { opacity: 0; transform: translate(-50%, -50%) scale(1.5); border-width: 1px;}
+      0% { opacity: 0.6; transform: translate(-50%, -50%) scale(0.8);}
+      100% { opacity: 0; transform: translate(-50%, -50%) scale(1.5);}
     }
 
     @keyframes starDrift {
@@ -208,7 +187,6 @@
       -webkit-background-clip: text;
       background-clip: text;
       color: transparent;
-      text-shadow: 0 0 40px rgba(255, 68, 0, 0.3);
     }
 
     body.light .glow-text {
@@ -223,15 +201,17 @@
       font-weight: 800;
       letter-spacing: -0.02em;
       transition: all 0.3s ease;
+      text-align: center;
     }
 
     .sub {
       font-size: 0.95rem;
       letter-spacing: 3px;
       margin-top: 0.5rem;
+      text-align: center;
     }
 
-    body.dark .sub { color: #ffaa88; text-shadow: 0 0 10px rgba(255,68,0,0.3);}
+    body.dark .sub { color: #ffaa88; }
     body.light .sub { color: #4a627a; }
 
     /* Input Fields */
@@ -277,7 +257,7 @@
     }
 
     /* Buttons */
-    .btn-primary {
+    .btn-primary, .btn-danger {
       width: 100%;
       padding: 1rem;
       border: none;
@@ -299,7 +279,17 @@
       color: white;
     }
 
-    .btn-primary:hover {
+    body.dark .btn-danger {
+      background: linear-gradient(95deg, #ff0000, #990033);
+      color: white;
+    }
+
+    body.light .btn-danger {
+      background: linear-gradient(95deg, #dc2626, #991b1b);
+      color: white;
+    }
+
+    .btn-primary:hover, .btn-danger:hover {
       transform: translateY(-3px);
       filter: brightness(1.05);
     }
@@ -307,7 +297,7 @@
     /* VM Grid */
     .vm-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
       gap: 1.5rem;
       margin-top: 1.5rem;
     }
@@ -316,6 +306,7 @@
       padding: 1.5rem;
       cursor: pointer;
       transition: all 0.25s;
+      position: relative;
     }
 
     body.dark .vm-card {
@@ -340,10 +331,48 @@
     .vm-name {
       font-size: 1.25rem;
       font-weight: bold;
+      margin-bottom: 0.5rem;
     }
 
     body.dark .vm-name { color: #ffaa77; }
     body.light .vm-name { color: #2c5282; }
+
+    .vm-info {
+      font-size: 0.8rem;
+      margin: 0.3rem 0;
+      opacity: 0.8;
+    }
+
+    .vm-status {
+      display: inline-block;
+      padding: 0.2rem 0.6rem;
+      border-radius: 20px;
+      font-size: 0.7rem;
+      font-weight: bold;
+    }
+
+    .status-running { background: #22c55e; color: white; }
+    .status-creating { background: #eab308; color: black; }
+    .status-expired { background: #6b7280; color: white; }
+
+    .delete-vm-btn {
+      position: absolute;
+      bottom: 1rem;
+      right: 1rem;
+      background: rgba(220, 38, 38, 0.8);
+      border: none;
+      border-radius: 20px;
+      padding: 0.3rem 0.8rem;
+      color: white;
+      font-size: 0.7rem;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .delete-vm-btn:hover {
+      background: #dc2626;
+      transform: scale(1.05);
+    }
 
     /* Tech Section */
     .tech-section {
@@ -589,6 +618,14 @@
     body.dark .result-box { background: #0b0e1c; }
     body.light .result-box { background: #f1f5ff; border-left-color: #2c5282; }
 
+    .result-box a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    body.dark .result-box a { color: #ffaa77; }
+    body.light .result-box a { color: #2c5282; }
+
     code {
       font-family: monospace;
       padding: 0.2rem 0.6rem;
@@ -650,12 +687,18 @@
 
     .hidden { display: none; }
 
+    .loading {
+      opacity: 0.7;
+      pointer-events: none;
+    }
+
     @media (max-width: 768px) {
       .glow-text { font-size: 2.2rem; }
       .settings-panel { width: 280px; left: 10px; top: 75px; }
       .settings-btn, .lang-switch { padding: 0.4rem 0.8rem; font-size: 1rem; }
       .card { padding: 1.2rem; }
       .toggle-btn { padding: 0.5rem 1.2rem; font-size: 0.9rem; }
+      .vm-grid { grid-template-columns: 1fr; }
     }
   </style>
 </head>
@@ -664,8 +707,6 @@
     <div class="star-particles"></div>
     <div class="singularity-core"></div>
     <div class="accretion-whirl"></div>
-    <div class="grav-wave"></div>
-    <div class="grav-wave"></div>
     <div class="grav-wave"></div>
     <div class="heaven-clouds"></div>
   </div>
@@ -705,7 +746,7 @@
   </div>
 
   <div class="container">
-    <div class="header" style="text-align: center; margin-bottom: 1.5rem;">
+    <div class="header" style="margin-bottom: 1.5rem;">
       <div class="glow-text" id="mainTitle">🌀 BLACK HOLE VM</div>
       <div class="sub">Singularity Core • 120Hz Neural Fabric</div>
     </div>
@@ -756,171 +797,362 @@
   </div>
 
   <script>
+    // ==================== CONFIGURATION ====================
+    const API_URL = '/api/vpsuser';
+    
+    // ==================== STATE ====================
     let currentDesign = 'dark';
     let currentGraphics = 'quality';
-    let vms = JSON.parse(localStorage.getItem('nova_vms') || '[]');
-
+    let currentLang = 'vi';
+    let vms = [];
+    
+    // ==================== TRANSLATIONS ====================
+    const translations = {
+      vi: {
+        mainTitle: "🌀 BLACK HOLE VM",
+        subText: "Singularity Core • 120Hz Neural Fabric",
+        createVM: "✨ Tạo VM",
+        manageVM: "🖥️ Quản lý VM",
+        authTitle: "🔐 Xác thực quyền truy cập",
+        githubTokenLabel: "🌌 GitHub Token",
+        tailscaleLabel: "🌀 Tailscale Auth Key",
+        createBtn: "🚀 Khởi tạo Singularity",
+        manageTitle: "🕳️ Singularities",
+        noVM: "🌀 Chưa có Singularity nào. Hãy tạo VM đầu tiên",
+        closeBtn: "Đóng",
+        modalConnection: "🔗 Tailscale Connection",
+        modalIP: "📡 IP",
+        modalUser: "👤 User",
+        modalPass: "🔐 Pass",
+        modalNovnc: "🌐 noVNC (Browser)",
+        modalPassword: "🔐 Password",
+        modalTime: "📅 Thông tin thời gian",
+        modalCreated: "🕳️ Created",
+        modalExpires: "⏱️ Expires",
+        modalRepo: "📦 Repository",
+        modalConfig: "⚡ Cấu hình VM",
+        modalCPU: "🖥️ CPU: 2-4 cores (Intel Xeon Platinum)",
+        modalRAM: "🧠 RAM: 7-16 GB DDR4 ECC",
+        modalStorage: "💾 Storage: 14 GB SSD NVMe",
+        modalNetwork: "📶 Network: 1 Gbps (~800 Mbps)",
+        modalVPN: "🔗 Tailscale VPN: 500+ Mbps",
+        deleteConfirm: "Bạn có chắc chắn muốn xóa VM này?",
+        deleteSuccess: "✅ VM đã được xóa thành công",
+        deleteError: "❌ Lỗi khi xóa VM",
+        creating: "🌀 Đang khởi tạo...",
+        createSuccess: "✅ VM đã được khởi tạo thành công!",
+        createError: "❌ Lỗi khi tạo VM"
+      },
+      en: {
+        mainTitle: "🌀 BLACK HOLE VM",
+        subText: "Singularity Core • 120Hz Neural Fabric",
+        createVM: "✨ Create VM",
+        manageVM: "🖥️ Manage VM",
+        authTitle: "🔐 Authentication",
+        githubTokenLabel: "🌌 GitHub Token",
+        tailscaleLabel: "🌀 Tailscale Auth Key",
+        createBtn: "🚀 Create Singularity",
+        manageTitle: "🕳️ Singularities",
+        noVM: "🌀 No Singularity yet. Create your first VM",
+        closeBtn: "Close",
+        modalConnection: "🔗 Tailscale Connection",
+        modalIP: "📡 IP",
+        modalUser: "👤 User",
+        modalPass: "🔐 Pass",
+        modalNovnc: "🌐 noVNC (Browser)",
+        modalPassword: "🔐 Password",
+        modalTime: "📅 Time Information",
+        modalCreated: "🕳️ Created",
+        modalExpires: "⏱️ Expires",
+        modalRepo: "📦 Repository",
+        modalConfig: "⚡ VM Configuration",
+        modalCPU: "🖥️ CPU: 2-4 cores (Intel Xeon Platinum)",
+        modalRAM: "🧠 RAM: 7-16 GB DDR4 ECC",
+        modalStorage: "💾 Storage: 14 GB SSD NVMe",
+        modalNetwork: "📶 Network: 1 Gbps (~800 Mbps)",
+        modalVPN: "🔗 Tailscale VPN: 500+ Mbps",
+        deleteConfirm: "Are you sure you want to delete this VM?",
+        deleteSuccess: "✅ VM has been deleted successfully",
+        deleteError: "❌ Error deleting VM",
+        creating: "🌀 Creating...",
+        createSuccess: "✅ VM created successfully!",
+        createError: "❌ Error creating VM"
+      }
+    };
+    
+    // ==================== UTILITIES ====================
+    function updateLanguage() {
+      const t = translations[currentLang];
+      document.querySelectorAll('[data-i18n]').forEach(el => {
+        const key = el.getAttribute('data-i18n');
+        if (t[key]) el.innerHTML = t[key];
+      });
+      document.getElementById('mainTitle').innerHTML = t.mainTitle;
+      document.querySelector('.sub').innerHTML = t.subText;
+      document.getElementById('createBtn').innerHTML = t.createBtn;
+    }
+    
     function applySettings() {
       document.body.classList.remove('dark', 'light', 'performance', 'quality');
       document.body.classList.add(currentDesign, currentGraphics);
       localStorage.setItem('nova_design', currentDesign);
       localStorage.setItem('nova_graphics', currentGraphics);
+      localStorage.setItem('nova_lang', currentLang);
       
       const titleEl = document.getElementById('mainTitle');
-      titleEl.innerHTML = currentDesign === 'dark' ? '🌀 BLACK HOLE VM' : '☁️ HEAVEN VM';
-    }
-
-    const savedDesign = localStorage.getItem('nova_design');
-    const savedGraphics = localStorage.getItem('nova_graphics');
-    if (savedDesign) currentDesign = savedDesign;
-    if (savedGraphics) currentGraphics = savedGraphics;
-    applySettings();
-
-    document.querySelectorAll('[data-design]').forEach(opt => {
-      if (opt.dataset.design === currentDesign) opt.classList.add('active');
-      opt.onclick = () => {
-        currentDesign = opt.dataset.design;
-        applySettings();
-        document.querySelectorAll('[data-design]').forEach(o => o.classList.remove('active'));
-        opt.classList.add('active');
-      };
-    });
-
-    document.querySelectorAll('[data-graphics]').forEach(opt => {
-      if (opt.dataset.graphics === currentGraphics) opt.classList.add('active');
-      opt.onclick = () => {
-        currentGraphics = opt.dataset.graphics;
-        applySettings();
-        document.querySelectorAll('[data-graphics]').forEach(o => o.classList.remove('active'));
-        opt.classList.add('active');
-      };
-    });
-
-    const settingsBtn = document.getElementById('settingsBtn');
-    const settingsPanel = document.getElementById('settingsPanel');
-    settingsBtn.onclick = () => settingsPanel.classList.toggle('open');
-    document.addEventListener('click', (e) => {
-      if (!settingsPanel.contains(e.target) && !settingsBtn.contains(e.target)) {
-        settingsPanel.classList.remove('open');
+      if (currentDesign === 'dark') {
+        titleEl.innerHTML = translations[currentLang].mainTitle;
+      } else {
+        titleEl.innerHTML = '☁️ HEAVEN VM';
       }
-    });
-
-    const createPanel = document.getElementById('createPanel');
-    const managePanel = document.getElementById('managePanel');
-    const createBtn = document.getElementById('createBtn');
-    const githubTokenInput = document.getElementById('githubToken');
-    const tailscaleKeyInput = document.getElementById('tailscaleKey');
-    const createResultDiv = document.getElementById('createResult');
-    const vmListDiv = document.getElementById('vmList');
-    const modal = document.getElementById('vmModal');
-    const modalTitle = document.getElementById('modalTitle');
-    const modalBody = document.getElementById('modalBody');
-
-    function saveVMs() { localStorage.setItem('nova_vms', JSON.stringify(vms)); }
-
+    }
+    
+    // ==================== VM MANAGEMENT ====================
+    async function loadVMs() {
+      try {
+        const response = await fetch(API_URL);
+        const data = await response.json();
+        if (data.success) {
+          vms = data.vms || [];
+          renderVMList();
+        }
+      } catch (error) {
+        console.error('Failed to load VMs:', error);
+      }
+    }
+    
+    async function deleteVM(vmId, event) {
+      event.stopPropagation();
+      if (!confirm(translations[currentLang].deleteConfirm)) return;
+      
+      try {
+        const response = await fetch(`${API_URL}?id=${vmId}`, { method: 'DELETE' });
+        const data = await response.json();
+        if (data.success) {
+          vms = vms.filter(vm => vm.id !== vmId);
+          renderVMList();
+          showToast(translations[currentLang].deleteSuccess, 'success');
+        } else {
+          showToast(translations[currentLang].deleteError, 'error');
+        }
+      } catch (error) {
+        showToast(translations[currentLang].deleteError, 'error');
+      }
+    }
+    
     function renderVMList() {
+      const container = document.getElementById('vmList');
+      const t = translations[currentLang];
+      
       if (vms.length === 0) {
-        vmListDiv.innerHTML = '<div style="text-align:center;">🌀 Chưa có Singularity nào. Hãy tạo VM đầu tiên</div>';
+        container.innerHTML = `<div style="text-align:center;">${t.noVM}</div>`;
         return;
       }
-      vmListDiv.innerHTML = vms.map(vm => `
+      
+      container.innerHTML = vms.map(vm => `
         <div class="vm-card" data-id="${vm.id}">
           <div class="vm-name">🕳️ ${vm.name}</div>
-          <div class="vm-expiry">⏱️ Expires: ${new Date(vm.expiresAt).toLocaleString()}</div>
-          <div class="vm-expiry">📅 Created: ${new Date(vm.createdAt).toLocaleString()}</div>
+          <div class="vm-info">📅 ${t.modalCreated}: ${new Date(vm.createdAt).toLocaleString()}</div>
+          <div class="vm-info">⏱️ ${t.modalExpires}: ${new Date(vm.expiresAt).toLocaleString()}</div>
+          <div class="vm-info">
+            <span class="vm-status status-${vm.status}">${vm.status}</span>
+          </div>
+          <button class="delete-vm-btn" onclick="deleteVM('${vm.id}', event)">🗑️ Xóa</button>
         </div>
       `).join('');
       
       document.querySelectorAll('.vm-card').forEach(card => {
-        card.onclick = () => {
+        card.addEventListener('click', (e) => {
+          if (e.target.classList.contains('delete-vm-btn')) return;
           const vm = vms.find(v => v.id === card.dataset.id);
           if (vm) showVMDetails(vm);
-        };
+        });
       });
     }
-
+    
     function showVMDetails(vm) {
-      modalTitle.innerText = `🕳️ ${vm.name}`;
+      const t = translations[currentLang];
+      const modalTitle = document.getElementById('modalTitle');
+      const modalBody = document.getElementById('modalBody');
+      
+      modalTitle.innerHTML = `🕳️ ${vm.name}`;
       modalBody.innerHTML = `
-        <div class="result-box"><strong>🔗 Tailscale:</strong><br>📡 IP: <code>Xem trong GitHub Actions logs</code><br>👤 User: <code>${vm.username}</code><br>🔐 Pass: <code>${vm.password}</code></div>
-        <div class="result-box"><strong>🌐 noVNC:</strong><br><a href="${vm.novncUrl}" target="_blank">${vm.novncUrl}</a><br>🔐 Password: <code>${vm.password}</code></div>
-        <div class="result-box"><strong>📅 Thời gian:</strong><br>🕳️ Created: ${new Date(vm.createdAt).toLocaleString()}<br>⏱️ Expires: ${new Date(vm.expiresAt).toLocaleString()}<br>📦 Repo: <a href="${vm.repoUrl}" target="_blank">GitHub →</a></div>
-        <div class="result-box"><strong>⚡ Cấu hình:</strong><br>🖥️ CPU: 2-4 cores<br>🧠 RAM: 7-16 GB<br>💾 Storage: 14 GB NVMe<br>📶 Network: 1 Gbps<br>🔗 Tailscale VPN: 500+ Mbps</div>
+        <div class="result-box">
+          <strong>${t.modalConnection}</strong><br>
+          ${t.modalIP}: <code>${vm.tailscaleIP || 'Đang khởi tạo...'}</code><br>
+          ${t.modalUser}: <code>${vm.username}</code><br>
+          ${t.modalPass}: <code>${vm.password}</code>
+        </div>
+        <div class="result-box">
+          <strong>${t.modalNovnc}</strong><br>
+          <a href="${vm.novncUrl}" target="_blank">${vm.novncUrl}</a><br>
+          ${t.modalPassword}: <code>${vm.password}</code>
+        </div>
+        <div class="result-box">
+          <strong>${t.modalTime}</strong><br>
+          ${t.modalCreated}: ${new Date(vm.createdAt).toLocaleString()}<br>
+          ${t.modalExpires}: ${new Date(vm.expiresAt).toLocaleString()}<br>
+          ${t.modalRepo}: <a href="${vm.repoUrl}" target="_blank">GitHub →</a>
+        </div>
+        <div class="result-box">
+          <strong>${t.modalConfig}</strong><br>
+          ${t.modalCPU}<br>
+          ${t.modalRAM}<br>
+          ${t.modalStorage}<br>
+          ${t.modalNetwork}<br>
+          ${t.modalVPN}
+        </div>
       `;
-      modal.style.display = 'flex';
+      document.getElementById('vmModal').style.display = 'flex';
     }
-
-    createBtn.onclick = async () => {
-      const githubToken = githubTokenInput.value.trim();
-      const tailscaleKey = tailscaleKeyInput.value.trim();
+    
+    async function createVM() {
+      const githubToken = document.getElementById('githubToken').value.trim();
+      const tailscaleKey = document.getElementById('tailscaleKey').value.trim();
+      const t = translations[currentLang];
       
       if (!githubToken || !tailscaleKey) {
-        createResultDiv.innerHTML = '<div style="color:#ff8888;">❌ Vui lòng nhập đầy đủ token và key</div>';
+        showToast('❌ Vui lòng nhập đầy đủ token và key', 'error');
         return;
       }
       
+      const createBtn = document.getElementById('createBtn');
+      const originalText = createBtn.innerHTML;
       createBtn.disabled = true;
-      createBtn.innerHTML = '🌀 Đang khởi tạo...';
+      createBtn.innerHTML = t.creating;
+      createBtn.classList.add('loading');
       
       try {
-        const res = await fetch('/api/vpsuser', {
+        const response = await fetch(API_URL, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ githubToken, tailscaleKey })
         });
-        const data = await res.json();
+        const data = await response.json();
         
         if (data.success) {
-          const newVM = {
-            id: data.id,
-            name: data.name,
-            repoUrl: data.repoUrl,
-            actionsUrl: data.actionsUrl,
-            novncUrl: data.novncUrl,
-            username: data.username,
-            password: data.password,
-            createdAt: data.createdAt,
-            expiresAt: data.expiresAt,
-            status: data.status
-          };
-          vms.unshift(newVM);
-          saveVMs();
+          vms.unshift(data);
           renderVMList();
-          createResultDiv.innerHTML = '<div style="color:#4cff8e;">✅ VM đã được khởi tạo thành công!</div>';
-          githubTokenInput.value = '';
-          tailscaleKeyInput.value = '';
+          showToast(t.createSuccess, 'success');
+          document.getElementById('githubToken').value = '';
+          document.getElementById('tailscaleKey').value = '';
           document.querySelector('[data-mode="manage"]').click();
         } else {
-          createResultDiv.innerHTML = `<div style="color:#ff8888;">❌ Lỗi: ${data.error || 'Không thể tạo VM'}</div>`;
+          showToast(`${t.createError}: ${data.error}`, 'error');
         }
-      } catch (err) {
-        createResultDiv.innerHTML = `<div style="color:#ff8888;">❌ Lỗi kết nối: ${err.message}</div>`;
+      } catch (error) {
+        showToast(`${t.createError}: ${error.message}`, 'error');
       } finally {
         createBtn.disabled = false;
-        createBtn.innerHTML = '🚀 Khởi tạo Singularity';
+        createBtn.innerHTML = originalText;
+        createBtn.classList.remove('loading');
       }
-    };
-
-    document.querySelectorAll('.toggle-btn').forEach(btn => {
-      btn.onclick = () => {
-        document.querySelectorAll('.toggle-btn').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        const mode = btn.dataset.mode;
-        if (mode === 'create') {
-          createPanel.classList.remove('hidden');
-          managePanel.classList.add('hidden');
-        } else {
-          createPanel.classList.add('hidden');
-          managePanel.classList.remove('hidden');
-          renderVMList();
+    }
+    
+    function showToast(message, type) {
+      const resultDiv = document.getElementById('createResult');
+      const color = type === 'success' ? '#4cff8e' : '#ff8888';
+      resultDiv.innerHTML = `<div style="color:${color};">${message}</div>`;
+      setTimeout(() => {
+        if (resultDiv.innerHTML === `<div style="color:${color};">${message}</div>`) {
+          resultDiv.innerHTML = '';
         }
-      };
-    });
-
-    document.getElementById('closeModal').onclick = () => modal.style.display = 'none';
-    window.onclick = (e) => { if (e.target === modal) modal.style.display = 'none'; };
-
-    renderVMList();
+      }, 5000);
+    }
+    
+    // ==================== INITIALIZATION ====================
+    function init() {
+      // Load saved settings
+      const savedDesign = localStorage.getItem('nova_design');
+      const savedGraphics = localStorage.getItem('nova_graphics');
+      const savedLang = localStorage.getItem('nova_lang');
+      if (savedDesign) currentDesign = savedDesign;
+      if (savedGraphics) currentGraphics = savedGraphics;
+      if (savedLang) currentLang = savedLang;
+      
+      applySettings();
+      updateLanguage();
+      loadVMs();
+      
+      // Event listeners
+      document.getElementById('createBtn').addEventListener('click', createVM);
+      document.getElementById('closeModal').addEventListener('click', () => {
+        document.getElementById('vmModal').style.display = 'none';
+      });
+      window.addEventListener('click', (e) => {
+        if (e.target === document.getElementById('vmModal')) {
+          document.getElementById('vmModal').style.display = 'none';
+        }
+      });
+      
+      // Settings panel
+      const settingsBtn = document.getElementById('settingsBtn');
+      const settingsPanel = document.getElementById('settingsPanel');
+      settingsBtn.addEventListener('click', () => settingsPanel.classList.toggle('open'));
+      document.addEventListener('click', (e) => {
+        if (!settingsPanel.contains(e.target) && !settingsBtn.contains(e.target)) {
+          settingsPanel.classList.remove('open');
+        }
+      });
+      
+      // Design switcher
+      document.querySelectorAll('[data-design]').forEach(opt => {
+        if (opt.dataset.design === currentDesign) opt.classList.add('active');
+        opt.addEventListener('click', () => {
+          currentDesign = opt.dataset.design;
+          applySettings();
+          document.querySelectorAll('[data-design]').forEach(o => o.classList.remove('active'));
+          opt.classList.add('active');
+        });
+      });
+      
+      // Graphics switcher
+      document.querySelectorAll('[data-graphics]').forEach(opt => {
+        if (opt.dataset.graphics === currentGraphics) opt.classList.add('active');
+        opt.addEventListener('click', () => {
+          currentGraphics = opt.dataset.graphics;
+          applySettings();
+          document.querySelectorAll('[data-graphics]').forEach(o => o.classList.remove('active'));
+          opt.classList.add('active');
+        });
+      });
+      
+      // Language switcher
+      document.querySelectorAll('.lang-btn').forEach(btn => {
+        if (btn.dataset.lang === currentLang) btn.classList.add('active');
+        btn.addEventListener('click', () => {
+          document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          currentLang = btn.dataset.lang;
+          updateLanguage();
+          applySettings();
+          localStorage.setItem('nova_lang', currentLang);
+        });
+      });
+      
+      // Tab switching
+      document.querySelectorAll('.toggle-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          document.querySelectorAll('.toggle-btn').forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          const mode = btn.dataset.mode;
+          if (mode === 'create') {
+            document.getElementById('createPanel').classList.remove('hidden');
+            document.getElementById('managePanel').classList.add('hidden');
+          } else {
+            document.getElementById('createPanel').classList.add('hidden');
+            document.getElementById('managePanel').classList.remove('hidden');
+            renderVMList();
+          }
+        });
+      });
+    }
+    
+    // Make deleteVM available globally for inline onclick
+    window.deleteVM = deleteVM;
+    
+    // Start app
+    init();
   </script>
 </body>
 </html>
