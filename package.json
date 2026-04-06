@@ -1,14 +1,14 @@
 {
-  "name": "vps-generator",
-  "version": "2.0.0",
-  "description": "Tạo VPS Windows miễn phí từ GitHub Actions với Tailscale + noVNC",
+  "name": "singularity-cloud",
+  "version": "3.0.0",
+  "description": "Tự động tạo VM Windows qua GitHub Actions + Tailscale",
   "main": "public/index.html",
   "scripts": {
     "dev": "npx serve .",
     "start": "npx serve ."
   },
-  "keywords": ["vps", "github-actions", "tailscale", "novnc", "windows", "free-vps"],
-  "author": "TDz888",
+  "keywords": ["vps", "github-actions", "tailscale", "windows", "automation"],
+  "author": "SuperDzAn",
   "license": "MIT",
   "devDependencies": {
     "serve": "^14.2.0"
