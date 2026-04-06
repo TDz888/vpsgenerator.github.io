@@ -4,10 +4,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
   <meta name="description" content="Tạo VPS Windows miễn phí từ GitHub Actions với Tailscale + noVNC">
-  <meta name="author" content="Singularity Cloud">
   <title>Singularity Nexus | Black Hole Cloud VPS</title>
   <link rel="icon" type="image/x-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌀</text></svg>">
-  
   <style>
     * {
       margin: 0;
@@ -33,6 +31,7 @@
       pointer-events: none;
     }
 
+    /* DARK MODE - BLACK HOLE */
     body.dark {
       background: #000000;
     }
@@ -81,6 +80,7 @@
       animation: waveExpand 4s ease-out infinite;
     }
 
+    /* LIGHT MODE - HEAVEN */
     body.light {
       background: linear-gradient(145deg, #f0f4ff 0%, #e0e8ff 100%);
     }
@@ -121,8 +121,6 @@
 
     /* Glassmorphic Cards */
     .card {
-      background: rgba(5, 7, 20, 0.75);
-      backdrop-filter: blur(20px);
       border-radius: 36px;
       padding: 2rem;
       margin-bottom: 2rem;
@@ -130,17 +128,20 @@
     }
 
     body.dark .card {
+      background: rgba(5, 7, 20, 0.75);
+      backdrop-filter: blur(20px);
       border: 1px solid rgba(255, 80, 40, 0.45);
       box-shadow: 0 25px 45px -12px rgba(0, 0, 0, 0.6);
     }
 
     body.light .card {
       background: rgba(255, 255, 255, 0.7);
+      backdrop-filter: blur(20px);
       border: 1px solid rgba(100, 120, 200, 0.3);
       box-shadow: 0 15px 35px -10px rgba(0, 0, 0, 0.08);
     }
 
-    /* Typography */
+    /* Typography - FIXED for Black Hole */
     .glow-text {
       font-size: 3.8rem;
       font-weight: 800;
@@ -166,23 +167,27 @@
       text-align: center;
     }
 
-    body.dark .sub { color: #ffaa88; }
+    body.dark .sub { color: #ffaa88 !important; }
     body.light .sub { color: #4a627a; }
 
-    /* Input Fields */
-    .input-group {
-      margin-bottom: 1.5rem;
+    /* Headings */
+    body.dark h1, body.dark h2, body.dark h3, body.dark h4 {
+      color: #ffffff !important;
+    }
+    body.light h1, body.light h2, body.light h3, body.light h4 {
+      color: #1e3a5f !important;
     }
 
+    /* Labels */
     .input-group label {
       display: block;
       margin-bottom: 0.5rem;
       font-weight: 600;
     }
-
-    body.dark .input-group label { color: #ffaa77; }
+    body.dark .input-group label { color: #ffaa77 !important; }
     body.light .input-group label { color: #2c5282; }
 
+    /* Input Fields */
     .input-group input {
       width: 100%;
       padding: 1rem 1.2rem;
@@ -192,19 +197,20 @@
       border: 1px solid transparent;
       transition: 0.2s;
     }
-
     body.dark .input-group input {
       background: #0a0c18;
       border-color: #ff6633aa;
-      color: #f0f3ff;
+      color: #f0f3ff !important;
     }
-
+    body.dark .input-group input::placeholder {
+      color: #64748b !important;
+    }
     body.dark .input-group input:focus {
       border-color: #ff884d;
       box-shadow: 0 0 0 3px rgba(255, 102, 0, 0.25);
       outline: none;
+      color: #ffffff !important;
     }
-
     body.light .input-group input {
       background: white;
       border-color: #c5d0f0;
@@ -222,33 +228,27 @@
       cursor: pointer;
       transition: all 0.25s;
     }
-
     body.dark .btn-primary {
       background: linear-gradient(95deg, #ff4d00, #ff0099);
       color: white;
       box-shadow: 0 4px 20px rgba(255, 68, 0, 0.35);
     }
-
     body.light .btn-primary {
       background: linear-gradient(95deg, #2b4c8a, #5a6eaa);
       color: white;
     }
-
     body.dark .btn-danger {
       background: linear-gradient(95deg, #ff0000, #990033);
       color: white;
     }
-
     body.light .btn-danger {
       background: linear-gradient(95deg, #dc2626, #991b1b);
       color: white;
     }
-
     .btn-primary:hover, .btn-danger:hover {
       transform: translateY(-3px);
       filter: brightness(1.05);
     }
-
     .btn-primary:disabled {
       opacity: 0.6;
       cursor: not-allowed;
@@ -262,7 +262,6 @@
       gap: 1.5rem;
       margin-top: 1.5rem;
     }
-
     .vm-card {
       padding: 1.5rem;
       cursor: pointer;
@@ -270,41 +269,34 @@
       position: relative;
       border-radius: 28px;
     }
-
     body.dark .vm-card {
       background: rgba(8, 10, 22, 0.85);
       border: 1px solid rgba(255, 102, 0, 0.4);
     }
-
     body.light .vm-card {
       background: rgba(255, 255, 245, 0.9);
       border: 1px solid #ccd9ff;
     }
-
     .vm-card:hover {
       transform: translateY(-5px);
     }
-
     body.dark .vm-card:hover {
       border-color: #ff884d;
       box-shadow: 0 15px 30px -12px rgba(255, 68, 0, 0.35);
     }
-
     .vm-name {
       font-size: 1.25rem;
       font-weight: bold;
       margin-bottom: 0.5rem;
     }
-
-    body.dark .vm-name { color: #ffaa77; }
+    body.dark .vm-name { color: #ffaa77 !important; }
     body.light .vm-name { color: #2c5282; }
-
     .vm-info {
       font-size: 0.8rem;
       margin: 0.3rem 0;
-      opacity: 0.8;
     }
-
+    body.dark .vm-info { color: #cbd5e1 !important; opacity: 0.9; }
+    body.light .vm-info { color: #334155; }
     .vm-status {
       display: inline-block;
       padding: 0.2rem 0.6rem;
@@ -312,11 +304,9 @@
       font-size: 0.7rem;
       font-weight: bold;
     }
-
     .status-running { background: #22c55e; color: white; }
     .status-creating { background: #eab308; color: black; }
     .status-expired { background: #6b7280; color: white; }
-
     .delete-vm-btn {
       position: absolute;
       bottom: 1rem;
@@ -330,7 +320,6 @@
       cursor: pointer;
       transition: all 0.2s;
     }
-
     .delete-vm-btn:hover {
       background: #dc2626;
       transform: scale(1.05);
@@ -343,39 +332,33 @@
       gap: 1.5rem;
       margin-top: 2rem;
     }
-
     .tech-card {
       padding: 1.4rem;
       text-align: center;
       border-radius: 28px;
     }
-
     body.dark .tech-card {
       background: rgba(0, 0, 0, 0.55);
       backdrop-filter: blur(12px);
       border: 1px solid #ff663355;
     }
-
     body.light .tech-card {
       background: rgba(255, 255, 255, 0.65);
       backdrop-filter: blur(12px);
       border: 1px solid #bcc9f0;
     }
-
     .tech-icon {
       font-size: 2.5rem;
       margin-bottom: 0.8rem;
     }
-
     .tech-title {
       font-size: 1.1rem;
       font-weight: bold;
       margin-bottom: 0.5rem;
     }
-
-    body.dark .tech-title { color: #ffaa77; }
+    body.dark .tech-title { color: #ffaa77 !important; }
     body.light .tech-title { color: #2c5282; }
-
+    body.dark .tech-card div:not(.spec-badge) { color: #cbd5e1 !important; }
     .spec-badge {
       display: inline-block;
       padding: 0.25rem 0.8rem;
@@ -384,12 +367,10 @@
       margin: 0.2rem;
       font-weight: 600;
     }
-
     body.dark .spec-badge {
-      background: rgba(255, 100, 50, 0.25);
-      color: #ffbb99;
+      background: rgba(255, 100, 50, 0.3);
+      color: #ffbb99 !important;
     }
-
     body.light .spec-badge {
       background: rgba(45, 80, 150, 0.12);
       color: #1e3a5f;
@@ -402,7 +383,6 @@
       gap: 1rem;
       margin-bottom: 2rem;
     }
-
     .toggle-btn {
       padding: 0.7rem 2rem;
       border-radius: 60px;
@@ -412,25 +392,21 @@
       transition: 0.2s;
       border: none;
     }
-
     body.dark .toggle-btn {
       background: #141824;
       color: #ddddff;
       border: 1px solid #ff884466;
     }
-
     body.light .toggle-btn {
       background: #eef3ff;
       color: #1f2f4a;
       border: 1px solid #b7c4e6;
     }
-
     .toggle-btn.active {
       background: linear-gradient(135deg, #ff6600, #ff33aa);
       color: white;
       border: none;
     }
-
     body.light .toggle-btn.active {
       background: linear-gradient(135deg, #2c5282, #5a6eaa);
     }
@@ -449,12 +425,10 @@
       backdrop-filter: blur(12px);
       border: 1px solid #ff6633aa;
     }
-
     body.light .settings-btn {
       background: rgba(255, 255, 255, 0.8);
       border: 1px solid #a0b4e0;
     }
-
     .settings-panel {
       position: fixed;
       top: 85px;
@@ -466,36 +440,31 @@
       transform: translateX(-120%);
       transition: transform 0.3s cubic-bezier(0.2, 0.9, 0.4, 1.1);
     }
-
     body.dark .settings-panel {
       background: rgba(2, 4, 18, 0.96);
       backdrop-filter: blur(24px);
       border: 1px solid #ff7744aa;
     }
-
     body.light .settings-panel {
       background: rgba(255, 255, 250, 0.98);
       backdrop-filter: blur(20px);
       border: 1px solid #a0b4e0;
     }
-
     .settings-panel.open { transform: translateX(0); }
-
     .settings-box {
       margin-bottom: 1.2rem;
       padding: 0.8rem;
       border-radius: 24px;
     }
-
     body.dark .settings-box { background: #0f111faa; }
     body.light .settings-box { background: #eef3ffaa; }
-
+    body.dark .settings-box h4 { color: #ffaa77 !important; }
+    body.dark .settings-box div:not(.switch-option) { color: #cbd5e1 !important; }
     .switch-group {
       display: flex;
       gap: 0.6rem;
       margin-top: 0.5rem;
     }
-
     .switch-option {
       flex: 1;
       text-align: center;
@@ -505,23 +474,18 @@
       font-size: 0.8rem;
       font-weight: 500;
     }
-
     body.dark .switch-option { background: #1e1f2e; color: #ccccff; }
     body.light .switch-option { background: #e3eaff; color: #1a2c44; }
-
     .switch-option.active {
       background: linear-gradient(135deg, #ff6600, #ff33aa);
       color: white;
     }
-
-    /* Steps */
     .step {
       display: flex;
       align-items: center;
       gap: 0.8rem;
       margin-bottom: 0.8rem;
     }
-
     .step-number {
       width: 32px;
       height: 32px;
@@ -534,6 +498,7 @@
       color: white;
       flex-shrink: 0;
     }
+    body.dark .step-text { color: #cbd5e6 !important; }
 
     /* Modal */
     .modal {
@@ -548,10 +513,8 @@
       align-items: center;
       z-index: 1000;
     }
-
     body.dark .modal { background: rgba(0, 0, 0, 0.95); }
     body.light .modal { background: rgba(0, 0, 0, 0.7); }
-
     .modal-content {
       max-width: 650px;
       width: 90%;
@@ -561,47 +524,39 @@
       max-height: 85vh;
       overflow-y: auto;
     }
-
     body.dark .modal-content { background: #070b1c; border-color: #ff8844; }
     body.light .modal-content { background: #ffffffea; border-color: #7189c9; }
-
+    body.dark .modal-content *:not(button):not(code) { color: #e2e8f0 !important; }
     .result-box {
       border-radius: 24px;
       padding: 1rem;
       margin: 1rem 0;
       border-left: 4px solid #ff6633;
     }
-
-    body.dark .result-box { background: #0b0e1c; }
+    body.dark .result-box { background: #0f172a !important; }
     body.light .result-box { background: #f1f5ff; border-left-color: #2c5282; }
-
+    body.dark .result-box strong { color: #ffaa77 !important; }
     .result-box a {
       color: inherit;
       text-decoration: none;
     }
-
-    body.dark .result-box a { color: #ffaa77; }
+    body.dark .result-box a { color: #ffaa77 !important; }
     body.light .result-box a { color: #2c5282; }
-
     code {
       font-family: monospace;
       padding: 0.2rem 0.6rem;
       border-radius: 12px;
     }
-
-    body.dark code { background: #1a1f2a; color: #ffbb99; }
+    body.dark code { background: #1e293b !important; color: #facc15 !important; }
     body.light code { background: #e0e8ff; color: #1f3b62; }
-
     .footer {
       margin-top: 3rem;
       text-align: center;
       padding-top: 1.5rem;
       border-top: 1px solid;
     }
-
-    body.dark .footer { border-top-color: #ff774433; }
+    body.dark .footer { border-top-color: #ff774433; color: #cbd5e1 !important; }
     body.light .footer { border-top-color: #b8c7f0; }
-
     .lang-switch {
       position: fixed;
       top: 20px;
@@ -612,17 +567,14 @@
       display: flex;
       gap: 0.3rem;
     }
-
     body.dark .lang-switch {
       background: rgba(0, 0, 0, 0.6);
       backdrop-filter: blur(12px);
     }
-
     body.light .lang-switch {
       background: rgba(255, 255, 255, 0.8);
       backdrop-filter: blur(12px);
     }
-
     .lang-btn {
       background: transparent;
       border: none;
@@ -631,17 +583,13 @@
       font-weight: bold;
       cursor: pointer;
     }
-
     body.dark .lang-btn { color: #ccc; }
     body.light .lang-btn { color: #222; }
-
     .lang-btn.active {
       background: #ff6633;
       color: white;
     }
-
     .hidden { display: none; }
-
     .toast {
       position: fixed;
       bottom: 30px;
@@ -650,13 +598,12 @@
       border-radius: 50px;
       z-index: 1000;
       animation: slideIn 0.3s ease;
+      color: white !important;
     }
-
     @keyframes slideIn {
       from { transform: translateX(100%); opacity: 0; }
       to { transform: translateX(0); opacity: 1; }
     }
-
     @media (max-width: 768px) {
       .glow-text { font-size: 2.2rem; }
       .settings-panel { width: 280px; left: 10px; top: 75px; }
@@ -685,10 +632,10 @@
     </div>
     <div class="settings-box">
       <h4>📘 Hướng dẫn</h4>
-      <div class="step"><span class="step-number">1</span><span>Lấy GitHub Token (repo, workflow)</span></div>
-      <div class="step"><span class="step-number">2</span><span>Lấy Tailscale Auth Key</span></div>
-      <div class="step"><span class="step-number">3</span><span>Dán token → Nhấn 'Khởi tạo'</span></div>
-      <div class="step"><span class="step-number">4</span><span>Chờ 2-3 phút → Kết nối qua noVNC</span></div>
+      <div class="step"><span class="step-number">1</span><span class="step-text">Lấy GitHub Token (repo, workflow)</span></div>
+      <div class="step"><span class="step-number">2</span><span class="step-text">Lấy Tailscale Auth Key</span></div>
+      <div class="step"><span class="step-number">3</span><span class="step-text">Dán token → Nhấn 'Khởi tạo'</span></div>
+      <div class="step"><span class="step-number">4</span><span class="step-text">Chờ 2-3 phút → Kết nối qua noVNC</span></div>
     </div>
     <div class="settings-box">
       <h4>📡 Liên hệ</h4>
@@ -753,16 +700,16 @@
   </div>
 
   <script>
-    // Configuration
+    // ==================== CONFIGURATION ====================
     const API_URL = '/api/vps';
     
-    // State
+    // ==================== STATE ====================
     let currentDesign = 'dark';
     let currentLang = 'vi';
     let vms = [];
     let refreshInterval = null;
     
-    // Translations
+    // ==================== TRANSLATIONS ====================
     const translations = {
       vi: {
         mainTitle: "🌀 BLACK HOLE VM",
@@ -830,6 +777,7 @@
       }
     };
     
+    // ==================== UTILITIES ====================
     function updateLanguage() {
       const t = translations[currentLang];
       document.getElementById('mainTitle').innerHTML = t.mainTitle;
@@ -854,6 +802,7 @@
       setTimeout(() => toast.remove(), 5000);
     }
     
+    // ==================== API CALLS ====================
     async function loadVMs() {
       try {
         const response = await fetch(API_URL);
@@ -864,6 +813,7 @@
         }
       } catch (error) {
         console.error('Failed to load VMs:', error);
+        document.getElementById('vmList').innerHTML = '<div style="text-align:center;">❌ Lỗi kết nối đến server</div>';
       }
     }
     
@@ -887,6 +837,52 @@
       }
     }
     
+    async function createVM() {
+      const githubToken = document.getElementById('githubToken').value.trim();
+      const tailscaleKey = document.getElementById('tailscaleKey').value.trim();
+      const t = translations[currentLang];
+      
+      if (!githubToken || !tailscaleKey) {
+        showToast('❌ Vui lòng nhập đầy đủ token và key', 'error');
+        return;
+      }
+      
+      const createBtn = document.getElementById('createBtn');
+      const originalText = createBtn.innerHTML;
+      createBtn.disabled = true;
+      createBtn.innerHTML = t.creating;
+      
+      try {
+        const response = await fetch(API_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ githubToken, tailscaleKey })
+        });
+        const data = await response.json();
+        
+        if (data.success) {
+          vms.unshift(data);
+          renderVMList();
+          showToast(t.createSuccess, 'success');
+          document.getElementById('githubToken').value = '';
+          document.getElementById('tailscaleKey').value = '';
+          // Chuyển sang tab quản lý
+          document.querySelectorAll('.toggle-btn').forEach(btn => btn.classList.remove('active'));
+          document.querySelector('[data-mode="manage"]').classList.add('active');
+          document.getElementById('createPanel').classList.add('hidden');
+          document.getElementById('managePanel').classList.remove('hidden');
+          loadVMs();
+        } else {
+          showToast(`${t.createError}: ${data.error}`, 'error');
+        }
+      } catch (error) {
+        showToast(`${t.createError}: ${error.message}`, 'error');
+      } finally {
+        createBtn.disabled = false;
+        createBtn.innerHTML = originalText;
+      }
+    }
+    
     function renderVMList() {
       const container = document.getElementById('vmList');
       const t = translations[currentLang];
@@ -904,7 +900,7 @@
           <div class="vm-info">
             <span class="vm-status status-${vm.status}">${vm.status}</span>
           </div>
-          <button class="delete-vm-btn" onclick="deleteVM('${vm.id}', event)">🗑️ Xóa</button>
+          <button class="delete-vm-btn" onclick="window.deleteVM('${vm.id}', event)">🗑️ Xóa</button>
         </div>
       `).join('');
       
@@ -947,48 +943,6 @@
       document.getElementById('vmModal').style.display = 'flex';
     }
     
-    async function createVM() {
-      const githubToken = document.getElementById('githubToken').value.trim();
-      const tailscaleKey = document.getElementById('tailscaleKey').value.trim();
-      const t = translations[currentLang];
-      
-      if (!githubToken || !tailscaleKey) {
-        showToast('❌ Vui lòng nhập đầy đủ token và key', 'error');
-        return;
-      }
-      
-      const createBtn = document.getElementById('createBtn');
-      const originalText = createBtn.innerHTML;
-      createBtn.disabled = true;
-      createBtn.innerHTML = t.creating;
-      
-      try {
-        const response = await fetch(API_URL, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ githubToken, tailscaleKey })
-        });
-        const data = await response.json();
-        
-        if (data.success) {
-          vms.unshift(data);
-          renderVMList();
-          showToast(t.createSuccess, 'success');
-          document.getElementById('githubToken').value = '';
-          document.getElementById('tailscaleKey').value = '';
-          document.querySelector('[data-mode="manage"]').click();
-        } else {
-          showToast(`${t.createError}: ${data.error}`, 'error');
-        }
-      } catch (error) {
-        showToast(`${t.createError}: ${error.message}`, 'error');
-      } finally {
-        createBtn.disabled = false;
-        createBtn.innerHTML = originalText;
-      }
-    }
-    
-    // Auto refresh VM list every 10 seconds
     function startAutoRefresh() {
       if (refreshInterval) clearInterval(refreshInterval);
       refreshInterval = setInterval(() => {
@@ -998,7 +952,7 @@
       }, 10000);
     }
     
-    // Initialize
+    // ==================== INITIALIZATION ====================
     function init() {
       const savedDesign = localStorage.getItem('singularity_design');
       const savedLang = localStorage.getItem('singularity_lang');
@@ -1073,7 +1027,10 @@
       });
     }
     
+    // Make deleteVM available globally
     window.deleteVM = deleteVM;
+    
+    // Start app
     init();
   </script>
 </body>
