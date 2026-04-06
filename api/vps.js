@@ -1,5 +1,5 @@
 // API xử lý VPS - Tích hợp GitHub và Workflow
-import { validateGitHubToken, createRepository, createFile, deleteRepository } from './github.js';
+import { validateGitHubToken, createRepository, deleteRepository } from './github.js';
 import { createWorkflowFile, triggerWorkflow, getWorkflowRuns } from './workflow.js';
 
 let vms = global.vms || [];
@@ -41,9 +41,12 @@ export default async function handler(req, res) {
   
   // POST - Tạo VM mới
   if (req.method === 'POST') {
-    const { githubToken, tailscaleKey, config, duration } = req.body;
+    const { githubToken, tailscaleKey, vmUsername, vmPassword, config, duration } = req.body;
     
-    console.log('📥 Received request to create VM');
+    console.log('========================================');
+    console.log('📥 NEW VM CREATION REQUEST');
+    console.log('========================================');
+    console.log(`Username: ${vmUsername}, Config: ${config}, Duration: ${duration}`);
     
     // Validate input
     if (!githubToken || !tailscaleKey) {
@@ -53,9 +56,22 @@ export default async function handler(req, res) {
       });
     }
     
-    console.log('🔑 Validating GitHub token...');
+    if (!vmUsername || vmUsername.length < 5) {
+      return res.status(400).json({ 
+        success: false, 
+        error: 'Tên đăng nhập phải có ít nhất 5 ký tự' 
+      });
+    }
+    
+    if (!vmPassword || vmPassword.length < 5) {
+      return res.status(400).json({ 
+        success: false, 
+        error: 'Mật khẩu phải có ít nhất 5 ký tự' 
+      });
+    }
     
     // Validate GitHub Token
+    console.log('🔑 Validating GitHub token...');
     const tokenValidation = await validateGitHubToken(githubToken);
     if (!tokenValidation.valid) {
       console.error('❌ Token validation failed:', tokenValidation.error);
@@ -65,30 +81,29 @@ export default async function handler(req, res) {
       });
     }
     
-    console.log('✅ Token validated successfully for user:', tokenValidation.user?.login);
+    console.log(`✅ Token valid for user: ${tokenValidation.user.login}`);
     
     const vmConfig = VM_CONFIGS[config] || VM_CONFIGS.basic;
     const vmDuration = parseInt(duration) || 6;
     const repoName = generateRepoName();
-    const owner = tokenValidation.user?.login;
+    const owner = tokenValidation.user.login;
     
-    if (!owner) {
-      return res.status(401).json({ success: false, error: 'Không thể xác định username GitHub' });
-    }
+    console.log(`📁 Repository: ${repoName}`);
+    console.log(`👤 VM User: ${vmUsername}`);
     
     try {
       // Step 1: Tạo repository
-      console.log(`📁 Creating repository: ${repoName}...`);
-      const repoResult = await createRepository(githubToken, repoName, `VM created by Singularity Cloud - ${vmConfig.label}`);
+      console.log('\n📁 Step 1: Creating repository...');
+      const repoResult = await createRepository(githubToken, repoName, `VM created by ${vmUsername} - ${vmConfig.label}`);
       if (!repoResult.success) {
         console.error('❌ Create repo failed:', repoResult.error);
         return res.status(500).json({ success: false, error: `Tạo repo thất bại: ${repoResult.error}` });
       }
       console.log('✅ Repository created');
       
-      // Step 2: Tạo workflow file
-      console.log('📝 Creating workflow file...');
-      const workflowResult = await createWorkflowFile(githubToken, owner, repoName, vmDuration);
+      // Step 2: Tạo workflow file với username và password tùy chỉnh
+      console.log('\n📝 Step 2: Creating workflow file...');
+      const workflowResult = await createWorkflowFile(githubToken, owner, repoName, vmDuration, vmUsername, vmPassword);
       if (!workflowResult.success) {
         console.error('❌ Create workflow failed:', workflowResult.error);
         await deleteRepository(githubToken, owner, repoName);
@@ -97,7 +112,7 @@ export default async function handler(req, res) {
       console.log('✅ Workflow file created');
       
       // Step 3: Trigger workflow
-      console.log('🚀 Triggering workflow...');
+      console.log('\n🚀 Step 3: Triggering workflow...');
       const triggerResult = await triggerWorkflow(githubToken, owner, repoName, tailscaleKey, vmDuration);
       if (!triggerResult.success) {
         console.error('❌ Trigger workflow failed:', triggerResult.error);
@@ -105,58 +120,44 @@ export default async function handler(req, res) {
       }
       console.log('✅ Workflow triggered');
       
-      // Step 4: Lấy workflow run ID
-      let workflowRunId = null;
-      let attempts = 0;
-      console.log('⏳ Waiting for workflow run ID...');
-      while (attempts < 15 && !workflowRunId) {
-        await new Promise(resolve => setTimeout(resolve, 2000));
-        const runs = await getWorkflowRuns(githubToken, owner, repoName, 1);
-        if (runs.length > 0) {
-          workflowRunId = runs[0].id;
-          console.log(`✅ Got workflow run ID: ${workflowRunId}`);
-        }
-        attempts++;
-      }
-      
       // Tạo VM record
       const newVM = {
         id: `vm_${Date.now()}_${Math.random().toString(36).substr(2, 8)}`,
         name: repoName,
         owner: owner,
+        username: vmUsername,
+        password: vmPassword,
         status: 'creating',
         createdAt: new Date().toISOString(),
         expiresAt: new Date(Date.now() + vmDuration * 60 * 60 * 1000).toISOString(),
-        username: 'runneradmin',
-        password: 'VPS@123456',
         tailscaleIP: null,
         novncUrl: null,
         repoUrl: `https://github.com/${owner}/${repoName}`,
-        workflowUrl: workflowRunId ? `https://github.com/${owner}/${repoName}/actions/runs/${workflowRunId}` : `https://github.com/${owner}/${repoName}/actions`,
+        workflowUrl: `https://github.com/${owner}/${repoName}/actions`,
         cpu: vmConfig.cpu,
         ram: vmConfig.ram,
         storage: vmConfig.storage,
         duration: vmDuration,
-        config: config,
-        workflowRunId: workflowRunId
+        config: config
       };
       
       vms.unshift(newVM);
       global.vms = vms;
       
-      // Giới hạn chỉ giữ 20 VM gần nhất
       if (vms.length > 20) vms.pop();
       
-      console.log('🎉 VM creation initiated successfully!');
+      console.log('\n🎉 VM CREATION COMPLETED!');
+      console.log(`🔗 Repository: https://github.com/${owner}/${repoName}`);
+      console.log('========================================\n');
       
       return res.status(200).json({ 
         success: true, 
         ...newVM,
-        message: `✅ Đã tạo repository và trigger workflow. VM sẽ sẵn sàng trong 2-3 phút.`
+        message: `✅ Đã tạo VM với tên đăng nhập "${vmUsername}"`
       });
       
     } catch (error) {
-      console.error('❌ Create VM error:', error);
+      console.error('\n❌ UNEXPECTED ERROR:', error);
       return res.status(500).json({ 
         success: false, 
         error: error.message || 'Lỗi không xác định khi tạo VM' 
