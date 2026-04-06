@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "name": "vps-generator",
+  "name": "singularity-cloud",
   "functions": {
     "api/*.js": {
       "maxDuration": 60,
@@ -12,11 +12,6 @@
       "src": "/api/vps",
       "methods": ["GET", "POST", "DELETE", "OPTIONS"],
       "dest": "/api/vps.js"
-    },
-    {
-      "src": "/api/health",
-      "methods": ["GET"],
-      "dest": "/api/health.js"
     },
     {
       "src": "/(.*)",
@@ -34,6 +29,6 @@
     }
   ],
   "env": {
-    "VM_EXPIRY_HOURS": "6"
+    "VM_DEFAULT_DURATION": "6"
   }
 }
