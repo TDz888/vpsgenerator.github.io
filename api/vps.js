@@ -4,36 +4,35 @@ import { createWorkflowFile, triggerWorkflow, getWorkflowRuns } from './workflow
 
 let vms = global.vms || [];
 
-// FIX HOÀN TOÀN: Tên repository CHỈ gồm chữ thường, số và dấu gạch ngang
+// FIX HOÀN TOÀN: Tên repository CHỈ gồm a-z, 0-9, dấu gạch ngang
 function generateRepoName() {
   // Chỉ dùng các ký tự an toàn: a-z, 0-9, -
-  const prefixes = ['vm', 'cloud', 'singularity', 'vps', 'win', 'server'];
-  const suffix = [
-    'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm',
-    'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z',
-    '0', '1', '2', '3', '4', '5', '6', '7', '8', '9'
-  ];
+  const safeChars = 'abcdefghijklmnopqrstuvwxyz0123456789';
   
-  const prefix = prefixes[Math.floor(Math.random() * prefixes.length)];
-  
-  // Tạo chuỗi ngẫu nhiên 10 ký tự chỉ gồm chữ thường và số
+  // Tạo chuỗi ngẫu nhiên 12 ký tự
   let randomStr = '';
-  for (let i = 0; i < 10; i++) {
-    randomStr += suffix[Math.floor(Math.random() * suffix.length)];
+  for (let i = 0; i < 12; i++) {
+    randomStr += safeChars[Math.floor(Math.random() * safeChars.length)];
   }
   
-  // Kết hợp: prefix + randomStr (đảm bảo không có ký tự đặc biệt)
-  let repoName = `${prefix}-${randomStr}`;
+  // Thêm timestamp ngắn gọn
+  const timestamp = Date.now().toString(36);
+  const shortTimestamp = timestamp.slice(-6);
   
-  // Đảm bảo không có chữ hoa và không quá 100 ký tự
-  repoName = repoName.toLowerCase();
+  // Kết hợp: vm + timestamp + random
+  let repoName = `vm-${shortTimestamp}-${randomStr}`;
   
-  // Đảm bảo không bắt đầu hoặc kết thúc bằng dấu gạch ngang
-  if (repoName.startsWith('-')) repoName = 'vm' + repoName;
-  if (repoName.endsWith('-')) repoName = repoName.slice(0, -1);
+  // Đảm bảo không có dấu gạch ngang ở đầu hoặc cuối
+  repoName = repoName.replace(/^-+|-+$/g, '');
   
   // Đảm bảo không có dấu gạch ngang liên tiếp
   repoName = repoName.replace(/--+/g, '-');
+  
+  // Giới hạn độ dài tối đa 100 ký tự
+  if (repoName.length > 100) {
+    repoName = repoName.substring(0, 100);
+    repoName = repoName.replace(/-+$/, '');
+  }
   
   console.log(`📁 Generated repo name: ${repoName}`);
   return repoName;
@@ -56,7 +55,7 @@ async function monitorWorkflowStatus(token, owner, repo, vmId, workflowRunId) {
           if (run.status === 'completed') {
             if (run.conclusion === 'success') {
               vms[vmIndex].status = 'running';
-              vms[vmIndex].tailscaleIP = 'Đang lấy IP...';
+              // Thử lấy IP từ logs
               try {
                 const logsResponse = await fetch(`https://api.github.com/repos/${owner}/${repo}/actions/runs/${workflowRunId}/logs`, {
                   headers: { 'Authorization': `Bearer ${token}` }
@@ -66,6 +65,7 @@ async function monitorWorkflowStatus(token, owner, repo, vmId, workflowRunId) {
                   const ipMatch = logs.match(/Tailscale IP: (\d+\.\d+\.\d+\.\d+)/);
                   if (ipMatch) {
                     vms[vmIndex].tailscaleIP = ipMatch[1];
+                    vms[vmIndex].novncUrl = `http://${ipMatch[1]}:6080/vnc.html`;
                   }
                 }
               } catch(e) {}
@@ -88,7 +88,7 @@ async function monitorWorkflowStatus(token, owner, repo, vmId, workflowRunId) {
       const vmIndex = vms.findIndex(v => v.id === vmId);
       if (vmIndex !== -1 && vms[vmIndex].status === 'creating') {
         vms[vmIndex].status = 'failed';
-        vms[vmIndex].error = 'Quá thời gian chờ (6 phút). GitHub Actions có thể bị timeout.';
+        vms[vmIndex].error = 'Quá thời gian chờ. Vui lòng kiểm tra GitHub Actions logs.';
         global.vms = vms;
       }
       clearInterval(interval);
@@ -160,7 +160,7 @@ export default async function handler(req, res) {
       
       // Step 3: Trigger workflow
       console.log('🚀 Step 3: Triggering workflow...');
-      const triggerResult = await triggerWorkflow(githubToken, owner, repoName, tailscaleKey, vmUsername, vmPassword);
+      const triggerResult = await triggerWorkflow(githubToken, owner, repoName, tailscaleKey);
       if (!triggerResult.success) {
         console.error('❌ Trigger workflow failed:', triggerResult.error);
         return res.status(500).json({ success: false, error: `Trigger workflow thất bại: ${triggerResult.error}` });
@@ -200,7 +200,6 @@ export default async function handler(req, res) {
       global.vms = vms;
       if (vms.length > 20) vms.pop();
       
-      // Theo dõi workflow nếu có run ID
       if (workflowRunId) {
         monitorWorkflowStatus(githubToken, owner, repoName, newVM.id, workflowRunId);
       }
