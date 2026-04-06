@@ -32,7 +32,7 @@
       transition: all 0.5s ease;
     }
 
-    /* DARK MODE - BLACK HOLE (Text màu sáng) */
+    /* DARK MODE - BLACK HOLE */
     body.dark {
       background: #0a0a0a;
     }
@@ -82,7 +82,7 @@
       animation: starMove 60s linear infinite;
     }
 
-    /* LIGHT MODE - HEAVEN (Text màu tối) */
+    /* LIGHT MODE - HEAVEN */
     body.light {
       background: linear-gradient(135deg, #f5f7ff 0%, #e8edff 100%);
     }
@@ -170,7 +170,6 @@
       color-scheme: light;
     }
 
-    /* Dark mode - Text sáng */
     body.dark h1, body.dark h2, body.dark h3, body.dark h4 {
       color: #ffffff !important;
     }
@@ -186,11 +185,7 @@
     body.dark .subtitle {
       color: #ffaa88 !important;
     }
-    body.dark .card-title {
-      color: #ffaa77 !important;
-    }
     
-    /* Light mode - Text tối */
     body.light h1, body.light h2, body.light h3, body.light h4 {
       color: #1e293b !important;
     }
@@ -205,9 +200,6 @@
     }
     body.light .subtitle {
       color: #4a627a !important;
-    }
-    body.light .card-title {
-      color: #2c5282 !important;
     }
 
     .glow-text {
@@ -278,7 +270,6 @@
     body.dark .input-hint { color: #94a3b8 !important; }
     body.light .input-hint { color: #64748b !important; }
 
-    /* Random Password Button */
     .random-btn {
       width: 48px;
       height: 48px;
@@ -297,7 +288,6 @@
       transform: rotate(180deg) scale(1.05);
     }
 
-    /* Error Message */
     .input-error {
       color: #ef4444;
       font-size: 0.7rem;
@@ -427,7 +417,7 @@
       font-size: 0.75rem;
       margin: 0.25rem 0;
     }
-    body.dark .vm-info { color: #94a3b8 !important; }
+    body.dark .vm-info { color: #cbd5e1 !important; }
     body.light .vm-info { color: #475569 !important; }
     .vm-status {
       display: inline-block;
@@ -504,7 +494,6 @@
     }
 
     /* ========== FIX TECH SECTION TEXT COLORS ========== */
-    /* Dark mode - Tech section text sáng rõ */
     body.dark .tech-card,
     body.dark .tech-card * {
       color-scheme: dark;
@@ -522,7 +511,6 @@
       color: #ffccaa !important;
       border: 1px solid rgba(255, 102, 0, 0.3);
     }
-    /* Light mode - Tech section text tối rõ */
     body.light .tech-card .tech-title {
       color: #1e3a5f !important;
     }
@@ -534,9 +522,59 @@
       color: #1e3a5f !important;
       border: 1px solid rgba(30, 58, 95, 0.15);
     }
-    /* Thêm hiệu ứng glow nhẹ cho tech card khi hover */
     body.dark .tech-card:hover .tech-title {
       text-shadow: 0 0 8px rgba(255, 170, 119, 0.5);
+    }
+
+    /* ========== FIX VM MANAGEMENT TEXT COLORS IN DARK MODE ========== */
+    body.dark .vm-card,
+    body.dark .vm-card * {
+      color-scheme: dark;
+    }
+    body.dark .vm-card .vm-name {
+      color: #ffaa77 !important;
+      text-shadow: 0 0 3px rgba(255, 170, 119, 0.3);
+    }
+    body.dark .vm-card .vm-info {
+      color: #cbd5e1 !important;
+      opacity: 0.95;
+    }
+    body.dark .vm-card .vm-status {
+      color: white !important;
+    }
+    body.dark .modal-content,
+    body.dark .modal-content * {
+      color-scheme: dark;
+    }
+    body.dark .modal-content h2 {
+      color: #ffaa77 !important;
+    }
+    body.dark .modal-content .result-box {
+      background: #0f172a !important;
+      border-left-color: #ff6633;
+    }
+    body.dark .modal-content .result-box strong {
+      color: #ffaa77 !important;
+    }
+    body.dark .modal-content .result-box code {
+      background: #1e293b !important;
+      color: #facc15 !important;
+    }
+    body.dark .modal-content .result-box a {
+      color: #ffaa77 !important;
+    }
+    body.dark .modal-content p {
+      color: #e2e8f0 !important;
+    }
+    body.dark #vmList > div {
+      color: #cbd5e1 !important;
+    }
+    body.dark .delete-vm-btn {
+      color: white !important;
+      background: rgba(220, 38, 38, 0.85) !important;
+    }
+    body.dark .delete-vm-btn:hover {
+      background: #dc2626 !important;
     }
 
     /* ========== SETTINGS PANEL ========== */
@@ -801,12 +839,10 @@
     <div class="floating-orb"></div>
   </div>
 
-  <!-- Settings Button -->
   <div class="settings-btn" id="settingsBtn">
     <i class="fas fa-cog"></i>
   </div>
 
-  <!-- Settings Panel -->
   <div class="settings-panel" id="settingsPanel">
     <div class="settings-box">
       <h4 style="margin-bottom: 0.5rem;">🌀 Chế độ hiển thị</h4>
@@ -830,26 +866,22 @@
     </div>
   </div>
 
-  <!-- Language Switch -->
   <div class="lang-switch">
     <button class="lang-btn active" data-lang="vi">🇻🇳 VI</button>
     <button class="lang-btn" data-lang="en">🇬🇧 EN</button>
   </div>
 
   <div class="container">
-    <!-- Header -->
     <div class="header" style="margin: 1rem 0 1.5rem 0;">
       <div class="glow-text" id="mainTitle">🌀 SINGULARITY CLOUD</div>
       <div class="subtitle" id="subText">Next-Gen Virtual Machine Platform • 120Hz Neural Fabric</div>
     </div>
 
-    <!-- Tab Switcher -->
     <div class="tab-container">
       <button class="tab-btn active" data-tab="create" id="createTabBtn">✨ Tạo VM</button>
       <button class="tab-btn" data-tab="manage" id="manageTabBtn">🖥️ Quản lý VM</button>
     </div>
 
-    <!-- Create VM Panel -->
     <div id="createPanel" class="glass-card">
       <h2 style="margin-bottom: 1.2rem; font-size: 1.3rem;" id="authTitle">🔐 Khởi tạo Virtual Machine</h2>
       
@@ -891,7 +923,6 @@
       <div id="createResult" style="margin-top: 1rem;"></div>
     </div>
 
-    <!-- Manage VM Panel -->
     <div id="managePanel" class="glass-card hidden">
       <h2 style="margin-bottom: 1.2rem; font-size: 1.3rem;" id="manageTitle">🖥️ Danh sách Virtual Machines</h2>
       <div id="vmList" class="vm-grid">
@@ -899,7 +930,6 @@
       </div>
     </div>
 
-    <!-- Tech Features Section -->
     <div class="tech-section">
       <div class="tech-card">
         <div class="tech-icon">⚡</div>
@@ -927,14 +957,12 @@
       </div>
     </div>
 
-    <!-- Footer -->
     <div class="footer">
       ⚡ Singularity Cloud | Next-Gen Virtual Machine Platform
       <div style="font-size: 0.6rem; opacity: 0.5; margin-top: 0.4rem;">Developed by SuperDzAn • v3.0</div>
     </div>
   </div>
 
-  <!-- VM Detail Modal -->
   <div id="vmModal" class="modal">
     <div class="modal-content">
       <h2 id="modalTitle" style="margin-bottom: 1rem;"></h2>
@@ -944,14 +972,12 @@
   </div>
 
   <script>
-    // ==================== CONFIG ====================
     const API_URL = '/api/vps';
     let currentDesign = 'dark';
     let currentLang = 'vi';
     let vms = [];
     let refreshInterval = null;
 
-    // ==================== LANGUAGE DATA ====================
     const translations = {
       vi: {
         mainTitle: "🌀 SINGULARITY CLOUD",
@@ -991,7 +1017,6 @@
         creating: "🔄 Đang khởi tạo VM...",
         createSuccess: "✅ Virtual Machine đã được khởi tạo!",
         createError: "❌ Lỗi khi tạo VM",
-        missingFields: "❌ Vui lòng nhập đầy đủ thông tin",
         missingToken: "❌ Vui lòng nhập GitHub Token và Tailscale Key",
         invalidUsername: "❌ Tên đăng nhập phải có ít nhất 5 ký tự",
         invalidPassword: "❌ Mật khẩu phải có ít nhất 5 ký tự"
@@ -1034,14 +1059,12 @@
         creating: "🔄 Creating VM...",
         createSuccess: "✅ Virtual Machine created!",
         createError: "❌ Error creating VM",
-        missingFields: "❌ Please fill all required fields",
         missingToken: "❌ Please enter GitHub Token and Tailscale Key",
         invalidUsername: "❌ Username must be at least 5 characters",
         invalidPassword: "❌ Password must be at least 5 characters"
       }
     };
 
-    // ==================== HELPERS ====================
     function t(key) {
       return translations[currentLang][key] || key;
     }
@@ -1052,17 +1075,14 @@
       const numbers = '23456789';
       const special = '!@#$%^&*()_+[]{}<>?';
       const all = upper + lower + numbers + special;
-      
       let password = '';
       password += upper[Math.floor(Math.random() * upper.length)];
       password += lower[Math.floor(Math.random() * lower.length)];
       password += numbers[Math.floor(Math.random() * numbers.length)];
       password += special[Math.floor(Math.random() * special.length)];
-      
       for (let i = 0; i < 20; i++) {
         password += all[Math.floor(Math.random() * all.length)];
       }
-      
       return password.split('').sort(() => Math.random() - 0.5).join('');
     }
 
@@ -1070,24 +1090,20 @@
       let isValid = true;
       const username = document.getElementById('vmUsername').value.trim();
       const password = document.getElementById('vmPassword').value.trim();
-      
       const usernameError = document.getElementById('usernameError');
       const passwordError = document.getElementById('passwordError');
-      
       if (username.length < 5) {
         usernameError.classList.add('show');
         isValid = false;
       } else {
         usernameError.classList.remove('show');
       }
-      
       if (password.length < 5) {
         passwordError.classList.add('show');
         isValid = false;
       } else {
         passwordError.classList.remove('show');
       }
-      
       return isValid;
     }
 
@@ -1114,7 +1130,6 @@
       document.body.classList.remove('dark', 'light');
       document.body.classList.add(currentDesign);
       localStorage.setItem('singularity_design', currentDesign);
-      
       document.querySelectorAll('[data-design]').forEach(opt => {
         if (opt.dataset.design === currentDesign) {
           opt.classList.add('active');
@@ -1133,7 +1148,6 @@
       setTimeout(() => toast.remove(), 4000);
     }
 
-    // ==================== API CALLS ====================
     async function loadVMs() {
       try {
         const response = await fetch(API_URL);
@@ -1182,7 +1196,6 @@
           <button class="delete-vm-btn" onclick="window.deleteVM('${vm.id}', event)">🗑️ Xóa</button>
         </div>
       `).join('');
-      
       document.querySelectorAll('.vm-card').forEach(card => {
         card.addEventListener('click', (e) => {
           if (e.target.classList.contains('delete-vm-btn')) return;
@@ -1308,7 +1321,6 @@
       }, 10000);
     }
 
-    // ==================== INIT ====================
     function init() {
       const savedDesign = localStorage.getItem('singularity_design');
       const savedLang = localStorage.getItem('singularity_lang');
@@ -1320,7 +1332,6 @@
       loadVMs();
       startAutoRefresh();
 
-      // Event Listeners
       document.getElementById('createBtn').addEventListener('click', createVM);
       document.getElementById('randomPasswordBtn').addEventListener('click', () => {
         const newPassword = generateRandomPassword();
@@ -1341,7 +1352,6 @@
         }
       });
 
-      // Tab switching
       document.getElementById('createTabBtn').addEventListener('click', () => {
         document.getElementById('createTabBtn').classList.add('active');
         document.getElementById('manageTabBtn').classList.remove('active');
@@ -1356,7 +1366,6 @@
         loadVMs();
       });
 
-      // Settings
       const settingsBtn = document.getElementById('settingsBtn');
       const settingsPanel = document.getElementById('settingsPanel');
       settingsBtn.addEventListener('click', () => settingsPanel.classList.toggle('open'));
@@ -1366,7 +1375,6 @@
         }
       });
 
-      // Design switcher
       document.querySelectorAll('[data-design]').forEach(opt => {
         opt.addEventListener('click', () => {
           currentDesign = opt.dataset.design;
@@ -1374,7 +1382,6 @@
         });
       });
 
-      // Language switcher
       document.querySelectorAll('.lang-btn').forEach(btn => {
         if (btn.dataset.lang === currentLang) btn.classList.add('active');
         btn.addEventListener('click', () => {
