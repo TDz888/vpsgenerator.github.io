@@ -1,8 +1,7 @@
 // API xử lý GitHub Actions Workflow
 const GITHUB_API = 'https://api.github.com';
 
-// Template workflow đơn giản hóa
-const WORKFLOW_TEMPLATE = `name: Create Windows VM
+const WORKFLOW_CONTENT = `name: Create Windows VM
 
 on:
   workflow_dispatch:
@@ -24,7 +23,7 @@ jobs:
       - name: Setup Tailscale
         shell: pwsh
         run: |
-          Write-Host "Downloading Tailscale..."
+          Write-Host "Installing Tailscale..."
           $url = "https://pkgs.tailscale.com/stable/tailscale-setup-latest.exe"
           $installer = "$env:TEMP\\tailscale.exe"
           Invoke-WebRequest -Uri $url -OutFile $installer
@@ -33,6 +32,7 @@ jobs:
           Start-Sleep -Seconds 10
           $ip = & "C:\\Program Files\\Tailscale\\Tailscale.exe" ip -4
           echo "TAILSCALE_IP=$ip" >> $env:GITHUB_ENV
+          Write-Host "Tailscale IP: $ip"
       
       - name: Configure Windows
         shell: pwsh
@@ -67,18 +67,19 @@ jobs:
         run: |
           $end = (Get-Date).AddHours(6)
           while ((Get-Date) -lt $end) {
-            Write-Host "VM running... expires in $([math]::Round(($end - (Get-Date)).TotalMinutes)) minutes"
+            $remaining = [math]::Round(($end - (Get-Date)).TotalMinutes)
+            Write-Host "VM running... expires in $remaining minutes"
             Start-Sleep -Seconds 300
           }
 `;
 
-async function waitForRepoReady(token, owner, repo, maxAttempts = 10) {
+async function waitForRepo(token, owner, repo, maxAttempts = 10) {
   for (let i = 0; i < maxAttempts; i++) {
     try {
-      const response = await fetch(`${GITHUB_API}/repos/${owner}/${repo}`, {
+      const res = await fetch(`${GITHUB_API}/repos/${owner}/${repo}`, {
         headers: { 'Authorization': `Bearer ${token}` }
       });
-      if (response.ok) return true;
+      if (res.ok) return true;
     } catch(e) {}
     await new Promise(r => setTimeout(r, 2000));
   }
@@ -87,13 +88,11 @@ async function waitForRepoReady(token, owner, repo, maxAttempts = 10) {
 
 export async function createWorkflowFile(token, owner, repo, username, password) {
   try {
-    const isReady = await waitForRepoReady(token, owner, repo);
-    if (!isReady) throw new Error('Repository chưa sẵn sàng');
+    const ready = await waitForRepo(token, owner, repo);
+    if (!ready) throw new Error('Repository chưa sẵn sàng');
     
-    const content = WORKFLOW_TEMPLATE;
     const path = '.github/workflows/create-vm.yml';
-    
-    const response = await fetch(`${GITHUB_API}/repos/${owner}/${repo}/contents/${path}`, {
+    const res = await fetch(`${GITHUB_API}/repos/${owner}/${repo}/contents/${path}`, {
       method: 'PUT',
       headers: {
         'Authorization': `Bearer ${token}`,
@@ -102,14 +101,14 @@ export async function createWorkflowFile(token, owner, repo, username, password)
       },
       body: JSON.stringify({
         message: 'Add workflow',
-        content: Buffer.from(content).toString('base64'),
+        content: Buffer.from(WORKFLOW_CONTENT).toString('base64'),
         branch: 'main'
       })
     });
     
-    if (!response.ok) {
-      const error = await response.text();
-      throw new Error(`HTTP ${response.status}: ${error}`);
+    if (!res.ok) {
+      const err = await res.text();
+      throw new Error(`HTTP ${res.status}: ${err}`);
     }
     
     await new Promise(r => setTimeout(r, 5000));
@@ -123,7 +122,7 @@ export async function triggerWorkflow(token, owner, repo, tailscaleKey) {
   try {
     await new Promise(r => setTimeout(r, 8000));
     
-    const response = await fetch(`${GITHUB_API}/repos/${owner}/${repo}/actions/workflows/create-vm.yml/dispatches`, {
+    const res = await fetch(`${GITHUB_API}/repos/${owner}/${repo}/actions/workflows/create-vm.yml/dispatches`, {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${token}`,
@@ -136,9 +135,9 @@ export async function triggerWorkflow(token, owner, repo, tailscaleKey) {
       })
     });
     
-    if (!response.ok) {
-      const error = await response.text();
-      throw new Error(`HTTP ${response.status}: ${error}`);
+    if (!res.ok) {
+      const err = await res.text();
+      throw new Error(`HTTP ${res.status}: ${err}`);
     }
     
     return { success: true };
@@ -149,15 +148,13 @@ export async function triggerWorkflow(token, owner, repo, tailscaleKey) {
 
 export async function getWorkflowRuns(token, owner, repo, perPage = 5) {
   try {
-    const response = await fetch(`${GITHUB_API}/repos/${owner}/${repo}/actions/runs?per_page=${perPage}`, {
+    const res = await fetch(`${GITHUB_API}/repos/${owner}/${repo}/actions/runs?per_page=${perPage}`, {
       headers: { 'Authorization': `Bearer ${token}` }
     });
-    if (!response.ok) return [];
-    const data = await response.json();
+    if (!res.ok) return [];
+    const data = await res.json();
     return data.workflow_runs || [];
-  } catch {
-    return [];
-  }
+  } catch { return []; }
 }
 
 export default { createWorkflowFile, triggerWorkflow, getWorkflowRuns };
