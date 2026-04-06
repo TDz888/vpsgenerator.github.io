@@ -6,6 +6,7 @@
   <meta name="description" content="Tạo VPS Windows miễn phí từ GitHub Actions với Tailscale + noVNC">
   <title>Singularity Nexus | Black Hole Cloud VPS</title>
   <link rel="icon" type="image/x-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌀</text></svg>">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
   <style>
     * {
       margin: 0;
@@ -15,12 +16,12 @@
 
     body {
       min-height: 100vh;
-      font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', 'Poppins', sans-serif;
-      transition: all 0.3s ease;
+      font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+      transition: all 0.4s cubic-bezier(0.2, 0.9, 0.4, 1.1);
       overflow-x: hidden;
     }
 
-    /* Background Systems */
+    /* ==================== BACKGROUND SYSTEMS ==================== */
     .bg-universe {
       position: fixed;
       top: 0;
@@ -29,17 +30,16 @@
       height: 100%;
       z-index: 0;
       pointer-events: none;
+      transition: all 0.5s ease;
     }
 
     /* DARK MODE - BLACK HOLE */
     body.dark {
       background: #000000;
     }
-
     body.dark .bg-universe {
       background: radial-gradient(ellipse at 30% 40%, #0a0a1a 0%, #000000 100%);
     }
-
     body.dark .singularity-core {
       position: absolute;
       top: 50%;
@@ -53,7 +53,6 @@
       opacity: 0.5;
       animation: corePulse 6s infinite alternate;
     }
-
     body.dark .accretion-whirl {
       position: absolute;
       top: 50%;
@@ -67,7 +66,6 @@
       opacity: 0.2;
       animation: whirlSpin 25s linear infinite;
     }
-
     body.dark .grav-wave {
       position: absolute;
       top: 50%;
@@ -79,38 +77,93 @@
       transform: translate(-50%, -50%);
       animation: waveExpand 4s ease-out infinite;
     }
+    body.dark .star-particles {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      background-image: radial-gradient(1px 1px at 15% 25%, #fff, transparent),
+                        radial-gradient(2px 2px at 78% 42%, #ffcc88, transparent),
+                        radial-gradient(1px 1px at 45% 80%, #fff, transparent),
+                        radial-gradient(1.5px 1.5px at 90% 15%, #fff, transparent),
+                        radial-gradient(1px 1px at 30% 70%, #ffaa66, transparent);
+      background-repeat: no-repeat;
+      background-size: 550px 550px;
+      opacity: 0.9;
+      animation: starDrift 45s linear infinite;
+    }
+    body.dark .quantum-grid {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      background-image: linear-gradient(rgba(255, 68, 0, 0.05) 1px, transparent 1px),
+                        linear-gradient(90deg, rgba(255, 68, 0, 0.05) 1px, transparent 1px);
+      background-size: 50px 50px;
+      animation: gridPulse 4s ease-in-out infinite;
+    }
 
     /* LIGHT MODE - HEAVEN */
     body.light {
       background: linear-gradient(145deg, #f0f4ff 0%, #e0e8ff 100%);
     }
-
     body.light .bg-universe {
-      background: radial-gradient(circle at 20% 30%, rgba(255, 248, 225, 0.6), rgba(200, 220, 255, 0.3));
+      background: radial-gradient(circle at 20% 30%, rgba(255, 248, 225, 0.8), rgba(200, 220, 255, 0.4));
     }
-
     body.light .singularity-core,
     body.light .accretion-whirl,
-    body.light .grav-wave {
+    body.light .grav-wave,
+    body.light .star-particles,
+    body.light .quantum-grid {
       display: none;
+    }
+    body.light .heaven-clouds {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      background: radial-gradient(ellipse at 80% 20%, rgba(255, 255, 245, 0.6) 0%, transparent 60%),
+                  radial-gradient(ellipse at 20% 80%, rgba(200, 220, 255, 0.4) 0%, transparent 50%);
+      pointer-events: none;
+    }
+    body.light .floating-particles {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      background-image: radial-gradient(2px 2px at 25% 35%, #88aaff, transparent),
+                        radial-gradient(1.5px 1.5px at 65% 75%, #66aaff, transparent),
+                        radial-gradient(1px 1px at 85% 15%, #aaccff, transparent);
+      background-repeat: no-repeat;
+      background-size: 400px 400px;
+      opacity: 0.5;
+      animation: floatSlow 30s ease-in-out infinite;
     }
 
     @keyframes corePulse {
       0% { opacity: 0.35; transform: translate(-50%, -50%) scale(0.9); filter: blur(65px);}
       100% { opacity: 0.65; transform: translate(-50%, -50%) scale(1.1); filter: blur(85px);}
     }
-
     @keyframes whirlSpin {
       0% { transform: translate(-50%, -50%) rotate(0deg); opacity: 0.15;}
       100% { transform: translate(-50%, -50%) rotate(360deg); opacity: 0.15;}
     }
-
     @keyframes waveExpand {
       0% { opacity: 0.6; transform: translate(-50%, -50%) scale(0.8);}
       100% { opacity: 0; transform: translate(-50%, -50%) scale(1.5);}
     }
+    @keyframes starDrift {
+      0% { transform: translateY(0px) translateX(0px);}
+      100% { transform: translateY(-200px) translateX(50px);}
+    }
+    @keyframes gridPulse {
+      0% { opacity: 0.3; }
+      50% { opacity: 0.6; }
+      100% { opacity: 0.3; }
+    }
+    @keyframes floatSlow {
+      0% { transform: translateY(0px) translateX(0px);}
+      50% { transform: translateY(-30px) translateX(20px);}
+      100% { transform: translateY(0px) translateX(0px);}
+    }
 
-    /* Container */
+    /* ==================== MAIN LAYOUT ==================== */
     .container {
       max-width: 1400px;
       margin: 0 auto;
@@ -126,14 +179,12 @@
       margin-bottom: 2rem;
       transition: all 0.3s cubic-bezier(0.2, 0.9, 0.4, 1.1);
     }
-
     body.dark .card {
       background: rgba(5, 7, 20, 0.75);
       backdrop-filter: blur(20px);
       border: 1px solid rgba(255, 80, 40, 0.45);
       box-shadow: 0 25px 45px -12px rgba(0, 0, 0, 0.6);
     }
-
     body.light .card {
       background: rgba(255, 255, 255, 0.7);
       backdrop-filter: blur(20px);
@@ -141,53 +192,58 @@
       box-shadow: 0 15px 35px -10px rgba(0, 0, 0, 0.08);
     }
 
-    /* Typography - FIXED for Black Hole */
+    /* Typography - Hoàn toàn fix lỗi màu chữ */
     .glow-text {
       font-size: 3.8rem;
       font-weight: 800;
       letter-spacing: -0.02em;
       text-align: center;
+      transition: all 0.3s ease;
     }
-
     body.dark .glow-text {
       background: linear-gradient(135deg, #ffffff, #ffaa66, #ff66cc, #ff3300);
       -webkit-background-clip: text;
       background-clip: text;
       color: transparent;
     }
-
     body.light .glow-text {
-      color: #1a2a4a;
+      background: linear-gradient(135deg, #1a2a4a, #2b4c8a, #5a6eaa);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
     }
-
     .sub {
       font-size: 0.95rem;
       letter-spacing: 3px;
       margin-top: 0.5rem;
       text-align: center;
     }
-
     body.dark .sub { color: #ffaa88 !important; }
-    body.light .sub { color: #4a627a; }
-
-    /* Headings */
+    body.light .sub { color: #4a627a !important; }
     body.dark h1, body.dark h2, body.dark h3, body.dark h4 {
       color: #ffffff !important;
     }
     body.light h1, body.light h2, body.light h3, body.light h4 {
       color: #1e3a5f !important;
     }
+    body.dark p, body.dark span:not(.spec-badge):not(.vm-status) {
+      color: #cbd5e1 !important;
+    }
+    body.light p, body.light span {
+      color: #334155 !important;
+    }
 
-    /* Labels */
+    /* Input Fields */
+    .input-group {
+      margin-bottom: 1.5rem;
+    }
     .input-group label {
       display: block;
       margin-bottom: 0.5rem;
       font-weight: 600;
     }
     body.dark .input-group label { color: #ffaa77 !important; }
-    body.light .input-group label { color: #2c5282; }
-
-    /* Input Fields */
+    body.light .input-group label { color: #2c5282 !important; }
     .input-group input {
       width: 100%;
       padding: 1rem 1.2rem;
@@ -209,7 +265,6 @@
       border-color: #ff884d;
       box-shadow: 0 0 0 3px rgba(255, 102, 0, 0.25);
       outline: none;
-      color: #ffffff !important;
     }
     body.light .input-group input {
       background: white;
@@ -227,6 +282,21 @@
       font-size: 1rem;
       cursor: pointer;
       transition: all 0.25s;
+      position: relative;
+      overflow: hidden;
+    }
+    .btn-primary::before, .btn-danger::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+      transition: left 0.5s;
+    }
+    .btn-primary:hover::before, .btn-danger:hover::before {
+      left: 100%;
     }
     body.dark .btn-primary {
       background: linear-gradient(95deg, #ff4d00, #ff0099);
@@ -268,6 +338,17 @@
       transition: all 0.25s;
       position: relative;
       border-radius: 28px;
+      overflow: hidden;
+    }
+    .vm-card::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(135deg, transparent 0%, rgba(255,255,255,0.05) 100%);
+      pointer-events: none;
     }
     body.dark .vm-card {
       background: rgba(8, 10, 22, 0.85);
@@ -290,13 +371,13 @@
       margin-bottom: 0.5rem;
     }
     body.dark .vm-name { color: #ffaa77 !important; }
-    body.light .vm-name { color: #2c5282; }
+    body.light .vm-name { color: #2c5282 !important; }
     .vm-info {
       font-size: 0.8rem;
       margin: 0.3rem 0;
     }
-    body.dark .vm-info { color: #cbd5e1 !important; opacity: 0.9; }
-    body.light .vm-info { color: #334155; }
+    body.dark .vm-info { color: #cbd5e1 !important; }
+    body.light .vm-info { color: #334155 !important; }
     .vm-status {
       display: inline-block;
       padding: 0.2rem 0.6rem;
@@ -319,13 +400,14 @@
       font-size: 0.7rem;
       cursor: pointer;
       transition: all 0.2s;
+      z-index: 10;
     }
     .delete-vm-btn:hover {
       background: #dc2626;
       transform: scale(1.05);
     }
 
-    /* Tech Section */
+    /* Tech Section - Hiệu ứng công nghệ */
     .tech-section {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
@@ -336,11 +418,21 @@
       padding: 1.4rem;
       text-align: center;
       border-radius: 28px;
+      transition: all 0.3s;
+      position: relative;
+      overflow: hidden;
+    }
+    .tech-card:hover {
+      transform: translateY(-5px);
     }
     body.dark .tech-card {
       background: rgba(0, 0, 0, 0.55);
       backdrop-filter: blur(12px);
       border: 1px solid #ff663355;
+    }
+    body.dark .tech-card:hover {
+      border-color: #ff884d;
+      box-shadow: 0 10px 30px -8px rgba(255, 68, 0, 0.3);
     }
     body.light .tech-card {
       background: rgba(255, 255, 255, 0.65);
@@ -350,6 +442,12 @@
     .tech-icon {
       font-size: 2.5rem;
       margin-bottom: 0.8rem;
+      display: inline-block;
+      animation: iconFloat 3s ease-in-out infinite;
+    }
+    @keyframes iconFloat {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-5px); }
     }
     .tech-title {
       font-size: 1.1rem;
@@ -357,7 +455,7 @@
       margin-bottom: 0.5rem;
     }
     body.dark .tech-title { color: #ffaa77 !important; }
-    body.light .tech-title { color: #2c5282; }
+    body.light .tech-title { color: #2c5282 !important; }
     body.dark .tech-card div:not(.spec-badge) { color: #cbd5e1 !important; }
     .spec-badge {
       display: inline-block;
@@ -373,7 +471,7 @@
     }
     body.light .spec-badge {
       background: rgba(45, 80, 150, 0.12);
-      color: #1e3a5f;
+      color: #1e3a5f !important;
     }
 
     /* Toggle Buttons */
@@ -391,6 +489,7 @@
       font-size: 1rem;
       transition: 0.2s;
       border: none;
+      position: relative;
     }
     body.dark .toggle-btn {
       background: #141824;
@@ -421,13 +520,20 @@
       padding: 0.7rem 1.1rem;
       cursor: pointer;
       font-size: 1.2rem;
+      transition: all 0.3s;
+    }
+    body.dark .settings-btn {
       background: rgba(0, 0, 0, 0.7);
       backdrop-filter: blur(12px);
       border: 1px solid #ff6633aa;
     }
     body.light .settings-btn {
       background: rgba(255, 255, 255, 0.8);
+      backdrop-filter: blur(12px);
       border: 1px solid #a0b4e0;
+    }
+    .settings-btn:hover {
+      transform: rotate(15deg);
     }
     .settings-panel {
       position: fixed;
@@ -459,7 +565,21 @@
     body.dark .settings-box { background: #0f111faa; }
     body.light .settings-box { background: #eef3ffaa; }
     body.dark .settings-box h4 { color: #ffaa77 !important; }
-    body.dark .settings-box div:not(.switch-option) { color: #cbd5e1 !important; }
+    .design-indicator {
+      display: inline-block;
+      margin-left: 8px;
+      font-size: 0.7rem;
+      padding: 2px 8px;
+      border-radius: 20px;
+    }
+    body.dark .design-indicator {
+      background: #ff663355;
+      color: #ffaa77;
+    }
+    body.light .design-indicator {
+      background: #2c528255;
+      color: #ffffff;
+    }
     .switch-group {
       display: flex;
       gap: 0.6rem;
@@ -473,6 +593,7 @@
       cursor: pointer;
       font-size: 0.8rem;
       font-weight: 500;
+      transition: all 0.2s;
     }
     body.dark .switch-option { background: #1e1f2e; color: #ccccff; }
     body.light .switch-option { background: #e3eaff; color: #1a2c44; }
@@ -480,6 +601,7 @@
       background: linear-gradient(135deg, #ff6600, #ff33aa);
       color: white;
     }
+    body.light .switch-option.active { background: linear-gradient(135deg, #2c5282, #4f70a5); }
     .step {
       display: flex;
       align-items: center;
@@ -523,10 +645,14 @@
       border: 1px solid;
       max-height: 85vh;
       overflow-y: auto;
+      animation: modalFadeIn 0.3s ease;
+    }
+    @keyframes modalFadeIn {
+      from { opacity: 0; transform: scale(0.9); }
+      to { opacity: 1; transform: scale(1); }
     }
     body.dark .modal-content { background: #070b1c; border-color: #ff8844; }
     body.light .modal-content { background: #ffffffea; border-color: #7189c9; }
-    body.dark .modal-content *:not(button):not(code) { color: #e2e8f0 !important; }
     .result-box {
       border-radius: 24px;
       padding: 1rem;
@@ -534,14 +660,14 @@
       border-left: 4px solid #ff6633;
     }
     body.dark .result-box { background: #0f172a !important; }
-    body.light .result-box { background: #f1f5ff; border-left-color: #2c5282; }
+    body.light .result-box { background: #f1f5ff !important; border-left-color: #2c5282; }
     body.dark .result-box strong { color: #ffaa77 !important; }
     .result-box a {
       color: inherit;
       text-decoration: none;
     }
     body.dark .result-box a { color: #ffaa77 !important; }
-    body.light .result-box a { color: #2c5282; }
+    body.light .result-box a { color: #2c5282 !important; }
     code {
       font-family: monospace;
       padding: 0.2rem 0.6rem;
@@ -582,6 +708,7 @@
       border-radius: 40px;
       font-weight: bold;
       cursor: pointer;
+      transition: all 0.2s;
     }
     body.dark .lang-btn { color: #ccc; }
     body.light .lang-btn { color: #222; }
@@ -599,11 +726,29 @@
       z-index: 1000;
       animation: slideIn 0.3s ease;
       color: white !important;
+      font-weight: 500;
     }
     @keyframes slideIn {
       from { transform: translateX(100%); opacity: 0; }
       to { transform: translateX(0); opacity: 1; }
     }
+
+    /* Loading animation */
+    .loading-spinner {
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      border: 2px solid rgba(255,255,255,0.3);
+      border-radius: 50%;
+      border-top-color: white;
+      animation: spin 0.8s linear infinite;
+      margin-right: 8px;
+    }
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    /* Responsive */
     @media (max-width: 768px) {
       .glow-text { font-size: 2.2rem; }
       .settings-panel { width: 280px; left: 10px; top: 75px; }
@@ -611,20 +756,30 @@
       .card { padding: 1.2rem; }
       .toggle-btn { padding: 0.5rem 1.2rem; font-size: 0.9rem; }
       .vm-grid { grid-template-columns: 1fr; }
+      .tech-section { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 480px) {
+      .glow-text { font-size: 1.8rem; }
+      .toggle-container { flex-direction: column; align-items: center; }
+      .toggle-btn { width: 80%; }
     }
   </style>
 </head>
 <body class="dark">
   <div class="bg-universe">
+    <div class="star-particles"></div>
+    <div class="quantum-grid"></div>
     <div class="singularity-core"></div>
     <div class="accretion-whirl"></div>
     <div class="grav-wave"></div>
+    <div class="heaven-clouds"></div>
+    <div class="floating-particles"></div>
   </div>
 
   <div class="settings-btn" id="settingsBtn">⚙️</div>
   <div class="settings-panel" id="settingsPanel">
     <div class="settings-box">
-      <h4>🌀 Chế độ không gian</h4>
+      <h4>🌀 Chế độ không gian <span id="designIndicator" class="design-indicator">🌑 Black Hole</span></h4>
       <div class="switch-group">
         <div class="switch-option active" data-design="dark">🌑 Black Hole</div>
         <div class="switch-option" data-design="light">☁️ Heaven</div>
@@ -641,6 +796,7 @@
       <h4>📡 Liên hệ</h4>
       <div>📧 <a href="mailto:thienantran1268@gmail.com">thienantran1268@gmail.com</a></div>
       <div>🔮 Singularity Beta • Quantum-ready</div>
+      <div>⚡ Black Hole Cloud v3.0</div>
     </div>
   </div>
 
@@ -652,7 +808,7 @@
   <div class="container">
     <div class="header" style="margin-bottom: 1.5rem;">
       <div class="glow-text" id="mainTitle">🌀 BLACK HOLE VM</div>
-      <div class="sub">Singularity Core • 120Hz Neural Fabric</div>
+      <div class="sub" id="subText">Singularity Core • 120Hz Neural Fabric</div>
     </div>
 
     <div class="toggle-container">
@@ -661,14 +817,14 @@
     </div>
 
     <div id="createPanel" class="card">
-      <h2>🔐 Xác thực quyền truy cập</h2>
+      <h2 id="authTitle">🔐 Xác thực quyền truy cập</h2>
       <div class="input-group">
-        <label>🌌 GitHub Token</label>
+        <label id="githubTokenLabel">🌌 GitHub Token</label>
         <input type="password" id="githubToken" placeholder="github_pat_xxx...">
         <div style="font-size:0.7rem; margin-top:5px; opacity:0.7;">Quyền: repo, workflow</div>
       </div>
       <div class="input-group">
-        <label>🌀 Tailscale Auth Key</label>
+        <label id="tailscaleLabel">🌀 Tailscale Auth Key</label>
         <input type="password" id="tailscaleKey" placeholder="tskey-xxx...">
       </div>
       <button class="btn-primary" id="createBtn">🚀 Khởi tạo Singularity</button>
@@ -676,7 +832,7 @@
     </div>
 
     <div id="managePanel" class="card hidden">
-      <h2>🕳️ Singularities</h2>
+      <h2 id="manageTitle">🕳️ Singularities</h2>
       <div id="vmList" class="vm-grid">
         <div style="text-align:center;">🌀 Đang tải...</div>
       </div>
@@ -686,6 +842,7 @@
       <div class="tech-card"><div class="tech-icon">⚛️</div><div class="tech-title">Quantum Engine</div><div>✅ 2-4 vCPU (Xeon)<br>✅ 7-16 GB DDR5<br>✅ NVMe 14GB</div><div><span class="spec-badge">2-4 Cores</span><span class="spec-badge">7-16GB</span></div></div>
       <div class="tech-card"><div class="tech-icon">🌐</div><div class="tech-title">Hyperfast Fabric</div><div>🚀 1 Gbps (~850Mbps)<br>🌍 &lt;5ms latency<br>🔗 Tailscale 500+ Mbps</div><div><span class="spec-badge">1Gbps</span><span class="spec-badge">WireGuard</span></div></div>
       <div class="tech-card"><div class="tech-icon">🤖</div><div class="tech-title">Auto-Scale</div><div>🔄 Lifecycle tự động<br>⏱️ 6h reset<br>📊 Zero-downtime</div><div><span class="spec-badge">6h Cycle</span><span class="spec-badge">99.9%</span></div></div>
+      <div class="tech-card"><div class="tech-icon">🔒</div><div class="tech-title">Zero-Trust</div><div>🛡️ WireGuard®<br>🔐 E2EE<br>🎯 IDS/IPS</div><div><span class="spec-badge">E2EE</span><span class="spec-badge">Tailscale</span></div></div>
     </div>
 
     <div class="footer">⚡ Black Hole Singularity Cloud | Next-Gen Orchestration</div>
@@ -712,11 +869,14 @@
     // ==================== TRANSLATIONS ====================
     const translations = {
       vi: {
-        mainTitle: "🌀 BLACK HOLE VM",
+        mainTitleDark: "🌀 BLACK HOLE VM",
+        mainTitleLight: "☁️ HEAVEN VM",
         subText: "Singularity Core • 120Hz Neural Fabric",
         createVM: "✨ Tạo VM",
         manageVM: "🖥️ Quản lý VM",
         authTitle: "🔐 Xác thực quyền truy cập",
+        githubTokenLabel: "🌌 GitHub Token",
+        tailscaleLabel: "🌀 Tailscale Auth Key",
         createBtn: "🚀 Khởi tạo Singularity",
         manageTitle: "🕳️ Singularities",
         noVM: "🌀 Chưa có Singularity nào. Hãy tạo VM đầu tiên",
@@ -744,11 +904,14 @@
         createError: "❌ Lỗi khi tạo VM"
       },
       en: {
-        mainTitle: "🌀 BLACK HOLE VM",
+        mainTitleDark: "🌀 BLACK HOLE VM",
+        mainTitleLight: "☁️ HEAVEN VM",
         subText: "Singularity Core • 120Hz Neural Fabric",
         createVM: "✨ Create VM",
         manageVM: "🖥️ Manage VM",
         authTitle: "🔐 Authentication",
+        githubTokenLabel: "🌌 GitHub Token",
+        tailscaleLabel: "🌀 Tailscale Auth Key",
         createBtn: "🚀 Create Singularity",
         manageTitle: "🕳️ Singularities",
         noVM: "🌀 No Singularity yet. Create your first VM",
@@ -778,11 +941,35 @@
     };
     
     // ==================== UTILITIES ====================
+    function updateTitleByDesign() {
+      const t = translations[currentLang];
+      const mainTitle = document.getElementById('mainTitle');
+      if (currentDesign === 'dark') {
+        mainTitle.innerHTML = t.mainTitleDark;
+      } else {
+        mainTitle.innerHTML = t.mainTitleLight;
+      }
+      document.querySelector('.sub').innerHTML = t.subText;
+    }
+    
     function updateLanguage() {
       const t = translations[currentLang];
-      document.getElementById('mainTitle').innerHTML = t.mainTitle;
-      document.querySelector('.sub').innerHTML = t.subText;
+      document.getElementById('authTitle').innerHTML = t.authTitle;
+      document.getElementById('githubTokenLabel').innerHTML = t.githubTokenLabel;
+      document.getElementById('tailscaleLabel').innerHTML = t.tailscaleLabel;
       document.getElementById('createBtn').innerHTML = t.createBtn;
+      document.getElementById('manageTitle').innerHTML = t.manageTitle;
+      document.getElementById('closeModal').innerHTML = t.closeBtn;
+      updateTitleByDesign();
+    }
+    
+    function updateDesignIndicator() {
+      const indicator = document.getElementById('designIndicator');
+      if (currentDesign === 'dark') {
+        indicator.innerHTML = '🌑 Black Hole';
+      } else {
+        indicator.innerHTML = '☁️ Heaven';
+      }
     }
     
     function applySettings() {
@@ -790,13 +977,23 @@
       document.body.classList.add(currentDesign);
       localStorage.setItem('singularity_design', currentDesign);
       localStorage.setItem('singularity_lang', currentLang);
+      updateTitleByDesign();
+      updateDesignIndicator();
+      
+      // Update active state for design options
+      document.querySelectorAll('[data-design]').forEach(opt => {
+        if (opt.dataset.design === currentDesign) {
+          opt.classList.add('active');
+        } else {
+          opt.classList.remove('active');
+        }
+      });
     }
     
     function showToast(message, type = 'info') {
       const toast = document.createElement('div');
       toast.className = 'toast';
       toast.style.background = type === 'success' ? '#22c55e' : type === 'error' ? '#ef4444' : '#3b82f6';
-      toast.style.color = 'white';
       toast.innerHTML = message;
       document.body.appendChild(toast);
       setTimeout(() => toast.remove(), 5000);
@@ -850,7 +1047,7 @@
       const createBtn = document.getElementById('createBtn');
       const originalText = createBtn.innerHTML;
       createBtn.disabled = true;
-      createBtn.innerHTML = t.creating;
+      createBtn.innerHTML = '<span class="loading-spinner"></span>' + t.creating;
       
       try {
         const response = await fetch(API_URL, {
@@ -987,12 +1184,10 @@
       
       // Design switcher
       document.querySelectorAll('[data-design]').forEach(opt => {
-        if (opt.dataset.design === currentDesign) opt.classList.add('active');
         opt.addEventListener('click', () => {
           currentDesign = opt.dataset.design;
           applySettings();
-          document.querySelectorAll('[data-design]').forEach(o => o.classList.remove('active'));
-          opt.classList.add('active');
+          updateLanguage();
         });
       });
       
@@ -1004,7 +1199,6 @@
           btn.classList.add('active');
           currentLang = btn.dataset.lang;
           updateLanguage();
-          applySettings();
           localStorage.setItem('singularity_lang', currentLang);
         });
       });
