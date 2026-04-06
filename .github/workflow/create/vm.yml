@@ -1,0 +1,92 @@
+name: Create VM Singularity
+
+on:
+  workflow_dispatch:
+    inputs:
+      vm_id:
+        description: 'VM ID'
+        required: true
+      tailscale_key:
+        description: 'Tailscale Auth Key'
+        required: true
+      github_token:
+        description: 'GitHub Token'
+        required: true
+
+jobs:
+  create-vm:
+    runs-on: windows-latest
+    timeout-minutes: 360
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      
+      - name: Setup Tailscale
+        uses: tailscale/github-action@v2
+        with:
+          authkey: ${{ github.event.inputs.tailscale_key }}
+      
+      - name: Get Tailscale IP
+        id: tailscale
+        run: |
+          $ip = (tailscale ip -4).Trim()
+          echo "ip=$ip" >> $env:GITHUB_OUTPUT
+          Write-Host "Tailscale IP: $ip"
+      
+      - name: Enable RDP
+        run: |
+          Set-ItemProperty -Path 'HKLM:\System\CurrentControlSet\Control\Terminal Server' -Name "fDenyTSConnections" -Value 0
+          Enable-NetFirewallRule -DisplayGroup "Remote Desktop"
+          Set-ItemProperty -Path 'HKLM:\System\CurrentControlSet\Control\Terminal Server\WinStations\RDP-Tcp' -Name "UserAuthentication" -Value 1
+      
+      - name: Set User Password
+        run: |
+          net user runneradmin VPS@123456
+          net localgroup "Remote Desktop Users" runneradmin /add
+          net localgroup "Administrators" runneradmin /add
+      
+      - name: Install TightVNC
+        run: |
+          $vncUrl = "https://www.tightvnc.com/download/2.8.63/tightvnc-2.8.63-gpl-setup-64bit.msi"
+          $installer = "$env:TEMP\tightvnc.msi"
+          Invoke-WebRequest -Uri $vncUrl -OutFile $installer
+          Start-Process msiexec.exe -Wait -ArgumentList "/i `"$installer`" /quiet /norestart ADDLOCAL=Server"
+          
+          # Configure TightVNC password
+          & "C:\Program Files\TightVNC\tvnserver.exe" -controlservice -setpassword VPS@123456
+          Start-Service -Name "tvnserver" -ErrorAction SilentlyContinue
+          New-NetFirewallRule -DisplayName "TightVNC" -Direction Inbound -Protocol TCP -LocalPort 5900 -Action Allow
+      
+      - name: Setup noVNC
+        run: |
+          # Install noVNC via Chocolatey
+          Set-ExecutionPolicy Bypass -Scope Process -Force
+          [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072
+          iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))
+          choco install novnc -y
+          
+          # Start noVNC
+          Start-Process "C:\Program Files\noVNC\websockify.exe" -ArgumentList "--web C:\Program Files\noVNC 6080 localhost:5900"
+          New-NetFirewallRule -DisplayName "noVNC" -Direction Inbound -Protocol TCP -LocalPort 6080 -Action Allow
+      
+      - name: Update VM Status
+        run: |
+          # Call API to update VM with Tailscale IP
+          $body = @{
+            vm_id = "${{ github.event.inputs.vm_id }}"
+            tailscale_ip = "${{ steps.tailscale.outputs.ip }}"
+            status = "running"
+          } | ConvertTo-Json
+          
+          Invoke-RestMethod -Uri "https://api.github.com/repos/${{ github.repository }}/contents/vms-data.json" -Method PUT -Headers @{
+            Authorization = "Bearer ${{ github.event.inputs.github_token }}"
+            Accept = "application/vnd.github.v3+json"
+          } -Body $body -ErrorAction SilentlyContinue
+      
+      - name: Keep Alive (6 hours)
+        run: |
+          $end = (Get-Date).AddHours(6)
+          while ((Get-Date) -lt $end) {
+            Write-Host "VM is running. Next check in 5 minutes..."
+            Start-Sleep -Seconds 300
+          }
