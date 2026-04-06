@@ -9,6 +9,11 @@
   },
   "routes": [
     {
+      "src": "/api/health",
+      "methods": ["GET", "OPTIONS"],
+      "dest": "/api/health.js"
+    },
+    {
       "src": "/api/vps",
       "methods": ["GET", "POST", "DELETE", "OPTIONS"],
       "dest": "/api/vps.js"
