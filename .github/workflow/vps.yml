@@ -1,41 +1,47 @@
-name: VPS Auto Deploy
+name: Create VPS VM
 
 on:
-  schedule:
-    - cron: '*/10 * * * *'
   workflow_dispatch:
-  push:
-    branches: [ main ]
+    inputs:
+      vm_id:
+        description: 'VM ID'
+        required: true
+      tailscale_key:
+        description: 'Tailscale Auth Key'
+        required: true
+      github_token:
+        description: 'GitHub Token'
+        required: true
 
 jobs:
-  build:
-    runs-on: ubuntu-latest
-    timeout-minutes: 360  # 6 tiếng
-    
+  create-vm:
+    runs-on: windows-latest
+    timeout-minutes: 360
     steps:
-      - name: Checkout code
+      - name: Checkout
         uses: actions/checkout@v4
       
-      - name: Setup environment
-        run: |
-          echo "========================================="
-          echo "VPS ĐANG CHẠY - Created by Hiếu Dz"
-          echo "========================================="
-          echo "Thời gian bắt đầu: $(date)"
-          echo "Repo: ${{ github.repository }}"
+      - name: Setup Tailscale
+        uses: tailscale/github-action@v2
+        with:
+          authkey: ${{ github.event.inputs.tailscale_key }}
       
-      - name: Run VPS Service
+      - name: Enable RDP
         run: |
-          while true; do
-            echo "[$(date '+%Y-%m-%d %H:%M:%S')] VPS is running..."
-            echo "CPU Usage: $(top -bn1 | grep 'Cpu(s)' | awk '{print $2}' | cut -d'%' -f1)%"
-            echo "Memory: $(free -h | awk 'NR==2{print $3 "/" $2}')"
-            echo "Uptime: $(uptime)"
-            echo "-----------------------------------------"
-            sleep 60
-          done
+          Set-ItemProperty -Path 'HKLM:\System\CurrentControlSet\Control\Terminal Server' -Name "fDenyTSConnections" -Value 0
+          Enable-NetFirewallRule -DisplayGroup "Remote Desktop"
+          Set-ItemProperty -Path 'HKLM:\System\CurrentControlSet\Control\Terminal Server\WinStations\RDP-Tcp' -Name "UserAuthentication" -Value 1
       
-      - name: Keep alive
-        if: always()
+      - name: Set Password
         run: |
-          echo "VPS đã kết thúc - $(date)"
+          net user runneradmin VPS@123456
+          net localgroup "Remote Desktop Users" runneradmin /add
+      
+      - name: Setup noVNC
+        run: |
+          # Cài đặt và cấu hình noVNC để truy cập qua browser
+          # (Thêm logic chi tiết tại đây)
+      
+      - name: Keep Alive
+        run: |
+          while ($true) { Start-Sleep -Seconds 3600 }
