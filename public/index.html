@@ -160,12 +160,16 @@
       box-shadow: 0 15px 35px -12px rgba(0, 0, 0, 0.08);
     }
 
-    /* ========== TYPOGRAPHY ========== */
+    /* ========== BASE TYPOGRAPHY ========== */
     body.dark, body.dark * { color-scheme: dark; }
     body.light, body.light * { color-scheme: light; }
 
-    body.dark h1, body.dark h2, body.dark h3, body.dark h4 { color: #ffffff !important; }
-    body.dark p, body.dark span, body.dark label, body.dark .text-muted { color: #e2e8f0 !important; }
+    body.dark h1, body.dark h2, body.dark h3, body.dark h4 {
+      color: #ffffff !important;
+    }
+    body.dark p, body.dark span, body.dark label, body.dark .text-muted {
+      color: #e2e8f0 !important;
+    }
     body.dark .glow-text {
       background: linear-gradient(135deg, #ffffff, #ffaa66, #ff66cc);
       -webkit-background-clip: text;
@@ -174,8 +178,12 @@
     }
     body.dark .subtitle { color: #ffaa88 !important; }
     
-    body.light h1, body.light h2, body.light h3, body.light h4 { color: #1e293b !important; }
-    body.light p, body.light span, body.light label, body.light .text-muted { color: #334155 !important; }
+    body.light h1, body.light h2, body.light h3, body.light h4 {
+      color: #1e293b !important;
+    }
+    body.light p, body.light span, body.light label, body.light .text-muted {
+      color: #334155 !important;
+    }
     body.light .glow-text {
       background: linear-gradient(135deg, #1a2a4a, #2b4c8a, #5a6eaa);
       -webkit-background-clip: text;
@@ -207,6 +215,9 @@
       font-weight: 600;
       font-size: 0.9rem;
     }
+    body.dark .input-group label { color: #ffaa77 !important; }
+    body.light .input-group label { color: #1e3a5f !important; }
+    
     .input-wrapper {
       display: flex;
       gap: 0.6rem;
@@ -244,6 +255,7 @@
       box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
       outline: none;
     }
+    
     .input-hint {
       font-size: 0.65rem;
       margin-top: 0.4rem;
@@ -270,7 +282,6 @@
       transform: translateY(-2px);
       filter: brightness(1.05);
     }
-    .random-btn i { font-size: 1rem; }
 
     .input-error {
       color: #ef4444;
@@ -358,7 +369,57 @@
       background: linear-gradient(135deg, #1e3a5f, #3b5a8a);
     }
 
-    /* ========== VM GRID ========== */
+    /* ========== TECH SECTION - FIXED BLACK HOLE ========== */
+    .tech-section {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 1.5rem;
+      margin: 2rem 0;
+    }
+    .tech-card {
+      padding: 1.3rem;
+      text-align: center;
+      border-radius: 24px;
+      transition: all 0.3s;
+    }
+    body.dark .tech-card {
+      background: rgba(0, 0, 0, 0.7) !important;
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 102, 0, 0.4) !important;
+    }
+    body.light .tech-card {
+      background: rgba(255, 255, 255, 0.6);
+      backdrop-filter: blur(12px);
+      border: 1px solid #cbd5e1;
+    }
+    .tech-card:hover { transform: translateY(-3px); }
+    .tech-icon { font-size: 2.2rem; margin-bottom: 0.6rem; }
+    .tech-title { font-size: 1rem; font-weight: 700; margin-bottom: 0.4rem; }
+    body.dark .tech-title { color: #ffaa77 !important; text-shadow: 0 0 5px rgba(255, 170, 119, 0.3); }
+    body.light .tech-title { color: #1e3a5f !important; }
+    .tech-desc { font-size: 0.75rem; line-height: 1.4; }
+    body.dark .tech-desc { color: #e2e8f0 !important; opacity: 1 !important; }
+    body.light .tech-desc { color: #334155 !important; }
+    
+    .spec-badge {
+      display: inline-block;
+      padding: 0.2rem 0.6rem;
+      border-radius: 20px;
+      font-size: 0.65rem;
+      margin: 0.15rem;
+      font-weight: 600;
+    }
+    body.dark .spec-badge {
+      background: rgba(255, 100, 50, 0.4) !important;
+      color: #ffddbb !important;
+      border: 1px solid rgba(255, 102, 0, 0.3);
+    }
+    body.light .spec-badge {
+      background: rgba(30, 58, 95, 0.12);
+      color: #1e3a5f !important;
+    }
+
+    /* ========== VM GRID - FIXED BLACK HOLE ========== */
     .vm-grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
@@ -373,7 +434,7 @@
       position: relative;
     }
     body.dark .vm-card {
-      background: rgba(12, 15, 30, 0.95) !important;
+      background: rgba(10, 12, 25, 0.95) !important;
       border: 1px solid rgba(255, 102, 0, 0.5) !important;
     }
     body.light .vm-card {
@@ -393,7 +454,7 @@
       margin-bottom: 0.8rem;
       word-break: break-all;
     }
-    body.dark .vm-name { color: #ffaa77 !important; }
+    body.dark .vm-name { color: #ffaa77 !important; text-shadow: 0 0 3px rgba(255, 170, 119, 0.3); }
     body.light .vm-name { color: #1e3a5f !important; }
     
     .vm-info-row {
@@ -460,53 +521,7 @@
       transform: scale(1.02);
     }
 
-    /* ========== TECH CARDS ========== */
-    .tech-section {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-      gap: 1.5rem;
-      margin: 2rem 0;
-    }
-    .tech-card {
-      padding: 1.3rem;
-      text-align: center;
-      border-radius: 24px;
-      transition: all 0.3s;
-    }
-    body.dark .tech-card {
-      background: rgba(0, 0, 0, 0.5);
-      backdrop-filter: blur(12px);
-      border: 1px solid #ff663355;
-    }
-    body.light .tech-card {
-      background: rgba(255, 255, 255, 0.6);
-      backdrop-filter: blur(12px);
-      border: 1px solid #cbd5e1;
-    }
-    .tech-card:hover { transform: translateY(-3px); }
-    .tech-icon { font-size: 2.2rem; margin-bottom: 0.6rem; }
-    .tech-title { font-size: 1rem; font-weight: 700; margin-bottom: 0.4rem; }
-    body.dark .tech-title { color: #ffaa77 !important; }
-    body.light .tech-title { color: #1e3a5f !important; }
-    .tech-desc { font-size: 0.75rem; line-height: 1.4; }
-    .spec-badge {
-      display: inline-block;
-      padding: 0.2rem 0.6rem;
-      border-radius: 20px;
-      font-size: 0.65rem;
-      margin: 0.15rem;
-      font-weight: 600;
-    }
-    body.dark .spec-badge {
-      background: rgba(255, 100, 50, 0.35);
-      color: #ffccaa !important;
-    }
-    body.light .spec-badge {
-      background: rgba(30, 58, 95, 0.12);
-      color: #1e3a5f !important;
-    }
-
-    /* ========== MODAL ========== */
+    /* ========== MODAL - FIXED BLACK HOLE ========== */
     .modal {
       display: none;
       position: fixed;
@@ -638,6 +653,8 @@
     }
     body.dark .settings-box { background: #0f111faa; }
     body.light .settings-box { background: #eef3ffaa; }
+    body.dark .settings-box h4 { color: #ffaa77 !important; }
+    
     .design-indicator {
       display: inline-block;
       margin-left: 8px;
@@ -686,6 +703,7 @@
       color: white;
       font-size: 0.7rem;
     }
+    body.dark .step span:not(.step-number) { color: #cbd5e6 !important; }
 
     /* ========== LANGUAGE SWITCH ========== */
     .lang-switch {
@@ -732,7 +750,7 @@
       font-size: 0.7rem;
       opacity: 0.5;
     }
-    body.dark .footer { border-top-color: #ff774433; }
+    body.dark .footer { border-top-color: #ff774433; color: #cbd5e1 !important; }
     body.light .footer { border-top-color: #cbd5e1; }
 
     /* ========== UTILITIES ========== */
@@ -1033,10 +1051,9 @@
 
     function t(key) { return translations[currentLang][key] || key; }
 
-    // Random username: 6-10 ký tự, chữ thường + số
     function generateRandomUsername() {
       const chars = 'abcdefghijklmnopqrstuvwxyz0123456789';
-      const length = Math.floor(Math.random() * 5) + 6; // 6-10
+      const length = Math.floor(Math.random() * 5) + 6;
       let result = '';
       for (let i = 0; i < length; i++) {
         result += chars[Math.floor(Math.random() * chars.length)];
@@ -1044,7 +1061,6 @@
       return result;
     }
 
-    // Random password: 30-32 ký tự, bao gồm chữ hoa, thường, số, kí tự đặc biệt, kết thúc bằng 'dz'
     function generateRandomPassword() {
       const upper = 'ABCDEFGHJKLMNPQRSTUVWXYZ';
       const lower = 'abcdefghijkmnopqrstuvwxyz';
@@ -1053,22 +1069,17 @@
       const all = upper + lower + numbers + special;
       
       let password = '';
-      // Đảm bảo có ít nhất 1 ký tự mỗi loại
       password += upper[Math.floor(Math.random() * upper.length)];
       password += lower[Math.floor(Math.random() * lower.length)];
       password += numbers[Math.floor(Math.random() * numbers.length)];
       password += special[Math.floor(Math.random() * special.length)];
       
-      // Thêm ký tự ngẫu nhiên đến 28-30 ký tự
-      const targetLength = Math.floor(Math.random() * 3) + 28; // 28-30
+      const targetLength = Math.floor(Math.random() * 3) + 28;
       for (let i = password.length; i < targetLength; i++) {
         password += all[Math.floor(Math.random() * all.length)];
       }
       
-      // Trộn ngẫu nhiên
       let shuffled = password.split('').sort(() => Math.random() - 0.5).join('');
-      
-      // Kết thúc bằng 'dz'
       shuffled = shuffled.slice(0, -2) + 'dz';
       
       return shuffled;
@@ -1274,7 +1285,6 @@
         return;
       }
       
-      // Auto generate if empty
       if (!vmUsername) {
         vmUsername = generateRandomUsername();
         document.getElementById('vmUsername').value = vmUsername;
@@ -1317,7 +1327,6 @@
               <span style="font-size: 0.75rem;">🔄 VM sẽ sẵn sàng trong 2-3 phút. Click vào tab "Quản lý VM" để xem trạng thái.</span>
             </div>
           `;
-          // Clear only token fields, keep generated user/pass
           document.getElementById('githubToken').value = '';
           document.getElementById('tailscaleKey').value = '';
           setTimeout(() => {
@@ -1370,7 +1379,6 @@
       loadVMs();
       startAutoRefresh();
 
-      // Generate random credentials on page load
       document.getElementById('vmUsername').value = generateRandomUsername();
       document.getElementById('vmPassword').value = generateRandomPassword();
 
