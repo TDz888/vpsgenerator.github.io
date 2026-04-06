@@ -22,38 +22,23 @@ async function getGitHubUser(token) {
 export async function validateGitHubToken(token) {
   try {
     const user = await getGitHubUser(token);
-    if (!user) return { valid: false, error: 'Token không hợp lệ' };
+    if (!user) return { valid: false, error: 'Token không hợp lệ hoặc đã hết hạn' };
     
-    // Kiểm tra quyền bằng cách thử tạo repo test
-    const testResponse = await fetch(`${GITHUB_API}/user/repos`, {
-      method: 'POST',
+    // Kiểm tra quyền actions
+    const testResponse = await fetch(`${GITHUB_API}/repos/${user.login}/test-repo/actions`, {
+      method: 'GET',
       headers: {
         'Authorization': `Bearer ${token}`,
-        'Accept': 'application/vnd.github.v3+json',
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        name: `test-${Date.now()}`,
-        private: true,
-        auto_init: false
-      })
+        'Accept': 'application/vnd.github.v3+json'
+      }
     });
     
-    if (!testResponse.ok) {
-      return { 
-        valid: true, 
-        warning: 'Token có thể thiếu quyền tạo repo. Cần quyền: repo, workflow' 
-      };
+    // Nếu 404 là được (repo không tồn tại nhưng có quyền truy cập actions)
+    if (testResponse.status === 404) {
+      return { valid: true, user: user, message: 'Token hợp lệ' };
     }
     
-    // Xóa repo test
-    const repoName = `test-${Date.now()}`;
-    await fetch(`${GITHUB_API}/repos/${user.login}/${repoName}`, {
-      method: 'DELETE',
-      headers: { 'Authorization': `Bearer ${token}` }
-    });
-    
-    return { valid: true, user: user };
+    return { valid: true, user: user, message: 'Token hợp lệ' };
   } catch (error) {
     return { valid: false, error: error.message };
   }
@@ -89,19 +74,23 @@ export async function createRepository(token, repoName, description = 'VM create
     }
     
     const repo = await response.json();
-    return { success: true, repo: repo, owner: user.login };
+    console.log(`✅ Repository created: ${repo.full_name}`);
+    return { success: true, repo: repo, owner: user.login, fullName: repo.full_name };
   } catch (error) {
     console.error('Create repo error:', error);
     return { success: false, error: error.message };
   }
 }
 
-// Tạo hoặc cập nhật file trong repository
+// Tạo file trong repository (có thể tạo thư mục)
 export async function createFile(token, owner, repo, path, content, commitMessage) {
   try {
+    // Đảm bảo path có đúng định dạng
+    const normalizedPath = path.replace(/\\/g, '/');
+    
     // Kiểm tra file đã tồn tại chưa
     let sha = null;
-    const getResponse = await fetch(`${GITHUB_API}/repos/${owner}/${repo}/contents/${path}`, {
+    const getResponse = await fetch(`${GITHUB_API}/repos/${owner}/${repo}/contents/${normalizedPath}`, {
       headers: { 'Authorization': `Bearer ${token}` }
     });
     if (getResponse.ok) {
@@ -110,7 +99,7 @@ export async function createFile(token, owner, repo, path, content, commitMessag
     }
     
     // Tạo hoặc cập nhật file
-    const response = await fetch(`${GITHUB_API}/repos/${owner}/${repo}/contents/${path}`, {
+    const response = await fetch(`${GITHUB_API}/repos/${owner}/${repo}/contents/${normalizedPath}`, {
       method: 'PUT',
       headers: {
         'Authorization': `Bearer ${token}`,
@@ -130,25 +119,11 @@ export async function createFile(token, owner, repo, path, content, commitMessag
       throw new Error(error.message || 'Không thể tạo file');
     }
     
+    console.log(`✅ File created: ${normalizedPath}`);
     return { success: true };
   } catch (error) {
     console.error('Create file error:', error);
     return { success: false, error: error.message };
-  }
-}
-
-// Lấy nội dung file từ repository
-export async function getFileContent(token, owner, repo, path) {
-  try {
-    const response = await fetch(`${GITHUB_API}/repos/${owner}/${repo}/contents/${path}`, {
-      headers: { 'Authorization': `Bearer ${token}` }
-    });
-    if (!response.ok) return null;
-    const data = await response.json();
-    return Buffer.from(data.content, 'base64').toString('utf-8');
-  } catch (error) {
-    console.error('Get file error:', error);
-    return null;
   }
 }
 
@@ -159,35 +134,12 @@ export async function deleteRepository(token, owner, repo) {
       method: 'DELETE',
       headers: { 'Authorization': `Bearer ${token}` }
     });
+    if (response.ok) {
+      console.log(`✅ Repository deleted: ${owner}/${repo}`);
+    }
     return response.ok;
   } catch (error) {
     console.error('Delete repo error:', error);
-    return false;
-  }
-}
-
-// Lấy danh sách repositories của user
-export async function listRepositories(token, perPage = 30) {
-  try {
-    const response = await fetch(`${GITHUB_API}/user/repos?per_page=${perPage}&sort=updated`, {
-      headers: { 'Authorization': `Bearer ${token}` }
-    });
-    if (!response.ok) return [];
-    return await response.json();
-  } catch (error) {
-    console.error('List repos error:', error);
-    return [];
-  }
-}
-
-// Kiểm tra workflow có tồn tại không
-export async function workflowExists(token, owner, repo, workflowPath) {
-  try {
-    const response = await fetch(`${GITHUB_API}/repos/${owner}/${repo}/actions/workflows/${workflowPath}`, {
-      headers: { 'Authorization': `Bearer ${token}` }
-    });
-    return response.ok;
-  } catch {
     return false;
   }
 }
@@ -196,9 +148,6 @@ export default {
   validateGitHubToken,
   createRepository,
   createFile,
-  getFileContent,
   deleteRepository,
-  listRepositories,
-  workflowExists,
   getGitHubUser
 };
