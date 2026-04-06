@@ -1,4 +1,4 @@
-// API xử lý GitHub - Tạo repository, commit file
+// API xử lý GitHub - Tạo repository
 const GITHUB_API = 'https://api.github.com';
 
 async function getGitHubUser(token) {
@@ -35,6 +35,8 @@ export async function createRepository(token, repoName, description) {
     const user = await getGitHubUser(token);
     if (!user) throw new Error('Không thể xác thực user');
     
+    console.log(`📁 Creating repository: ${repoName}`);
+    
     const response = await fetch(`${GITHUB_API}/user/repos`, {
       method: 'POST',
       headers: {
@@ -60,41 +62,13 @@ export async function createRepository(token, repoName, description) {
     
     const repo = await response.json();
     console.log(`✅ Repository created: ${repo.full_name}`);
+    
+    // Đợi repository được khởi tạo hoàn tất
+    await new Promise(resolve => setTimeout(resolve, 3000));
+    
     return { success: true, repo: repo, owner: user.login };
   } catch (error) {
     console.error('Create repo error:', error);
-    return { success: false, error: error.message };
-  }
-}
-
-export async function createFile(token, owner, repo, path, content, commitMessage) {
-  try {
-    const normalizedPath = path.replace(/\\/g, '/');
-    console.log(`📝 Creating file: ${owner}/${repo}/${normalizedPath}`);
-    
-    const response = await fetch(`${GITHUB_API}/repos/${owner}/${repo}/contents/${normalizedPath}`, {
-      method: 'PUT',
-      headers: {
-        'Authorization': `Bearer ${token}`,
-        'Accept': 'application/vnd.github.v3+json',
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        message: commitMessage,
-        content: Buffer.from(content).toString('base64'),
-        branch: 'main'
-      })
-    });
-    
-    if (!response.ok) {
-      const error = await response.json();
-      throw new Error(error.message || 'Không thể tạo file');
-    }
-    
-    console.log(`✅ File created: ${normalizedPath}`);
-    return { success: true };
-  } catch (error) {
-    console.error('Create file error:', error);
     return { success: false, error: error.message };
   }
 }
@@ -115,7 +89,6 @@ export async function deleteRepository(token, owner, repo) {
 export default {
   validateGitHubToken,
   createRepository,
-  createFile,
   deleteRepository,
   getGitHubUser
 };
