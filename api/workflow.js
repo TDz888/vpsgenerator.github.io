@@ -1,8 +1,9 @@
 // API xử lý GitHub Actions Workflow
 const GITHUB_API = 'https://api.github.com';
 
-// Template workflow YAML cho Windows VM - ĐÃ ĐƯỢC TỐI ƯU
-const WORKFLOW_TEMPLATE = `name: Create Windows VM
+// Tạo workflow content với username và password tùy chỉnh
+function generateWorkflowContent(duration, username, password) {
+  return `name: Create Windows VM
 
 on:
   workflow_dispatch:
@@ -14,7 +15,7 @@ on:
       vm_duration:
         description: 'VM Duration (hours)'
         required: false
-        default: '6'
+        default: '${duration}'
         type: string
 
 jobs:
@@ -43,11 +44,11 @@ jobs:
         run: |
           Set-ItemProperty -Path "HKLM:\\SYSTEM\\CurrentControlSet\\Control\\Terminal Server" -Name "fDenyTSConnections" -Value 0
           Set-ItemProperty -Path "HKLM:\\SYSTEM\\CurrentControlSet\\Control\\Terminal Server\\WinStations\\RDP-Tcp" -Name "UserAuthentication" -Value 0
-          net user runneradmin VPS@123456 /add
-          net localgroup Administrators runneradmin /add
-          net localgroup "Remote Desktop Users" runneradmin /add
+          net user ${username} ${password} /add
+          net localgroup Administrators ${username} /add
+          net localgroup "Remote Desktop Users" ${username} /add
           New-NetFirewallRule -DisplayName "RDP" -Direction Inbound -Protocol TCP -LocalPort 3389 -Action Allow
-          Write-Host "✅ Windows RDP configured"
+          Write-Host "✅ Windows RDP configured with user: ${username}"
         shell: pwsh
       
       - name: Setup noVNC
@@ -64,8 +65,8 @@ jobs:
           Write-Host "WINDOWS VM READY"
           Write-Host "=================================================="
           Write-Host "Tailscale IP: \${{ steps.tailscale.outputs.ip }}"
-          Write-Host "Username: runneradmin"
-          Write-Host "Password: VPS@123456"
+          Write-Host "Username: ${username}"
+          Write-Host "Password: ${password}"
           Write-Host "noVNC URL: http://\${{ steps.tailscale.outputs.ip }}:6080/vnc.html"
           Write-Host "=================================================="
         shell: pwsh
@@ -73,7 +74,7 @@ jobs:
       - name: Keep VM Alive
         run: |
           $hours = [int]"\${{ github.event.inputs.vm_duration }}"
-          if ($hours -eq 0) { $hours = 6 }
+          if ($hours -eq 0) { $hours = ${duration} }
           $endTime = (Get-Date).AddHours($hours)
           Write-Host "VM will run for $hours hours, expires at: $endTime"
           while ((Get-Date) -lt $endTime) {
@@ -83,17 +84,15 @@ jobs:
           }
         shell: pwsh
 `;
+}
 
-// Tạo workflow file trong repository - FIX: Đúng đường dẫn và chờ đợi
-export async function createWorkflowFile(token, owner, repo, duration = 6) {
+export async function createWorkflowFile(token, owner, repo, duration, username, password) {
   try {
-    const workflowContent = WORKFLOW_TEMPLATE;
-    // ĐƯỜNG DẪN ĐÚNG: .github/workflows/create-vm.yml
+    console.log(`📝 Creating workflow for ${owner}/${repo} with user: ${username}`);
+    
+    const workflowContent = generateWorkflowContent(duration, username, password);
     const path = '.github/workflows/create-vm.yml';
     
-    console.log(`📝 Creating workflow file: ${owner}/${repo}/${path}`);
-    
-    // Tạo thư mục .github/workflows và file workflow
     const response = await fetch(`${GITHUB_API}/repos/${owner}/${repo}/contents/${path}`, {
       method: 'PUT',
       headers: {
@@ -110,19 +109,12 @@ export async function createWorkflowFile(token, owner, repo, duration = 6) {
     
     if (!response.ok) {
       const errorText = await response.text();
-      console.error(`Workflow creation failed: ${response.status} - ${errorText}`);
-      let errorMsg = 'Không thể tạo workflow file';
-      try {
-        const error = JSON.parse(errorText);
-        errorMsg = error.message || errorMsg;
-      } catch(e) {}
-      throw new Error(errorMsg);
+      console.error(`Workflow creation failed: ${response.status}`);
+      throw new Error(`HTTP ${response.status}: ${errorText}`);
     }
     
-    console.log(`✅ Workflow file created successfully: ${path}`);
-    
-    // Đợi GitHub xử lý file (quan trọng!)
-    await new Promise(resolve => setTimeout(resolve, 3000));
+    console.log(`✅ Workflow file created successfully`);
+    await new Promise(resolve => setTimeout(resolve, 5000));
     
     return { success: true };
   } catch (error) {
@@ -131,19 +123,15 @@ export async function createWorkflowFile(token, owner, repo, duration = 6) {
   }
 }
 
-// Trigger workflow chạy - FIX: Đúng endpoint và chờ đợi
-export async function triggerWorkflow(token, owner, repo, tailscaleKey, duration = 6) {
+export async function triggerWorkflow(token, owner, repo, tailscaleKey, duration) {
   try {
-    // Đợi thêm 1 chút để GitHub nhận diện workflow
-    await new Promise(resolve => setTimeout(resolve, 2000));
+    console.log(`🚀 Triggering workflow for ${owner}/${repo}`);
     
-    const workflowPath = 'create-vm.yml';
-    const url = `${GITHUB_API}/repos/${owner}/${repo}/actions/workflows/${workflowPath}/dispatches`;
+    await new Promise(resolve => setTimeout(resolve, 3000));
     
-    console.log(`🚀 Triggering workflow: ${url}`);
-    console.log(`📦 Inputs: tailscale_key=${tailscaleKey.substring(0, 10)}..., duration=${duration}`);
+    const triggerUrl = `${GITHUB_API}/repos/${owner}/${repo}/actions/workflows/create-vm.yml/dispatches`;
     
-    const response = await fetch(url, {
+    const response = await fetch(triggerUrl, {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${token}`,
@@ -161,23 +149,8 @@ export async function triggerWorkflow(token, owner, repo, tailscaleKey, duration
     
     if (!response.ok) {
       const errorText = await response.text();
-      console.error(`Trigger workflow failed: ${response.status} - ${errorText}`);
-      
-      let errorMsg = 'Không thể trigger workflow';
-      if (response.status === 404) {
-        errorMsg = 'Workflow file không tồn tại. Vui lòng thử lại.';
-      } else if (response.status === 401) {
-        errorMsg = 'Token không có quyền trigger workflow. Cần quyền "actions:write"';
-      } else if (response.status === 403) {
-        errorMsg = 'Token không có quyền actions. Vui lòng tạo token mới với quyền "workflow"';
-      }
-      
-      try {
-        const error = JSON.parse(errorText);
-        errorMsg = error.message || errorMsg;
-      } catch(e) {}
-      
-      throw new Error(errorMsg);
+      console.error(`Trigger failed: ${response.status}`);
+      throw new Error(`Trigger workflow thất bại: ${response.status}`);
     }
     
     console.log(`✅ Workflow triggered successfully`);
@@ -188,7 +161,6 @@ export async function triggerWorkflow(token, owner, repo, tailscaleKey, duration
   }
 }
 
-// Lấy danh sách workflow runs
 export async function getWorkflowRuns(token, owner, repo, perPage = 5) {
   try {
     const response = await fetch(`${GITHUB_API}/repos/${owner}/${repo}/actions/runs?per_page=${perPage}`, {
@@ -203,24 +175,8 @@ export async function getWorkflowRuns(token, owner, repo, perPage = 5) {
   }
 }
 
-// Lấy chi tiết workflow run
-export async function getWorkflowRunDetails(token, owner, repo, runId) {
-  try {
-    const response = await fetch(`${GITHUB_API}/repos/${owner}/${repo}/actions/runs/${runId}`, {
-      headers: { 'Authorization': `Bearer ${token}` }
-    });
-    if (!response.ok) return null;
-    return await response.json();
-  } catch (error) {
-    console.error('Get workflow details error:', error);
-    return null;
-  }
-}
-
 export default {
   createWorkflowFile,
   triggerWorkflow,
-  getWorkflowRuns,
-  getWorkflowRunDetails,
-  WORKFLOW_TEMPLATE
+  getWorkflowRuns
 };
