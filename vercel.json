@@ -27,8 +27,5 @@
         { "key": "Access-Control-Allow-Headers", "value": "Content-Type" }
       ]
     }
-  ],
-  "env": {
-    "VM_DEFAULT_DURATION": "6"
-  }
+  ]
 }
