@@ -4,19 +4,45 @@ import { createWorkflowFile, triggerWorkflow, getWorkflowRuns } from './workflow
 
 let vms = global.vms || [];
 
-// FIX: Tên repository chỉ chứa chữ thường, số và dấu gạch ngang
+// FIX HOÀN TOÀN: Tên repository CHỈ gồm chữ thường, số và dấu gạch ngang
 function generateRepoName() {
-  const prefixes = ['vm', 'cloud', 'singularity', 'vps', 'win'];
+  // Chỉ dùng các ký tự an toàn: a-z, 0-9, -
+  const prefixes = ['vm', 'cloud', 'singularity', 'vps', 'win', 'server'];
+  const suffix = [
+    'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm',
+    'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z',
+    '0', '1', '2', '3', '4', '5', '6', '7', '8', '9'
+  ];
+  
   const prefix = prefixes[Math.floor(Math.random() * prefixes.length)];
-  const timestamp = Date.now().toString(36); // chỉ chữ thường và số
-  const random = Math.random().toString(36).substring(2, 8); // chỉ chữ thường và số
-  return `${prefix}-${timestamp}-${random}`.toLowerCase();
+  
+  // Tạo chuỗi ngẫu nhiên 10 ký tự chỉ gồm chữ thường và số
+  let randomStr = '';
+  for (let i = 0; i < 10; i++) {
+    randomStr += suffix[Math.floor(Math.random() * suffix.length)];
+  }
+  
+  // Kết hợp: prefix + randomStr (đảm bảo không có ký tự đặc biệt)
+  let repoName = `${prefix}-${randomStr}`;
+  
+  // Đảm bảo không có chữ hoa và không quá 100 ký tự
+  repoName = repoName.toLowerCase();
+  
+  // Đảm bảo không bắt đầu hoặc kết thúc bằng dấu gạch ngang
+  if (repoName.startsWith('-')) repoName = 'vm' + repoName;
+  if (repoName.endsWith('-')) repoName = repoName.slice(0, -1);
+  
+  // Đảm bảo không có dấu gạch ngang liên tiếp
+  repoName = repoName.replace(/--+/g, '-');
+  
+  console.log(`📁 Generated repo name: ${repoName}`);
+  return repoName;
 }
 
 // Hàm theo dõi workflow và cập nhật trạng thái
 async function monitorWorkflowStatus(token, owner, repo, vmId, workflowRunId) {
   let attempts = 0;
-  const maxAttempts = 36; // 6 phút (mỗi 10 giây)
+  const maxAttempts = 36;
   const interval = setInterval(async () => {
     attempts++;
     try {
@@ -31,7 +57,6 @@ async function monitorWorkflowStatus(token, owner, repo, vmId, workflowRunId) {
             if (run.conclusion === 'success') {
               vms[vmIndex].status = 'running';
               vms[vmIndex].tailscaleIP = 'Đang lấy IP...';
-              // Thử lấy IP từ logs nếu có
               try {
                 const logsResponse = await fetch(`https://api.github.com/repos/${owner}/${repo}/actions/runs/${workflowRunId}/logs`, {
                   headers: { 'Authorization': `Bearer ${token}` }
@@ -46,7 +71,7 @@ async function monitorWorkflowStatus(token, owner, repo, vmId, workflowRunId) {
               } catch(e) {}
             } else {
               vms[vmIndex].status = 'failed';
-              vms[vmIndex].error = `Workflow thất bại: ${run.conclusion}. Chi tiết: ${run.display_title || 'Lỗi không xác định'}`;
+              vms[vmIndex].error = `Workflow thất bại: ${run.conclusion}`;
             }
             global.vms = vms;
             clearInterval(interval);
@@ -63,7 +88,7 @@ async function monitorWorkflowStatus(token, owner, repo, vmId, workflowRunId) {
       const vmIndex = vms.findIndex(v => v.id === vmId);
       if (vmIndex !== -1 && vms[vmIndex].status === 'creating') {
         vms[vmIndex].status = 'failed';
-        vms[vmIndex].error = 'Quá thời gian chờ (6 phút). GitHub Actions có thể bị timeout hoặc thiếu tài nguyên. Vui lòng kiểm tra workflow logs.';
+        vms[vmIndex].error = 'Quá thời gian chờ (6 phút). GitHub Actions có thể bị timeout.';
         global.vms = vms;
       }
       clearInterval(interval);
