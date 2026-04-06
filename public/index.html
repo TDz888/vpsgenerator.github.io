@@ -32,7 +32,6 @@
       transition: all 0.5s ease;
     }
 
-    /* DARK MODE - BLACK HOLE */
     body.dark {
       background: #0a0a0a;
     }
@@ -82,7 +81,6 @@
       animation: starMove 60s linear infinite;
     }
 
-    /* LIGHT MODE - HEAVEN */
     body.light {
       background: linear-gradient(135deg, #f5f7ff 0%, #e8edff 100%);
     }
@@ -150,57 +148,41 @@
       transition: all 0.3s cubic-bezier(0.2, 0.9, 0.4, 1.1);
     }
     body.dark .glass-card {
-      background: rgba(8, 10, 25, 0.7);
+      background: rgba(8, 10, 25, 0.75);
       backdrop-filter: blur(20px);
-      border: 1px solid rgba(255, 90, 40, 0.3);
+      border: 1px solid rgba(255, 90, 40, 0.35);
       box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.5);
     }
     body.light .glass-card {
-      background: rgba(255, 255, 255, 0.65);
+      background: rgba(255, 255, 255, 0.7);
       backdrop-filter: blur(20px);
       border: 1px solid rgba(100, 120, 200, 0.25);
       box-shadow: 0 15px 35px -12px rgba(0, 0, 0, 0.08);
     }
 
-    /* ========== TYPOGRAPHY - FIXED COLORS ========== */
-    body.dark, body.dark * {
-      color-scheme: dark;
-    }
-    body.light, body.light * {
-      color-scheme: light;
-    }
+    /* ========== TYPOGRAPHY ========== */
+    body.dark, body.dark * { color-scheme: dark; }
+    body.light, body.light * { color-scheme: light; }
 
-    body.dark h1, body.dark h2, body.dark h3, body.dark h4 {
-      color: #ffffff !important;
-    }
-    body.dark p, body.dark span, body.dark label, body.dark .text-muted {
-      color: #e2e8f0 !important;
-    }
+    body.dark h1, body.dark h2, body.dark h3, body.dark h4 { color: #ffffff !important; }
+    body.dark p, body.dark span, body.dark label, body.dark .text-muted { color: #e2e8f0 !important; }
     body.dark .glow-text {
       background: linear-gradient(135deg, #ffffff, #ffaa66, #ff66cc);
       -webkit-background-clip: text;
       background-clip: text;
       color: transparent !important;
     }
-    body.dark .subtitle {
-      color: #ffaa88 !important;
-    }
+    body.dark .subtitle { color: #ffaa88 !important; }
     
-    body.light h1, body.light h2, body.light h3, body.light h4 {
-      color: #1e293b !important;
-    }
-    body.light p, body.light span, body.light label, body.light .text-muted {
-      color: #334155 !important;
-    }
+    body.light h1, body.light h2, body.light h3, body.light h4 { color: #1e293b !important; }
+    body.light p, body.light span, body.light label, body.light .text-muted { color: #334155 !important; }
     body.light .glow-text {
       background: linear-gradient(135deg, #1a2a4a, #2b4c8a, #5a6eaa);
       -webkit-background-clip: text;
       background-clip: text;
       color: transparent !important;
     }
-    body.light .subtitle {
-      color: #4a627a !important;
-    }
+    body.light .subtitle { color: #4a627a !important; }
 
     .glow-text {
       font-size: 3.5rem;
@@ -229,6 +211,7 @@
       display: flex;
       gap: 0.6rem;
       align-items: center;
+      flex-wrap: wrap;
     }
     .input-wrapper input {
       flex: 1;
@@ -238,15 +221,14 @@
       font-family: 'SF Mono', monospace;
       border: 1px solid transparent;
       transition: all 0.2s;
+      min-width: 200px;
     }
     body.dark .input-wrapper input {
       background: #0f111f;
       border-color: #ff6633aa;
       color: #f0f3ff !important;
     }
-    body.dark .input-wrapper input::placeholder {
-      color: #4a5568 !important;
-    }
+    body.dark .input-wrapper input::placeholder { color: #4a5568 !important; }
     body.dark .input-wrapper input:focus {
       border-color: #ff884d;
       box-shadow: 0 0 0 3px rgba(255, 102, 0, 0.2);
@@ -271,22 +253,24 @@
     body.light .input-hint { color: #64748b !important; }
 
     .random-btn {
-      width: 48px;
-      height: 48px;
-      border-radius: 50%;
+      padding: 0.9rem 1.2rem;
+      border-radius: 28px;
       border: none;
       cursor: pointer;
-      font-size: 1.3rem;
+      font-size: 1rem;
       transition: all 0.2s;
       background: linear-gradient(135deg, #ff6600, #ff33aa);
       color: white;
-      display: flex;
+      display: inline-flex;
       align-items: center;
-      justify-content: center;
+      gap: 0.5rem;
+      white-space: nowrap;
     }
     .random-btn:hover {
-      transform: rotate(180deg) scale(1.05);
+      transform: translateY(-2px);
+      filter: brightness(1.05);
     }
+    .random-btn i { font-size: 1rem; }
 
     .input-error {
       color: #ef4444;
@@ -294,9 +278,7 @@
       margin-top: 0.3rem;
       display: none;
     }
-    .input-error.show {
-      display: block;
-    }
+    .input-error.show { display: block; }
 
     /* ========== BUTTONS ========== */
     .btn-primary {
@@ -321,9 +303,7 @@
       background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
       transition: left 0.5s;
     }
-    .btn-primary:hover::after {
-      left: 100%;
-    }
+    .btn-primary:hover::after { left: 100%; }
     body.dark .btn-primary {
       background: linear-gradient(95deg, #ff4d00, #ff0099);
       color: white;
@@ -349,6 +329,7 @@
       justify-content: center;
       gap: 1rem;
       margin-bottom: 2rem;
+      flex-wrap: wrap;
     }
     .tab-btn {
       padding: 0.7rem 2.2rem;
@@ -380,7 +361,7 @@
     /* ========== VM GRID ========== */
     .vm-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+      grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
       gap: 1.5rem;
       margin-top: 1.5rem;
     }
@@ -392,11 +373,11 @@
       position: relative;
     }
     body.dark .vm-card {
-      background: rgba(12, 15, 30, 0.9) !important;
+      background: rgba(12, 15, 30, 0.95) !important;
       border: 1px solid rgba(255, 102, 0, 0.5) !important;
     }
     body.light .vm-card {
-      background: rgba(255, 255, 255, 0.9) !important;
+      background: rgba(255, 255, 255, 0.95) !important;
       border: 1px solid #cbd5e1;
     }
     .vm-card:hover {
@@ -407,37 +388,35 @@
       box-shadow: 0 12px 25px -12px rgba(255, 68, 0, 0.4);
     }
     .vm-name {
-      font-size: 1.1rem;
+      font-size: 1rem;
       font-weight: 700;
-      margin-bottom: 0.6rem;
+      margin-bottom: 0.8rem;
       word-break: break-all;
     }
-    body.dark .vm-name { color: #ffaa77 !important; text-shadow: 0 0 3px rgba(255, 170, 119, 0.3); }
+    body.dark .vm-name { color: #ffaa77 !important; }
     body.light .vm-name { color: #1e3a5f !important; }
     
-    .vm-info {
-      font-size: 0.8rem;
-      margin: 0.4rem 0;
-      line-height: 1.4;
+    .vm-info-row {
       display: flex;
-      align-items: center;
+      align-items: flex-start;
       gap: 0.5rem;
+      margin-bottom: 0.5rem;
+      font-size: 0.75rem;
       flex-wrap: wrap;
     }
     .vm-info-label {
-      font-weight: 600;
-      min-width: 35px;
+      font-weight: 700;
+      min-width: 30px;
     }
     body.dark .vm-info-label { color: #ffaa77 !important; }
     body.light .vm-info-label { color: #1e3a5f !important; }
     
     .vm-info-value {
       font-family: 'SF Mono', monospace;
-      font-size: 0.8rem;
       word-break: break-all;
       flex: 1;
     }
-    body.dark .vm-info-value { color: #cbd5e1 !important; }
+    body.dark .vm-info-value { color: #e2e8f0 !important; }
     body.light .vm-info-value { color: #475569 !important; }
     
     .vm-status {
@@ -446,9 +425,23 @@
       border-radius: 20px;
       font-size: 0.7rem;
       font-weight: 600;
+      margin-top: 0.3rem;
     }
     .status-running { background: #22c55e; color: white; }
     .status-creating { background: #eab308; color: black; }
+    .status-failed { background: #ef4444; color: white; }
+    
+    .vm-error {
+      margin-top: 0.5rem;
+      padding: 0.4rem;
+      border-radius: 12px;
+      font-size: 0.7rem;
+      background: rgba(239, 68, 68, 0.15);
+      border-left: 3px solid #ef4444;
+    }
+    body.dark .vm-error { color: #fca5a5 !important; }
+    body.light .vm-error { color: #dc2626 !important; }
+    
     .delete-vm-btn {
       position: absolute;
       bottom: 0.8rem;
@@ -490,22 +483,12 @@
       backdrop-filter: blur(12px);
       border: 1px solid #cbd5e1;
     }
-    .tech-card:hover {
-      transform: translateY(-3px);
-    }
-    .tech-icon {
-      font-size: 2.2rem;
-      margin-bottom: 0.6rem;
-    }
-    .tech-title {
-      font-size: 1rem;
-      font-weight: 700;
-      margin-bottom: 0.4rem;
-    }
-    .tech-desc {
-      font-size: 0.75rem;
-      line-height: 1.4;
-    }
+    .tech-card:hover { transform: translateY(-3px); }
+    .tech-icon { font-size: 2.2rem; margin-bottom: 0.6rem; }
+    .tech-title { font-size: 1rem; font-weight: 700; margin-bottom: 0.4rem; }
+    body.dark .tech-title { color: #ffaa77 !important; }
+    body.light .tech-title { color: #1e3a5f !important; }
+    .tech-desc { font-size: 0.75rem; line-height: 1.4; }
     .spec-badge {
       display: inline-block;
       padding: 0.2rem 0.6rem;
@@ -514,64 +497,16 @@
       margin: 0.15rem;
       font-weight: 600;
     }
-
-    /* ========== FIX TECH SECTION TEXT COLORS ========== */
-    body.dark .tech-card,
-    body.dark .tech-card * {
-      color-scheme: dark;
-    }
-    body.dark .tech-card .tech-title {
-      color: #ffaa77 !important;
-      text-shadow: 0 0 5px rgba(255, 170, 119, 0.3);
-    }
-    body.dark .tech-card .tech-desc {
-      color: #e2e8f0 !important;
-      opacity: 0.95;
-    }
-    body.dark .tech-card .spec-badge {
-      background: rgba(255, 100, 50, 0.35) !important;
+    body.dark .spec-badge {
+      background: rgba(255, 100, 50, 0.35);
       color: #ffccaa !important;
-      border: 1px solid rgba(255, 102, 0, 0.3);
     }
-    body.light .tech-card .tech-title {
+    body.light .spec-badge {
+      background: rgba(30, 58, 95, 0.12);
       color: #1e3a5f !important;
     }
-    body.light .tech-card .tech-desc {
-      color: #334155 !important;
-    }
-    body.light .tech-card .spec-badge {
-      background: rgba(30, 58, 95, 0.12) !important;
-      color: #1e3a5f !important;
-      border: 1px solid rgba(30, 58, 95, 0.15);
-    }
 
-    /* ========== FIX VM MANAGEMENT TEXT COLORS ========== */
-    body.dark .vm-card,
-    body.dark .vm-card * {
-      color-scheme: dark;
-    }
-    body.dark .vm-card .vm-name {
-      color: #ffaa77 !important;
-      text-shadow: 0 0 3px rgba(255, 170, 119, 0.3);
-    }
-    body.dark .vm-card .vm-info-value {
-      color: #e2e8f0 !important;
-    }
-    body.dark .vm-card .vm-status {
-      color: white !important;
-    }
-    body.dark #vmList > div {
-      color: #cbd5e1 !important;
-    }
-    body.dark .delete-vm-btn {
-      color: white !important;
-      background: rgba(220, 38, 38, 0.85) !important;
-    }
-    body.dark .delete-vm-btn:hover {
-      background: #dc2626 !important;
-    }
-
-    /* ========== MODAL - HIỂN THỊ RÕ USER, PASS, IP ========== */
+    /* ========== MODAL ========== */
     .modal {
       display: none;
       position: fixed;
@@ -587,7 +522,7 @@
     body.dark .modal { background: rgba(0, 0, 0, 0.95); }
     body.light .modal { background: rgba(0, 0, 0, 0.6); }
     .modal-content {
-      max-width: 600px;
+      max-width: 650px;
       width: 90%;
       border-radius: 32px;
       padding: 1.8rem;
@@ -611,7 +546,6 @@
     body.dark .result-box { background: #0f172a; }
     body.light .result-box { background: #f1f5f9; }
     
-    /* Info row trong modal - hiển thị rõ ràng */
     .info-row {
       display: flex;
       align-items: flex-start;
@@ -621,12 +555,11 @@
     }
     .info-label {
       font-weight: 700;
-      min-width: 70px;
+      min-width: 100px;
       font-size: 0.85rem;
     }
     body.dark .info-label { color: #ffaa77 !important; }
     body.light .info-label { color: #1e3a5f !important; }
-    
     .info-value {
       font-family: 'SF Mono', monospace;
       font-size: 0.85rem;
@@ -643,17 +576,16 @@
       background: #e2e8f0;
       color: #1e293b;
     }
-    
-    code {
-      font-family: 'SF Mono', monospace;
-      padding: 0.2rem 0.5rem;
-      border-radius: 8px;
-      font-size: 0.8rem;
+    .error-message {
+      background: rgba(239, 68, 68, 0.15);
+      border-left: 3px solid #ef4444;
+      padding: 0.8rem;
+      border-radius: 12px;
+      margin-top: 0.5rem;
     }
-    body.dark code { background: #1e293b; color: #facc15; }
-    body.light code { background: #e2e8f0; color: #1e293b; }
+    body.dark .error-message { color: #fca5a5 !important; }
 
-    /* ========== SETTINGS PANEL ========== */
+    /* ========== SETTINGS ========== */
     .settings-btn {
       position: fixed;
       top: 20px;
@@ -713,10 +645,7 @@
       padding: 2px 8px;
       border-radius: 20px;
     }
-    body.dark .design-indicator {
-      background: #ff663355;
-      color: #ffaa77;
-    }
+    body.dark .design-indicator { background: #ff663355; color: #ffaa77; }
     .switch-group {
       display: flex;
       gap: 0.6rem;
@@ -758,18 +687,6 @@
       font-size: 0.7rem;
     }
 
-    /* ========== FOOTER ========== */
-    .footer {
-      margin-top: 2.5rem;
-      text-align: center;
-      padding: 1.2rem 0;
-      border-top: 1px solid;
-      font-size: 0.7rem;
-      opacity: 0.5;
-    }
-    body.dark .footer { border-top-color: #ff774433; }
-    body.light .footer { border-top-color: #cbd5e1; }
-
     /* ========== LANGUAGE SWITCH ========== */
     .lang-switch {
       position: fixed;
@@ -805,6 +722,18 @@
       background: #ff6633;
       color: white;
     }
+
+    /* ========== FOOTER ========== */
+    .footer {
+      margin-top: 2.5rem;
+      text-align: center;
+      padding: 1.2rem 0;
+      border-top: 1px solid;
+      font-size: 0.7rem;
+      opacity: 0.5;
+    }
+    body.dark .footer { border-top-color: #ff774433; }
+    body.light .footer { border-top-color: #cbd5e1; }
 
     /* ========== UTILITIES ========== */
     .hidden { display: none; }
@@ -848,8 +777,9 @@
       .vm-grid { grid-template-columns: 1fr; }
       .tech-section { grid-template-columns: 1fr; }
       .settings-panel { width: 280px; left: 10px; top: 75px; }
-      .input-wrapper { flex-wrap: wrap; }
-      .random-btn { width: 100%; border-radius: 28px; margin-top: 0.3rem; }
+      .input-wrapper { flex-direction: column; }
+      .input-wrapper input { width: 100%; }
+      .random-btn { width: 100%; justify-content: center; }
       .info-row { flex-direction: column; gap: 0.3rem; }
       .info-label { min-width: auto; }
     }
@@ -857,7 +787,6 @@
       .glow-text { font-size: 1.6rem; }
       .tab-container { flex-direction: column; align-items: center; gap: 0.6rem; }
       .tab-btn { width: 80%; }
-      .vm-info { flex-direction: column; align-items: flex-start; gap: 0.2rem; }
     }
   </style>
 </head>
@@ -886,9 +815,8 @@
       <h4 style="margin-bottom: 0.5rem;">📘 Hướng dẫn sử dụng</h4>
       <div class="step"><span class="step-number">1</span><span>Lấy GitHub Token (cần quyền repo, workflow)</span></div>
       <div class="step"><span class="step-number">2</span><span>Lấy Tailscale Auth Key</span></div>
-      <div class="step"><span class="step-number">3</span><span>Nhập tên đăng nhập (≥5 ký tự)</span></div>
-      <div class="step"><span class="step-number">4</span><span>Nhập mật khẩu hoặc bấm 🎲 để tạo random</span></div>
-      <div class="step"><span class="step-number">5</span><span>Nhấn "Tạo VM" và chờ 2-3 phút</span></div>
+      <div class="step"><span class="step-number">3</span><span>Nhấn "Random" để tạo user/pass tự động</span></div>
+      <div class="step"><span class="step-number">4</span><span>Nhấn "Tạo VM" và chờ 2-3 phút</span></div>
     </div>
     <div class="settings-box">
       <h4 style="margin-bottom: 0.5rem;">📡 Liên hệ hỗ trợ</h4>
@@ -935,7 +863,8 @@
       <div class="input-group">
         <label id="usernameLabel">👤 Tên đăng nhập VM</label>
         <div class="input-wrapper">
-          <input type="text" id="vmUsername" placeholder="Nhập tên đăng nhập (tối thiểu 5 ký tự)">
+          <input type="text" id="vmUsername" placeholder="Tên đăng nhập (tự động random)">
+          <button class="random-btn" id="randomUsernameBtn" type="button"><i class="fas fa-dice-d6"></i> Random</button>
         </div>
         <div class="input-error" id="usernameError">Tên đăng nhập phải có ít nhất 5 ký tự</div>
       </div>
@@ -943,11 +872,11 @@
       <div class="input-group">
         <label id="passwordLabel">🔐 Mật khẩu VM</label>
         <div class="input-wrapper">
-          <input type="text" id="vmPassword" placeholder="Nhập mật khẩu (tối thiểu 5 ký tự)">
-          <button class="random-btn" id="randomPasswordBtn" title="Tạo mật khẩu ngẫu nhiên 24 ký tự">🎲</button>
+          <input type="text" id="vmPassword" placeholder="Mật khẩu (tự động random 30-32 ký tự)">
+          <button class="random-btn" id="randomPasswordBtn" type="button"><i class="fas fa-dice-d6"></i> Random</button>
         </div>
         <div class="input-error" id="passwordError">Mật khẩu phải có ít nhất 5 ký tự</div>
-        <div class="input-hint" id="passwordHint">💡 Bấm vào biểu tượng 🎲 để tự động tạo mật khẩu mạnh</div>
+        <div class="input-hint" id="passwordHint">💡 Bấm Random để tạo user/pass mạnh tự động</div>
       </div>
 
       <button class="btn-primary" id="createBtn">🚀 Tạo Virtual Machine</button>
@@ -990,7 +919,7 @@
 
     <div class="footer">
       ⚡ Singularity Cloud | Next-Gen Virtual Machine Platform
-      <div style="font-size: 0.6rem; opacity: 0.5; margin-top: 0.4rem;">Developed by SuperDzAn • v3.0</div>
+      <div style="font-size: 0.6rem; opacity: 0.5; margin-top: 0.4rem;">Developed by SuperDzAn • v4.0</div>
     </div>
   </div>
 
@@ -1022,7 +951,7 @@
         tailscaleHint: "Lấy key từ Tailscale Admin Console",
         usernameLabel: "👤 Tên đăng nhập VM",
         passwordLabel: "🔐 Mật khẩu VM",
-        passwordHint: "💡 Bấm vào biểu tượng 🎲 để tự động tạo mật khẩu mạnh",
+        passwordHint: "💡 Bấm Random để tạo user/pass mạnh tự động",
         createBtn: "🚀 Tạo Virtual Machine",
         manageTitle: "🖥️ Danh sách Virtual Machines",
         loading: "🌀 Đang tải danh sách...",
@@ -1032,6 +961,7 @@
         modalUser: "👤 Tên đăng nhập",
         modalPass: "🔐 Mật khẩu",
         modalIP: "🌐 Tailscale IP",
+        modalVNC: "🖥️ noVNC/TightVNC",
         modalTime: "📅 Thời gian",
         modalCreated: "🕳️ Tạo lúc",
         modalExpires: "⏱️ Hết hạn",
@@ -1043,6 +973,7 @@
         modalNetwork: "📶 Mạng: 1-2 Gbps",
         modalVPN: "🔗 VPN: Tailscale + WireGuard",
         modalNote: "🔄 VM sẽ tự động xóa sau 6 giờ. Kết nối qua Tailscale để dùng RDP.",
+        modalError: "⚠️ Lỗi",
         deleteConfirm: "Bạn có chắc chắn muốn xóa VM này?",
         deleteSuccess: "✅ VM đã được xóa thành công",
         deleteError: "❌ Lỗi khi xóa VM",
@@ -1065,7 +996,7 @@
         tailscaleHint: "Get key from Tailscale Admin Console",
         usernameLabel: "👤 VM Username",
         passwordLabel: "🔐 VM Password",
-        passwordHint: "💡 Click 🎲 to generate a strong random password",
+        passwordHint: "💡 Click Random to generate strong credentials",
         createBtn: "🚀 Create Virtual Machine",
         manageTitle: "🖥️ Virtual Machines List",
         loading: "🌀 Loading list...",
@@ -1075,6 +1006,7 @@
         modalUser: "👤 Username",
         modalPass: "🔐 Password",
         modalIP: "🌐 Tailscale IP",
+        modalVNC: "🖥️ noVNC/TightVNC",
         modalTime: "📅 Time Information",
         modalCreated: "🕳️ Created at",
         modalExpires: "⏱️ Expires at",
@@ -1086,6 +1018,7 @@
         modalNetwork: "📶 Network: 1-2 Gbps",
         modalVPN: "🔗 VPN: Tailscale + WireGuard",
         modalNote: "🔄 VM will auto-delete after 6 hours. Connect via Tailscale for RDP.",
+        modalError: "⚠️ Error",
         deleteConfirm: "Are you sure you want to delete this VM?",
         deleteSuccess: "✅ VM deleted successfully",
         deleteError: "❌ Error deleting VM",
@@ -1098,25 +1031,47 @@
       }
     };
 
-    function t(key) {
-      return translations[currentLang][key] || key;
+    function t(key) { return translations[currentLang][key] || key; }
+
+    // Random username: 6-10 ký tự, chữ thường + số
+    function generateRandomUsername() {
+      const chars = 'abcdefghijklmnopqrstuvwxyz0123456789';
+      const length = Math.floor(Math.random() * 5) + 6; // 6-10
+      let result = '';
+      for (let i = 0; i < length; i++) {
+        result += chars[Math.floor(Math.random() * chars.length)];
+      }
+      return result;
     }
 
+    // Random password: 30-32 ký tự, bao gồm chữ hoa, thường, số, kí tự đặc biệt, kết thúc bằng 'dz'
     function generateRandomPassword() {
       const upper = 'ABCDEFGHJKLMNPQRSTUVWXYZ';
       const lower = 'abcdefghijkmnopqrstuvwxyz';
       const numbers = '23456789';
       const special = '!@#$%^&*()_+[]{}<>?';
       const all = upper + lower + numbers + special;
+      
       let password = '';
+      // Đảm bảo có ít nhất 1 ký tự mỗi loại
       password += upper[Math.floor(Math.random() * upper.length)];
       password += lower[Math.floor(Math.random() * lower.length)];
       password += numbers[Math.floor(Math.random() * numbers.length)];
       password += special[Math.floor(Math.random() * special.length)];
-      for (let i = 0; i < 20; i++) {
+      
+      // Thêm ký tự ngẫu nhiên đến 28-30 ký tự
+      const targetLength = Math.floor(Math.random() * 3) + 28; // 28-30
+      for (let i = password.length; i < targetLength; i++) {
         password += all[Math.floor(Math.random() * all.length)];
       }
-      return password.split('').sort(() => Math.random() - 0.5).join('');
+      
+      // Trộn ngẫu nhiên
+      let shuffled = password.split('').sort(() => Math.random() - 0.5).join('');
+      
+      // Kết thúc bằng 'dz'
+      shuffled = shuffled.slice(0, -2) + 'dz';
+      
+      return shuffled;
     }
 
     function validateInputs() {
@@ -1125,6 +1080,7 @@
       const password = document.getElementById('vmPassword').value.trim();
       const usernameError = document.getElementById('usernameError');
       const passwordError = document.getElementById('passwordError');
+      
       if (username.length < 5) {
         usernameError.classList.add('show');
         isValid = false;
@@ -1164,11 +1120,8 @@
       document.body.classList.add(currentDesign);
       localStorage.setItem('singularity_design', currentDesign);
       document.querySelectorAll('[data-design]').forEach(opt => {
-        if (opt.dataset.design === currentDesign) {
-          opt.classList.add('active');
-        } else {
-          opt.classList.remove('active');
-        }
+        if (opt.dataset.design === currentDesign) opt.classList.add('active');
+        else opt.classList.remove('active');
       });
     }
 
@@ -1219,29 +1172,30 @@
       container.innerHTML = vms.map(vm => `
         <div class="vm-card" style="position:relative;" data-id="${vm.id}">
           <div class="vm-name">🕳️ ${vm.name}</div>
-          <div class="vm-info">
+          <div class="vm-info-row">
             <span class="vm-info-label">👤</span>
-            <span class="vm-info-value">${vm.username}</span>
+            <span class="vm-info-value">${vm.username || 'N/A'}</span>
           </div>
-          <div class="vm-info">
+          <div class="vm-info-row">
             <span class="vm-info-label">🔐</span>
-            <span class="vm-info-value">${vm.password}</span>
+            <span class="vm-info-value">${vm.password ? '••••••••' : 'N/A'}</span>
           </div>
-          <div class="vm-info">
+          <div class="vm-info-row">
             <span class="vm-info-label">🌐</span>
             <span class="vm-info-value">${vm.tailscaleIP || 'Đang khởi tạo...'}</span>
           </div>
-          <div class="vm-info">
+          <div class="vm-info-row">
             <span class="vm-info-label">📅</span>
             <span class="vm-info-value">${t('modalCreated')}: ${new Date(vm.createdAt).toLocaleString()}</span>
           </div>
-          <div class="vm-info">
+          <div class="vm-info-row">
             <span class="vm-info-label">⏱️</span>
             <span class="vm-info-value">${t('modalExpires')}: ${new Date(vm.expiresAt).toLocaleString()}</span>
           </div>
-          <div class="vm-info">
-            <span class="vm-status status-${vm.status}">${vm.status === 'running' ? 'Đang chạy' : vm.status === 'creating' ? 'Đang tạo' : 'Hết hạn'}</span>
+          <div>
+            <span class="vm-status status-${vm.status}">${vm.status === 'running' ? 'Đang chạy' : vm.status === 'creating' ? 'Đang tạo' : vm.status === 'failed' ? 'Thất bại' : 'Hết hạn'}</span>
           </div>
+          ${vm.error ? `<div class="vm-error"><i class="fas fa-exclamation-triangle"></i> ${vm.error}</div>` : ''}
           <button class="delete-vm-btn" onclick="window.deleteVM('${vm.id}', event)">🗑️ Xóa</button>
         </div>
       `).join('');
@@ -1256,22 +1210,26 @@
     }
 
     function showVMDetails(vm) {
-      const tData = t;
+      const noVNCUrl = vm.tailscaleIP ? `http://${vm.tailscaleIP}:6080/vnc.html` : '#';
       document.getElementById('modalTitle').innerHTML = `🕳️ ${vm.name}`;
       document.getElementById('modalBody').innerHTML = `
         <div class="result-box">
           <strong>${t('modalConnection')}</strong><br><br>
           <div class="info-row">
             <span class="info-label">${t('modalUser')}:</span>
-            <span class="info-value">${vm.username}</span>
+            <span class="info-value">${vm.username || 'N/A'}</span>
           </div>
           <div class="info-row">
             <span class="info-label">${t('modalPass')}:</span>
-            <span class="info-value">${vm.password}</span>
+            <span class="info-value">${vm.password || 'N/A'}</span>
           </div>
           <div class="info-row">
             <span class="info-label">${t('modalIP')}:</span>
             <span class="info-value">${vm.tailscaleIP || 'Đang khởi tạo...'}</span>
+          </div>
+          <div class="info-row">
+            <span class="info-label">${t('modalVNC')}:</span>
+            <span class="info-value">${vm.tailscaleIP ? `<a href="${noVNCUrl}" target="_blank" style="color: #ffaa77;">${noVNCUrl}</a>` : 'Đang khởi tạo...'}</span>
           </div>
         </div>
         <div class="result-box">
@@ -1291,27 +1249,13 @@
         </div>
         <div class="result-box">
           <strong>${t('modalConfig')}</strong><br><br>
-          <div class="info-row">
-            <span class="info-label">🖥️ CPU:</span>
-            <span class="info-value">${t('modalCPU')}</span>
-          </div>
-          <div class="info-row">
-            <span class="info-label">🧠 RAM:</span>
-            <span class="info-value">${t('modalRAM')}</span>
-          </div>
-          <div class="info-row">
-            <span class="info-label">💾 Storage:</span>
-            <span class="info-value">${t('modalStorage')}</span>
-          </div>
-          <div class="info-row">
-            <span class="info-label">📶 Network:</span>
-            <span class="info-value">${t('modalNetwork')}</span>
-          </div>
-          <div class="info-row">
-            <span class="info-label">🔗 VPN:</span>
-            <span class="info-value">${t('modalVPN')}</span>
-          </div>
+          <div class="info-row"><span class="info-label">🖥️ CPU:</span><span class="info-value">${t('modalCPU')}</span></div>
+          <div class="info-row"><span class="info-label">🧠 RAM:</span><span class="info-value">${t('modalRAM')}</span></div>
+          <div class="info-row"><span class="info-label">💾 Storage:</span><span class="info-value">${t('modalStorage')}</span></div>
+          <div class="info-row"><span class="info-label">📶 Network:</span><span class="info-value">${t('modalNetwork')}</span></div>
+          <div class="info-row"><span class="info-label">🔗 VPN:</span><span class="info-value">${t('modalVPN')}</span></div>
         </div>
+        ${vm.error ? `<div class="error-message"><strong>${t('modalError')}:</strong> ${vm.error}</div>` : ''}
         <p style="margin-top:0.8rem; padding:0.7rem; background:#ff663322; border-radius:14px; font-size:0.8rem;">
           ${t('modalNote')}
         </p>
@@ -1322,13 +1266,24 @@
     async function createVM() {
       const githubToken = document.getElementById('githubToken').value.trim();
       const tailscaleKey = document.getElementById('tailscaleKey').value.trim();
-      const vmUsername = document.getElementById('vmUsername').value.trim();
-      const vmPassword = document.getElementById('vmPassword').value.trim();
+      let vmUsername = document.getElementById('vmUsername').value.trim();
+      let vmPassword = document.getElementById('vmPassword').value.trim();
 
       if (!githubToken || !tailscaleKey) {
         showToast(t('missingToken'), 'error');
         return;
       }
+      
+      // Auto generate if empty
+      if (!vmUsername) {
+        vmUsername = generateRandomUsername();
+        document.getElementById('vmUsername').value = vmUsername;
+      }
+      if (!vmPassword) {
+        vmPassword = generateRandomPassword();
+        document.getElementById('vmPassword').value = vmPassword;
+      }
+      
       if (!validateInputs()) {
         showToast(t('invalidUsername'), 'error');
         return;
@@ -1362,10 +1317,9 @@
               <span style="font-size: 0.75rem;">🔄 VM sẽ sẵn sàng trong 2-3 phút. Click vào tab "Quản lý VM" để xem trạng thái.</span>
             </div>
           `;
+          // Clear only token fields, keep generated user/pass
           document.getElementById('githubToken').value = '';
           document.getElementById('tailscaleKey').value = '';
-          document.getElementById('vmUsername').value = '';
-          document.getElementById('vmPassword').value = '';
           setTimeout(() => {
             document.getElementById('manageTabBtn').click();
             loadVMs();
@@ -1416,12 +1370,22 @@
       loadVMs();
       startAutoRefresh();
 
+      // Generate random credentials on page load
+      document.getElementById('vmUsername').value = generateRandomUsername();
+      document.getElementById('vmPassword').value = generateRandomPassword();
+
       document.getElementById('createBtn').addEventListener('click', createVM);
+      document.getElementById('randomUsernameBtn').addEventListener('click', () => {
+        const newUsername = generateRandomUsername();
+        document.getElementById('vmUsername').value = newUsername;
+        document.getElementById('usernameError').classList.remove('show');
+        showToast('👤 Tên đăng nhập ngẫu nhiên đã được tạo!', 'success');
+      });
       document.getElementById('randomPasswordBtn').addEventListener('click', () => {
         const newPassword = generateRandomPassword();
         document.getElementById('vmPassword').value = newPassword;
         document.getElementById('passwordError').classList.remove('show');
-        showToast('🔐 Mật khẩu ngẫu nhiên đã được tạo!', 'success');
+        showToast('🔐 Mật khẩu ngẫu nhiên 30-32 ký tự đã được tạo!', 'success');
       });
       
       document.getElementById('vmUsername').addEventListener('input', validateInputs);
