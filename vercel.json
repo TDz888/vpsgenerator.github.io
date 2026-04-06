@@ -7,9 +7,12 @@
   },
   "routes": [
     {
-      "src": "/api/vpsuser",
-      "dest": "/api/vpsuser.js",
-      "methods": ["POST", "OPTIONS"]
+      "src": "/api/(.*)",
+      "dest": "/api/vpsuser.js"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/public/index.html"
     }
   ]
 }
