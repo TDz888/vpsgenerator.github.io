@@ -5,14 +5,8 @@
       "runtime": "nodejs18.x"
     }
   },
-  "routes": [
-    {
-      "src": "/api/(.*)",
-      "dest": "/api/vpsuser.js"
-    },
-    {
-      "src": "/(.*)",
-      "dest": "/public/index.html"
-    }
+  "rewrites": [
+    { "source": "/api/(.*)", "destination": "/api/vpsuser.js" },
+    { "source": "/(.*)", "destination": "/index.html" }
   ]
 }
