@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
   <meta name="description" content="Tạo VPS Windows miễn phí từ GitHub Actions với Tailscale + noVNC">
-  <title>Singularity Nexus | Black Hole Cloud VPS</title>
+  <title>Singularity Nexus | Virtual Machine Cloud</title>
   <link rel="icon" type="image/x-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌀</text></svg>">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
   <style>
@@ -33,7 +33,7 @@
       transition: all 0.5s ease;
     }
 
-    /* DARK MODE - BLACK HOLE */
+    /* DARK MODE - BLACK HOLE (Text sáng) */
     body.dark {
       background: #000000;
     }
@@ -100,8 +100,27 @@
       background-size: 50px 50px;
       animation: gridPulse 4s ease-in-out infinite;
     }
+    /* Dark mode text colors - TẤT CẢ SÁNG */
+    body.dark, body.dark * {
+      color-scheme: dark;
+    }
+    body.dark .glow-text {
+      background: linear-gradient(135deg, #ffffff, #ffaa66, #ff66cc, #ff3300);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+    body.dark h1, body.dark h2, body.dark h3, body.dark h4, body.dark p, body.dark span, body.dark div, body.dark label {
+      color: #ffffff !important;
+    }
+    body.dark .sub, body.dark .vm-info, body.dark .footer, body.dark .step-text, body.dark .tech-card div {
+      color: #cbd5e1 !important;
+    }
+    body.dark .vm-name, body.dark .tech-title, body.dark .settings-box h4 {
+      color: #ffaa77 !important;
+    }
 
-    /* LIGHT MODE - HEAVEN */
+    /* LIGHT MODE - HEAVEN (Text tối) */
     body.light {
       background: linear-gradient(145deg, #f0f4ff 0%, #e0e8ff 100%);
     }
@@ -134,6 +153,25 @@
       background-size: 400px 400px;
       opacity: 0.5;
       animation: floatSlow 30s ease-in-out infinite;
+    }
+    /* Light mode text colors - TẤT CẢ TỐI */
+    body.light, body.light * {
+      color-scheme: light;
+    }
+    body.light .glow-text {
+      background: linear-gradient(135deg, #1a2a4a, #2b4c8a, #5a6eaa);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+    body.light h1, body.light h2, body.light h3, body.light h4, body.light p, body.light span, body.light div, body.light label {
+      color: #1e293b !important;
+    }
+    body.light .sub, body.light .vm-info, body.light .footer, body.light .step-text, body.light .tech-card div {
+      color: #475569 !important;
+    }
+    body.light .vm-name, body.light .tech-title, body.light .settings-box h4 {
+      color: #1e3a5f !important;
     }
 
     @keyframes corePulse {
@@ -192,7 +230,7 @@
       box-shadow: 0 15px 35px -10px rgba(0, 0, 0, 0.08);
     }
 
-    /* Typography - Hoàn toàn fix lỗi màu chữ */
+    /* Typography */
     .glow-text {
       font-size: 3.8rem;
       font-weight: 800;
@@ -200,37 +238,11 @@
       text-align: center;
       transition: all 0.3s ease;
     }
-    body.dark .glow-text {
-      background: linear-gradient(135deg, #ffffff, #ffaa66, #ff66cc, #ff3300);
-      -webkit-background-clip: text;
-      background-clip: text;
-      color: transparent;
-    }
-    body.light .glow-text {
-      background: linear-gradient(135deg, #1a2a4a, #2b4c8a, #5a6eaa);
-      -webkit-background-clip: text;
-      background-clip: text;
-      color: transparent;
-    }
     .sub {
       font-size: 0.95rem;
       letter-spacing: 3px;
       margin-top: 0.5rem;
       text-align: center;
-    }
-    body.dark .sub { color: #ffaa88 !important; }
-    body.light .sub { color: #4a627a !important; }
-    body.dark h1, body.dark h2, body.dark h3, body.dark h4 {
-      color: #ffffff !important;
-    }
-    body.light h1, body.light h2, body.light h3, body.light h4 {
-      color: #1e3a5f !important;
-    }
-    body.dark p, body.dark span:not(.spec-badge):not(.vm-status) {
-      color: #cbd5e1 !important;
-    }
-    body.light p, body.light span {
-      color: #334155 !important;
     }
 
     /* Input Fields */
@@ -242,8 +254,6 @@
       margin-bottom: 0.5rem;
       font-weight: 600;
     }
-    body.dark .input-group label { color: #ffaa77 !important; }
-    body.light .input-group label { color: #2c5282 !important; }
     .input-group input {
       width: 100%;
       padding: 1rem 1.2rem;
@@ -370,14 +380,10 @@
       font-weight: bold;
       margin-bottom: 0.5rem;
     }
-    body.dark .vm-name { color: #ffaa77 !important; }
-    body.light .vm-name { color: #2c5282 !important; }
     .vm-info {
       font-size: 0.8rem;
       margin: 0.3rem 0;
     }
-    body.dark .vm-info { color: #cbd5e1 !important; }
-    body.light .vm-info { color: #334155 !important; }
     .vm-status {
       display: inline-block;
       padding: 0.2rem 0.6rem;
@@ -407,7 +413,7 @@
       transform: scale(1.05);
     }
 
-    /* Tech Section - Hiệu ứng công nghệ */
+    /* Tech Section */
     .tech-section {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
@@ -454,9 +460,6 @@
       font-weight: bold;
       margin-bottom: 0.5rem;
     }
-    body.dark .tech-title { color: #ffaa77 !important; }
-    body.light .tech-title { color: #2c5282 !important; }
-    body.dark .tech-card div:not(.spec-badge) { color: #cbd5e1 !important; }
     .spec-badge {
       display: inline-block;
       padding: 0.25rem 0.8rem;
@@ -489,7 +492,6 @@
       font-size: 1rem;
       transition: 0.2s;
       border: none;
-      position: relative;
     }
     body.dark .toggle-btn {
       background: #141824;
@@ -564,7 +566,6 @@
     }
     body.dark .settings-box { background: #0f111faa; }
     body.light .settings-box { background: #eef3ffaa; }
-    body.dark .settings-box h4 { color: #ffaa77 !important; }
     .design-indicator {
       display: inline-block;
       margin-left: 8px;
@@ -620,7 +621,6 @@
       color: white;
       flex-shrink: 0;
     }
-    body.dark .step-text { color: #cbd5e6 !important; }
 
     /* Modal */
     .modal {
@@ -661,7 +661,6 @@
     }
     body.dark .result-box { background: #0f172a !important; }
     body.light .result-box { background: #f1f5ff !important; border-left-color: #2c5282; }
-    body.dark .result-box strong { color: #ffaa77 !important; }
     .result-box a {
       color: inherit;
       text-decoration: none;
@@ -675,14 +674,21 @@
     }
     body.dark code { background: #1e293b !important; color: #facc15 !important; }
     body.light code { background: #e0e8ff; color: #1f3b62; }
+
+    /* Footer */
     .footer {
       margin-top: 3rem;
       text-align: center;
-      padding-top: 1.5rem;
+      padding: 1.5rem 0 2rem 0;
       border-top: 1px solid;
+      font-size: 0.7rem;
+      opacity: 0.6;
+      letter-spacing: 1px;
     }
-    body.dark .footer { border-top-color: #ff774433; color: #cbd5e1 !important; }
+    body.dark .footer { border-top-color: #ff774433; }
     body.light .footer { border-top-color: #b8c7f0; }
+
+    /* Language Switch */
     .lang-switch {
       position: fixed;
       top: 20px;
@@ -717,6 +723,8 @@
       color: white;
     }
     .hidden { display: none; }
+
+    /* Toast */
     .toast {
       position: fixed;
       bottom: 30px;
@@ -733,7 +741,7 @@
       to { transform: translateX(0); opacity: 1; }
     }
 
-    /* Loading animation */
+    /* Loading spinner */
     .loading-spinner {
       display: inline-block;
       width: 20px;
@@ -779,24 +787,24 @@
   <div class="settings-btn" id="settingsBtn">⚙️</div>
   <div class="settings-panel" id="settingsPanel">
     <div class="settings-box">
-      <h4>🌀 Chế độ không gian <span id="designIndicator" class="design-indicator">🌑 Black Hole</span></h4>
+      <h4 id="spaceModeTitle">🌀 Chế độ không gian <span id="designIndicator" class="design-indicator">🌑 Black Hole</span></h4>
       <div class="switch-group">
         <div class="switch-option active" data-design="dark">🌑 Black Hole</div>
         <div class="switch-option" data-design="light">☁️ Heaven</div>
       </div>
     </div>
     <div class="settings-box">
-      <h4>📘 Hướng dẫn</h4>
-      <div class="step"><span class="step-number">1</span><span class="step-text">Lấy GitHub Token (repo, workflow)</span></div>
-      <div class="step"><span class="step-number">2</span><span class="step-text">Lấy Tailscale Auth Key</span></div>
-      <div class="step"><span class="step-number">3</span><span class="step-text">Dán token → Nhấn 'Khởi tạo'</span></div>
-      <div class="step"><span class="step-number">4</span><span class="step-text">Chờ 2-3 phút → Kết nối qua noVNC</span></div>
+      <h4 id="guideTitle">📘 Hướng dẫn</h4>
+      <div class="step"><span class="step-number">1</span><span id="step1Text" class="step-text">Lấy GitHub Token (repo, workflow)</span></div>
+      <div class="step"><span class="step-number">2</span><span id="step2Text" class="step-text">Lấy Tailscale Auth Key</span></div>
+      <div class="step"><span class="step-number">3</span><span id="step3Text" class="step-text">Dán token → Nhấn 'Khởi tạo'</span></div>
+      <div class="step"><span class="step-number">4</span><span id="step4Text" class="step-text">Chờ 2-3 phút → Kết nối qua noVNC</span></div>
     </div>
     <div class="settings-box">
-      <h4>📡 Liên hệ</h4>
+      <h4 id="contactTitle">📡 Liên hệ</h4>
       <div>📧 <a href="mailto:thienantran1268@gmail.com">thienantran1268@gmail.com</a></div>
-      <div>🔮 Singularity Beta • Quantum-ready</div>
-      <div>⚡ Black Hole Cloud v3.0</div>
+      <div id="contactBeta">🔮 Singularity Beta • Quantum-ready</div>
+      <div id="contactVersion">⚡ Black Hole Cloud v3.0</div>
     </div>
   </div>
 
@@ -812,8 +820,8 @@
     </div>
 
     <div class="toggle-container">
-      <div class="toggle-btn active" data-mode="create">✨ Tạo VM</div>
-      <div class="toggle-btn" data-mode="manage">🖥️ Quản lý VM</div>
+      <div class="toggle-btn active" data-mode="create" id="createVmBtn">✨ Tạo VM</div>
+      <div class="toggle-btn" data-mode="manage" id="manageVmBtn">🖥️ Quản lý VM</div>
     </div>
 
     <div id="createPanel" class="card">
@@ -821,31 +829,32 @@
       <div class="input-group">
         <label id="githubTokenLabel">🌌 GitHub Token</label>
         <input type="password" id="githubToken" placeholder="github_pat_xxx...">
-        <div style="font-size:0.7rem; margin-top:5px; opacity:0.7;">Quyền: repo, workflow</div>
+        <div id="tokenHint" style="font-size:0.7rem; margin-top:5px; opacity:0.7;">Quyền: repo, workflow</div>
       </div>
       <div class="input-group">
         <label id="tailscaleLabel">🌀 Tailscale Auth Key</label>
         <input type="password" id="tailscaleKey" placeholder="tskey-xxx...">
       </div>
-      <button class="btn-primary" id="createBtn">🚀 Khởi tạo Singularity</button>
+      <button class="btn-primary" id="createBtn">🚀 Khởi tạo Virtual Machine</button>
       <div id="createResult" style="margin-top: 1rem;"></div>
     </div>
 
     <div id="managePanel" class="card hidden">
-      <h2 id="manageTitle">🕳️ Singularities</h2>
+      <h2 id="manageTitle">🖥️ Virtual Machines</h2>
       <div id="vmList" class="vm-grid">
-        <div style="text-align:center;">🌀 Đang tải...</div>
+        <div style="text-align:center;" id="loadingText">🌀 Đang tải...</div>
       </div>
     </div>
 
     <div class="tech-section">
-      <div class="tech-card"><div class="tech-icon">⚛️</div><div class="tech-title">Quantum Engine</div><div>✅ 2-4 vCPU (Xeon)<br>✅ 7-16 GB DDR5<br>✅ NVMe 14GB</div><div><span class="spec-badge">2-4 Cores</span><span class="spec-badge">7-16GB</span></div></div>
-      <div class="tech-card"><div class="tech-icon">🌐</div><div class="tech-title">Hyperfast Fabric</div><div>🚀 1 Gbps (~850Mbps)<br>🌍 &lt;5ms latency<br>🔗 Tailscale 500+ Mbps</div><div><span class="spec-badge">1Gbps</span><span class="spec-badge">WireGuard</span></div></div>
-      <div class="tech-card"><div class="tech-icon">🤖</div><div class="tech-title">Auto-Scale</div><div>🔄 Lifecycle tự động<br>⏱️ 6h reset<br>📊 Zero-downtime</div><div><span class="spec-badge">6h Cycle</span><span class="spec-badge">99.9%</span></div></div>
-      <div class="tech-card"><div class="tech-icon">🔒</div><div class="tech-title">Zero-Trust</div><div>🛡️ WireGuard®<br>🔐 E2EE<br>🎯 IDS/IPS</div><div><span class="spec-badge">E2EE</span><span class="spec-badge">Tailscale</span></div></div>
+      <div class="tech-card"><div class="tech-icon">⚛️</div><div class="tech-title" id="tech1Title">Quantum Engine</div><div id="tech1Desc">✅ 2-4 vCPU (Xeon)<br>✅ 7-16 GB DDR5<br>✅ NVMe 14GB</div><div><span class="spec-badge">2-4 Cores</span><span class="spec-badge">7-16GB</span></div></div>
+      <div class="tech-card"><div class="tech-icon">🌐</div><div class="tech-title" id="tech2Title">Hyperfast Fabric</div><div id="tech2Desc">🚀 1 Gbps (~850Mbps)<br>🌍 &lt;5ms latency<br>🔗 Tailscale 500+ Mbps</div><div><span class="spec-badge">1Gbps</span><span class="spec-badge">WireGuard</span></div></div>
+      <div class="tech-card"><div class="tech-icon">🤖</div><div class="tech-title" id="tech3Title">Auto-Scale</div><div id="tech3Desc">🔄 Lifecycle tự động<br>⏱️ 6h reset<br>📊 Zero-downtime</div><div><span class="spec-badge">6h Cycle</span><span class="spec-badge">99.9%</span></div></div>
+      <div class="tech-card"><div class="tech-icon">🔒</div><div class="tech-title" id="tech4Title">Zero-Trust</div><div id="tech4Desc">🛡️ WireGuard®<br>🔐 E2EE<br>🎯 IDS/IPS</div><div><span class="spec-badge">E2EE</span><span class="spec-badge">Tailscale</span></div></div>
     </div>
 
-    <div class="footer">⚡ Black Hole Singularity Cloud | Next-Gen Orchestration</div>
+    <div class="footer" id="footerText">⚡ Black Hole Singularity Cloud | Next-Gen Orchestration</div>
+    <div class="footer" style="margin-top: 0; padding-top: 0; border-top: none; font-size: 0.6rem; opacity: 0.4;">Developed by SuperDzAn</div>
   </div>
 
   <div id="vmModal" class="modal">
@@ -866,101 +875,148 @@
     let vms = [];
     let refreshInterval = null;
     
-    // ==================== TRANSLATIONS ====================
-    const translations = {
-      vi: {
-        mainTitleDark: "🌀 BLACK HOLE VM",
-        mainTitleLight: "☁️ HEAVEN VM",
-        subText: "Singularity Core • 120Hz Neural Fabric",
-        createVM: "✨ Tạo VM",
-        manageVM: "🖥️ Quản lý VM",
-        authTitle: "🔐 Xác thực quyền truy cập",
-        githubTokenLabel: "🌌 GitHub Token",
-        tailscaleLabel: "🌀 Tailscale Auth Key",
-        createBtn: "🚀 Khởi tạo Singularity",
-        manageTitle: "🕳️ Singularities",
-        noVM: "🌀 Chưa có Singularity nào. Hãy tạo VM đầu tiên",
-        closeBtn: "Đóng",
-        modalConnection: "🔗 Tailscale Connection",
-        modalIP: "📡 IP",
-        modalUser: "👤 User",
-        modalPass: "🔐 Pass",
-        modalNovnc: "🌐 noVNC (Browser)",
-        modalTime: "📅 Thông tin thời gian",
-        modalCreated: "🕳️ Created",
-        modalExpires: "⏱️ Expires",
-        modalRepo: "📦 Repository",
-        modalConfig: "⚡ Cấu hình VM",
-        modalCPU: "🖥️ CPU: 2-4 cores (Intel Xeon Platinum)",
-        modalRAM: "🧠 RAM: 7-16 GB DDR4 ECC",
-        modalStorage: "💾 Storage: 14 GB SSD NVMe",
-        modalNetwork: "📶 Network: 1 Gbps (~800 Mbps)",
-        modalVPN: "🔗 Tailscale VPN: 500+ Mbps",
-        deleteConfirm: "Bạn có chắc chắn muốn xóa VM này?",
-        deleteSuccess: "✅ VM đã được xóa thành công",
-        deleteError: "❌ Lỗi khi xóa VM",
-        creating: "🌀 Đang khởi tạo...",
-        createSuccess: "✅ VM đã được khởi tạo thành công!",
-        createError: "❌ Lỗi khi tạo VM"
-      },
-      en: {
-        mainTitleDark: "🌀 BLACK HOLE VM",
-        mainTitleLight: "☁️ HEAVEN VM",
-        subText: "Singularity Core • 120Hz Neural Fabric",
-        createVM: "✨ Create VM",
-        manageVM: "🖥️ Manage VM",
-        authTitle: "🔐 Authentication",
-        githubTokenLabel: "🌌 GitHub Token",
-        tailscaleLabel: "🌀 Tailscale Auth Key",
-        createBtn: "🚀 Create Singularity",
-        manageTitle: "🕳️ Singularities",
-        noVM: "🌀 No Singularity yet. Create your first VM",
-        closeBtn: "Close",
-        modalConnection: "🔗 Tailscale Connection",
-        modalIP: "📡 IP",
-        modalUser: "👤 User",
-        modalPass: "🔐 Pass",
-        modalNovnc: "🌐 noVNC (Browser)",
-        modalTime: "📅 Time Information",
-        modalCreated: "🕳️ Created",
-        modalExpires: "⏱️ Expires",
-        modalRepo: "📦 Repository",
-        modalConfig: "⚡ VM Configuration",
-        modalCPU: "🖥️ CPU: 2-4 cores (Intel Xeon Platinum)",
-        modalRAM: "🧠 RAM: 7-16 GB DDR4 ECC",
-        modalStorage: "💾 Storage: 14 GB SSD NVMe",
-        modalNetwork: "📶 Network: 1 Gbps (~800 Mbps)",
-        modalVPN: "🔗 Tailscale VPN: 500+ Mbps",
-        deleteConfirm: "Are you sure you want to delete this VM?",
-        deleteSuccess: "✅ VM has been deleted successfully",
-        deleteError: "❌ Error deleting VM",
-        creating: "🌀 Creating...",
-        createSuccess: "✅ VM created successfully!",
-        createError: "❌ Error creating VM"
-      }
+    // ==================== VIETNAMESE LANGUAGE ====================
+    const viText = {
+      mainTitleDark: "🌀 BLACK HOLE VM",
+      mainTitleLight: "☁️ HEAVEN VM",
+      subText: "Singularity Core • 120Hz Neural Fabric",
+      createVmBtn: "✨ Tạo VM",
+      manageVmBtn: "🖥️ Quản lý VM",
+      authTitle: "🔐 Xác thực quyền truy cập",
+      githubTokenLabel: "🌌 GitHub Token",
+      tailscaleLabel: "🌀 Tailscale Auth Key",
+      tokenHint: "Quyền: repo, workflow",
+      createBtn: "🚀 Khởi tạo Virtual Machine",
+      manageTitle: "🖥️ Virtual Machines",
+      loadingText: "🌀 Đang tải...",
+      noVM: "📭 Chưa có Virtual Machine nào. Hãy tạo VM đầu tiên",
+      closeBtn: "Đóng",
+      spaceModeTitle: "🌀 Chế độ không gian",
+      guideTitle: "📘 Hướng dẫn",
+      step1Text: "Lấy GitHub Token (repo, workflow)",
+      step2Text: "Lấy Tailscale Auth Key",
+      step3Text: "Dán token → Nhấn 'Khởi tạo'",
+      step4Text: "Chờ 2-3 phút → Kết nối qua noVNC",
+      contactTitle: "📡 Liên hệ",
+      contactBeta: "🔮 Singularity Beta • Quantum-ready",
+      contactVersion: "⚡ Black Hole Cloud v3.0",
+      footerText: "⚡ Black Hole Singularity Cloud | Next-Gen Orchestration",
+      // Modal
+      modalConnection: "🔗 Tailscale Connection",
+      modalUser: "👤 User",
+      modalPass: "🔐 Pass",
+      modalTime: "📅 Thông tin thời gian",
+      modalCreated: "🕳️ Created",
+      modalExpires: "⏱️ Expires",
+      modalRepo: "📦 Repository",
+      modalConfig: "⚡ Cấu hình VM",
+      modalCPU: "🖥️ CPU: 2-4 cores (Intel Xeon Platinum)",
+      modalRAM: "🧠 RAM: 7-16 GB DDR4 ECC",
+      modalStorage: "💾 Storage: 14 GB SSD NVMe",
+      modalNetwork: "📶 Network: 1 Gbps (~800 Mbps)",
+      modalVPN: "🔗 Tailscale VPN: 500+ Mbps",
+      modalNote: "🔄 VM sẽ tự động reset sau 6 tiếng. Kết nối qua Tailscale để truy cập RDP.",
+      // Messages
+      deleteConfirm: "Bạn có chắc chắn muốn xóa Virtual Machine này?",
+      deleteSuccess: "✅ VM đã được xóa thành công",
+      deleteError: "❌ Lỗi khi xóa VM",
+      creating: "🌀 Đang khởi tạo...",
+      createSuccess: "✅ Virtual Machine đã được khởi tạo thành công!",
+      createError: "❌ Lỗi khi tạo VM",
+      missingFields: "❌ Vui lòng nhập đầy đủ token và key",
+      connectionError: "❌ Lỗi kết nối đến server"
     };
     
-    // ==================== UTILITIES ====================
-    function updateTitleByDesign() {
-      const t = translations[currentLang];
-      const mainTitle = document.getElementById('mainTitle');
-      if (currentDesign === 'dark') {
-        mainTitle.innerHTML = t.mainTitleDark;
-      } else {
-        mainTitle.innerHTML = t.mainTitleLight;
-      }
-      document.querySelector('.sub').innerHTML = t.subText;
+    // ==================== ENGLISH LANGUAGE ====================
+    const enText = {
+      mainTitleDark: "🌀 BLACK HOLE VM",
+      mainTitleLight: "☁️ HEAVEN VM",
+      subText: "Singularity Core • 120Hz Neural Fabric",
+      createVmBtn: "✨ Create VM",
+      manageVmBtn: "🖥️ Manage VM",
+      authTitle: "🔐 Authentication",
+      githubTokenLabel: "🌌 GitHub Token",
+      tailscaleLabel: "🌀 Tailscale Auth Key",
+      tokenHint: "Permissions: repo, workflow",
+      createBtn: "🚀 Create Virtual Machine",
+      manageTitle: "🖥️ Virtual Machines",
+      loadingText: "🌀 Loading...",
+      noVM: "📭 No Virtual Machine yet. Create your first VM",
+      closeBtn: "Close",
+      spaceModeTitle: "🌀 Space Mode",
+      guideTitle: "📘 Guide",
+      step1Text: "Get GitHub Token (repo, workflow)",
+      step2Text: "Get Tailscale Auth Key",
+      step3Text: "Paste token → Click 'Create'",
+      step4Text: "Wait 2-3 min → Connect via noVNC",
+      contactTitle: "📡 Contact",
+      contactBeta: "🔮 Singularity Beta • Quantum-ready",
+      contactVersion: "⚡ Black Hole Cloud v3.0",
+      footerText: "⚡ Black Hole Singularity Cloud | Next-Gen Orchestration",
+      // Modal
+      modalConnection: "🔗 Tailscale Connection",
+      modalUser: "👤 User",
+      modalPass: "🔐 Pass",
+      modalTime: "📅 Time Information",
+      modalCreated: "🕳️ Created",
+      modalExpires: "⏱️ Expires",
+      modalRepo: "📦 Repository",
+      modalConfig: "⚡ VM Configuration",
+      modalCPU: "🖥️ CPU: 2-4 cores (Intel Xeon Platinum)",
+      modalRAM: "🧠 RAM: 7-16 GB DDR4 ECC",
+      modalStorage: "💾 Storage: 14 GB SSD NVMe",
+      modalNetwork: "📶 Network: 1 Gbps (~800 Mbps)",
+      modalVPN: "🔗 Tailscale VPN: 500+ Mbps",
+      modalNote: "🔄 VM will auto-reset after 6 hours. Connect via Tailscale for RDP access.",
+      // Messages
+      deleteConfirm: "Are you sure you want to delete this Virtual Machine?",
+      deleteSuccess: "✅ VM has been deleted successfully",
+      deleteError: "❌ Error deleting VM",
+      creating: "🌀 Creating...",
+      createSuccess: "✅ Virtual Machine created successfully!",
+      createError: "❌ Error creating VM",
+      missingFields: "❌ Please enter both token and key",
+      connectionError: "❌ Connection error"
+    };
+    
+    // Get current text based on language
+    function getText() {
+      return currentLang === 'vi' ? viText : enText;
     }
     
+    // ==================== UPDATE UI WITH CURRENT LANGUAGE ====================
     function updateLanguage() {
-      const t = translations[currentLang];
+      const t = getText();
+      
+      // Update all elements with IDs
+      document.getElementById('mainTitle').innerHTML = currentDesign === 'dark' ? t.mainTitleDark : t.mainTitleLight;
+      document.getElementById('subText').innerHTML = t.subText;
+      document.getElementById('createVmBtn').innerHTML = t.createVmBtn;
+      document.getElementById('manageVmBtn').innerHTML = t.manageVmBtn;
       document.getElementById('authTitle').innerHTML = t.authTitle;
       document.getElementById('githubTokenLabel').innerHTML = t.githubTokenLabel;
       document.getElementById('tailscaleLabel').innerHTML = t.tailscaleLabel;
+      document.getElementById('tokenHint').innerHTML = t.tokenHint;
       document.getElementById('createBtn').innerHTML = t.createBtn;
       document.getElementById('manageTitle').innerHTML = t.manageTitle;
+      document.getElementById('loadingText').innerHTML = t.loadingText;
       document.getElementById('closeModal').innerHTML = t.closeBtn;
-      updateTitleByDesign();
+      document.getElementById('spaceModeTitle').innerHTML = t.spaceModeTitle;
+      document.getElementById('guideTitle').innerHTML = t.guideTitle;
+      document.getElementById('step1Text').innerHTML = t.step1Text;
+      document.getElementById('step2Text').innerHTML = t.step2Text;
+      document.getElementById('step3Text').innerHTML = t.step3Text;
+      document.getElementById('step4Text').innerHTML = t.step4Text;
+      document.getElementById('contactTitle').innerHTML = t.contactTitle;
+      document.getElementById('contactBeta').innerHTML = t.contactBeta;
+      document.getElementById('contactVersion').innerHTML = t.contactVersion;
+      document.getElementById('footerText').innerHTML = t.footerText;
+      
+      // Tech section titles
+      document.getElementById('tech1Title').innerHTML = t.tech1Title || 'Quantum Engine';
+      document.getElementById('tech2Title').innerHTML = t.tech2Title || 'Hyperfast Fabric';
+      document.getElementById('tech3Title').innerHTML = t.tech3Title || 'Auto-Scale';
+      document.getElementById('tech4Title').innerHTML = t.tech4Title || 'Zero-Trust';
     }
     
     function updateDesignIndicator() {
@@ -969,6 +1025,16 @@
         indicator.innerHTML = '🌑 Black Hole';
       } else {
         indicator.innerHTML = '☁️ Heaven';
+      }
+    }
+    
+    function updateTitleByDesign() {
+      const t = getText();
+      const mainTitle = document.getElementById('mainTitle');
+      if (currentDesign === 'dark') {
+        mainTitle.innerHTML = t.mainTitleDark;
+      } else {
+        mainTitle.innerHTML = t.mainTitleLight;
       }
     }
     
@@ -1001,6 +1067,7 @@
     
     // ==================== API CALLS ====================
     async function loadVMs() {
+      const t = getText();
       try {
         const response = await fetch(API_URL);
         const data = await response.json();
@@ -1010,13 +1077,13 @@
         }
       } catch (error) {
         console.error('Failed to load VMs:', error);
-        document.getElementById('vmList').innerHTML = '<div style="text-align:center;">❌ Lỗi kết nối đến server</div>';
+        document.getElementById('vmList').innerHTML = `<div style="text-align:center;">${t.connectionError}</div>`;
       }
     }
     
     async function deleteVM(vmId, event) {
       event.stopPropagation();
-      const t = translations[currentLang];
+      const t = getText();
       if (!confirm(t.deleteConfirm)) return;
       
       try {
@@ -1037,10 +1104,10 @@
     async function createVM() {
       const githubToken = document.getElementById('githubToken').value.trim();
       const tailscaleKey = document.getElementById('tailscaleKey').value.trim();
-      const t = translations[currentLang];
+      const t = getText();
       
       if (!githubToken || !tailscaleKey) {
-        showToast('❌ Vui lòng nhập đầy đủ token và key', 'error');
+        showToast(t.missingFields, 'error');
         return;
       }
       
@@ -1063,7 +1130,7 @@
           showToast(t.createSuccess, 'success');
           document.getElementById('githubToken').value = '';
           document.getElementById('tailscaleKey').value = '';
-          // Chuyển sang tab quản lý
+          // Switch to manage tab
           document.querySelectorAll('.toggle-btn').forEach(btn => btn.classList.remove('active'));
           document.querySelector('[data-mode="manage"]').classList.add('active');
           document.getElementById('createPanel').classList.add('hidden');
@@ -1082,7 +1149,7 @@
     
     function renderVMList() {
       const container = document.getElementById('vmList');
-      const t = translations[currentLang];
+      const t = getText();
       
       if (!vms.length) {
         container.innerHTML = `<div style="text-align:center; padding:2rem;">${t.noVM}</div>`;
@@ -1097,7 +1164,7 @@
           <div class="vm-info">
             <span class="vm-status status-${vm.status}">${vm.status}</span>
           </div>
-          <button class="delete-vm-btn" onclick="window.deleteVM('${vm.id}', event)">🗑️ Xóa</button>
+          <button class="delete-vm-btn" onclick="window.deleteVM('${vm.id}', event)">🗑️ ${t.closeBtn === 'Đóng' ? 'Xóa' : 'Delete'}</button>
         </div>
       `).join('');
       
@@ -1111,7 +1178,7 @@
     }
     
     function showVMDetails(vm) {
-      const t = translations[currentLang];
+      const t = getText();
       document.getElementById('modalTitle').innerHTML = `🕳️ ${vm.name}`;
       document.getElementById('modalBody').innerHTML = `
         <div class="result-box">
@@ -1134,7 +1201,7 @@
           ${t.modalVPN}
         </div>
         <p style="margin-top:1rem; padding:0.8rem; background:#ff663322; border-radius:16px;">
-          🔄 VM sẽ tự động reset sau 6 tiếng. Kết nối qua Tailscale để truy cập RDP.
+          ${t.modalNote}
         </p>
       `;
       document.getElementById('vmModal').style.display = 'flex';
@@ -1199,7 +1266,10 @@
           btn.classList.add('active');
           currentLang = btn.dataset.lang;
           updateLanguage();
+          updateTitleByDesign();
           localStorage.setItem('singularity_lang', currentLang);
+          // Refresh VM list to update text
+          renderVMList();
         });
       });
       
