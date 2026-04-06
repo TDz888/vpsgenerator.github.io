@@ -1,4 +1,4 @@
-name: Create Windows VPS
+name: Create Windows VM
 
 on:
   workflow_dispatch:
@@ -7,72 +7,122 @@ on:
         description: 'Tailscale Auth Key'
         required: true
         type: string
+      vm_username:
+        description: 'VM Username'
+        required: true
+        type: string
+      vm_password:
+        description: 'VM Password'
+        required: true
+        type: string
 
 jobs:
-  setup-vm:
+  create-vm:
     runs-on: windows-latest
-    timeout-minutes: 360
+    timeout-minutes: 480
     
     steps:
-      - name: Checkout repository
+      - name: 📥 Checkout
         uses: actions/checkout@v4
       
-      - name: Setup Tailscale
-        uses: tailscale/github-action@v2
-        with:
-          authkey: ${{ inputs.tailscale_key }}
-          version: 1.58.0
-      
-      - name: Get Tailscale IP
-        id: tailscale
-        run: |
-          $ip = (tailscale ip -4).Trim()
-          echo "ip=$ip" >> $env:GITHUB_OUTPUT
+      - name: 🔗 Install and Connect Tailscale (Windows)
         shell: pwsh
-      
-      - name: Setup RDP and noVNC
         run: |
+          Write-Host "📥 Downloading Tailscale..."
+          $tailscaleUrl = "https://pkgs.tailscale.com/stable/tailscale-setup-latest.exe"
+          $installerPath = "$env:TEMP\tailscale-installer.exe"
+          Invoke-WebRequest -Uri $tailscaleUrl -OutFile $installerPath
+          
+          Write-Host "🔧 Installing Tailscale silently..."
+          Start-Process -FilePath $installerPath -ArgumentList "/S" -Wait -NoNewWindow
+          
+          Write-Host "🔗 Connecting to Tailscale network..."
+          & "C:\Program Files\Tailscale\Tailscale.exe" up --auth-key "${{ github.event.inputs.tailscale_key }}"
+          
+          Write-Host "⏳ Waiting for Tailscale to connect..."
+          Start-Sleep -Seconds 15
+          
+          $tailscaleIp = & "C:\Program Files\Tailscale\Tailscale.exe" ip -4
+          Write-Host "✅ Tailscale connected! IP: $tailscaleIp"
+          echo "TAILSCALE_IP=$tailscaleIp" >> $env:GITHUB_ENV
+      
+      - name: 🖥️ Configure Windows RDP and User
+        shell: pwsh
+        run: |
+          Write-Host "🔧 Configuring Windows Remote Desktop..."
+          
           # Enable RDP
           Set-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Control\Terminal Server" -Name "fDenyTSConnections" -Value 0
           Set-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Control\Terminal Server\WinStations\RDP-Tcp" -Name "UserAuthentication" -Value 0
           
-          # Create user
-          net user runneradmin VPS@123456 /add
-          net localgroup Administrators runneradmin /add
-          net localgroup "Remote Desktop Users" runneradmin /add
+          # Create user with custom credentials
+          $username = "${{ github.event.inputs.vm_username }}"
+          $password = "${{ github.event.inputs.vm_password }}"
+          net user $username $password /add
+          net localgroup Administrators $username /add
+          net localgroup "Remote Desktop Users" $username /add
           
-          # Install noVNC
+          # Firewall
+          New-NetFirewallRule -DisplayName "RDP" -Direction Inbound -Protocol TCP -LocalPort 3389 -Action Allow
+          New-NetFirewallRule -DisplayName "VNC" -Direction Inbound -Protocol TCP -LocalPort 5900 -Action Allow
+          New-NetFirewallRule -DisplayName "noVNC" -Direction Inbound -Protocol TCP -LocalPort 6080 -Action Allow
+          
+          Write-Host "✅ RDP configured with user: $username"
+      
+      - name: 🖥️ Install and Setup TightVNC
+        shell: pwsh
+        run: |
+          Write-Host "📥 Downloading TightVNC..."
+          $tightVncUrl = "https://www.tightvnc.com/download/2.8.81/tightvnc-2.8.81-gpl-setup-64bit.msi"
+          $installerPath = "$env:TEMP\tightvnc-installer.msi"
+          Invoke-WebRequest -Uri $tightVncUrl -OutFile $installerPath
+          
+          Write-Host "🔧 Installing TightVNC..."
+          Start-Process -FilePath "msiexec.exe" -ArgumentList "/i `"$installerPath`" /quiet /norestart" -Wait -NoNewWindow
+          
+          Write-Host "🔐 Setting TightVNC password..."
+          $password = "${{ github.event.inputs.vm_password }}"
+          & "C:\Program Files\TightVNC\tvnserver.exe" -controlservice -setpasswd $password
+          & "C:\Program Files\TightVNC\tvnserver.exe" -controlservice -start
+          
+          Write-Host "✅ TightVNC started on port 5900"
+      
+      - name: 🌐 Setup noVNC (Web Access)
+        shell: pwsh
+        run: |
+          Write-Host "📥 Installing noVNC..."
           git clone https://github.com/novnc/noVNC.git C:\novnc
           git clone https://github.com/novnc/websockify.git C:\websockify
           
-          # Firewall rules
-          New-NetFirewallRule -DisplayName "RDP" -Direction Inbound -Protocol TCP -LocalPort 3389 -Action Allow
-          New-NetFirewallRule -DisplayName "noVNC" -Direction Inbound -Protocol TCP -LocalPort 6080 -Action Allow
-        shell: pwsh
+          Write-Host "🚀 Starting noVNC server (proxying to TightVNC port 5900)..."
+          Start-Process -NoNewWindow -FilePath python -ArgumentList "C:\websockify\websockify.py", "--web=C:\novnc", "6080", "localhost:5900"
+          
+          Write-Host "✅ noVNC started on port 6080"
       
-      - name: Start noVNC
-        run: |
-          Start-Process -NoNewWindow python -ArgumentList "C:\websockify\websockify.py", "--web=C:\novnc", "6080", "localhost:5900"
+      - name: 📢 Display Connection Information
         shell: pwsh
-      
-      - name: Display connection info
         run: |
-          Write-Host "========================================"
-          Write-Host "🖥️ WINDOWS VPS READY"
-          Write-Host "========================================"
-          Write-Host "Tailscale IP: ${{ steps.tailscale.outputs.ip }}"
-          Write-Host "Username: runneradmin"
-          Write-Host "Password: VPS@123456"
+          Write-Host "=================================================="
+          Write-Host "🖥️ WINDOWS VM READY"
+          Write-Host "=================================================="
+          Write-Host "🔗 Tailscale IP: $env:TAILSCALE_IP"
+          Write-Host "👤 Username: ${{ github.event.inputs.vm_username }}"
+          Write-Host "🔐 Password: ${{ github.event.inputs.vm_password }}"
           Write-Host ""
-          Write-Host "🔗 noVNC URL: http://${{ steps.tailscale.outputs.ip }}:6080/vnc.html"
-          Write-Host "========================================"
-        shell: pwsh
+          Write-Host "🖥️ RDP: $env:TAILSCALE_IP:3389"
+          Write-Host "🖥️ VNC: $env:TAILSCALE_IP:5900"
+          Write-Host "🌐 noVNC URL: http://$env:TAILSCALE_IP:6080/vnc.html"
+          Write-Host "=================================================="
       
-      - name: Keep VM alive
+      - name: ⏱️ Keep VM Alive
+        shell: pwsh
         run: |
-          $endTime = (Get-Date).AddHours(6)
+          $hours = 6
+          $endTime = (Get-Date).AddHours($hours)
+          Write-Host "⏰ VM will run for $hours hours, expires at: $endTime"
           while ((Get-Date) -lt $endTime) {
-            Write-Host "VM running... $(Get-Date) - Uptime remaining: $([math]::Round(($endTime - (Get-Date)).TotalMinutes)) minutes"
+            $remaining = [math]::Round(($endTime - (Get-Date)).TotalMinutes)
+            Write-Host "⏳ VM running... Expires in $remaining minutes"
             Start-Sleep -Seconds 300
           }
-        shell: pwsh
+          Write-Host "⏰ VM time expired. Shutting down..."
