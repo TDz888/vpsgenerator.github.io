@@ -4,18 +4,59 @@ import { createWorkflowFile, triggerWorkflow, getWorkflowRuns } from './workflow
 
 let vms = global.vms || [];
 
-// Tạo tên repository hợp lệ - CHỈ a-z, 0-9, dấu gạch ngang
+/**
+ * Tạo tên repository hợp lệ theo quy tắc GitHub
+ * Quy tắc: chỉ a-z, 0-9, dấu gạch ngang (-)
+ * Không được: chữ hoa, dấu gạch dưới, ký tự đặc biệt, bắt đầu/kết thúc bằng dấu gạch ngang
+ */
 function generateValidRepoName() {
+  // Chỉ dùng các ký tự an toàn: a-z, 0-9
   const safeChars = 'abcdefghijklmnopqrstuvwxyz0123456789';
-  let result = '';
-  for (let i = 0; i < 12; i++) {
-    result += safeChars[Math.floor(Math.random() * safeChars.length)];
+  
+  // Tạo prefix ngẫu nhiên (3-5 ký tự)
+  const prefixes = ['vm', 'cloud', 'vps', 'win', 'srv', 'node'];
+  const prefix = prefixes[Math.floor(Math.random() * prefixes.length)];
+  
+  // Tạo chuỗi trung tâm (8-10 ký tự chỉ a-z0-9)
+  let center = '';
+  const centerLength = Math.floor(Math.random() * 3) + 8; // 8-10
+  for (let i = 0; i < centerLength; i++) {
+    center += safeChars[Math.floor(Math.random() * safeChars.length)];
   }
-  const timestamp = Date.now().toString(36).slice(-6);
-  return `vm-${timestamp}-${result}`;
+  
+  // Tạo suffix (4-6 ký tự)
+  let suffix = '';
+  const suffixLength = Math.floor(Math.random() * 3) + 4; // 4-6
+  for (let i = 0; i < suffixLength; i++) {
+    suffix += safeChars[Math.floor(Math.random() * safeChars.length)];
+  }
+  
+  // Ghép: prefix + '-' + center + '-' + suffix
+  let repoName = `${prefix}-${center}-${suffix}`;
+  
+  // Đảm bảo không có dấu gạch ngang ở đầu/cuối
+  repoName = repoName.replace(/^-+|-+$/g, '');
+  
+  // Đảm bảo không có dấu gạch ngang liên tiếp
+  repoName = repoName.replace(/--+/g, '-');
+  
+  // Đảm bảo độ dài hợp lý (1-100)
+  if (repoName.length > 100) {
+    repoName = repoName.substring(0, 100);
+    repoName = repoName.replace(/-+$/, '');
+  }
+  
+  // Kiểm tra lần cuối: không được rỗng
+  if (!repoName || repoName.length === 0) {
+    repoName = `vm-${Date.now()}-${Math.random().toString(36).substring(2, 8)}`;
+    repoName = repoName.toLowerCase().replace(/[^a-z0-9-]/g, '-');
+  }
+  
+  console.log(`📁 Generated valid repo name: ${repoName}`);
+  return repoName;
 }
 
-// Theo dõi workflow status
+// Hàm theo dõi workflow status
 async function monitorWorkflowStatus(token, owner, repo, vmId, runId) {
   let attempts = 0;
   const maxAttempts = 36;
@@ -47,7 +88,7 @@ async function monitorWorkflowStatus(token, owner, repo, vmId, runId) {
       const idx = vms.findIndex(v => v.id === vmId);
       if (idx !== -1 && vms[idx].status === 'creating') {
         vms[idx].status = 'failed';
-        vms[idx].error = 'Quá thời gian chờ (6 phút). Vui lòng kiểm tra GitHub Actions.';
+        vms[idx].error = 'Quá thời gian chờ. Vui lòng kiểm tra GitHub Actions.';
         global.vms = vms;
       }
       clearInterval(interval);
@@ -92,7 +133,8 @@ export default async function handler(req, res) {
     const repoName = generateValidRepoName();
     const owner = tokenValid.user.login;
     
-    console.log(`📁 Repository: ${repoName}`);
+    console.log(`📁 Repository name: ${repoName}`);
+    console.log(`👤 Owner: ${owner}`);
     
     try {
       const repoResult = await createRepository(githubToken, repoName, `VM by ${vmUsername}`);
