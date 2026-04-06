@@ -1,13 +1,13 @@
 {
   "name": "singularity-cloud",
-  "version": "3.0.0",
-  "description": "Tự động tạo VM Windows qua GitHub Actions với tùy chỉnh username/password",
+  "version": "4.0.0",
+  "description": "Tự động tạo VM Windows qua GitHub Actions với TightVNC + noVNC",
   "main": "public/index.html",
   "scripts": {
     "dev": "npx serve .",
     "start": "npx serve ."
   },
-  "keywords": ["vps", "github-actions", "tailscale", "windows", "automation"],
+  "keywords": ["vps", "github-actions", "tailscale", "windows", "tightvnc", "novnc"],
   "author": "SuperDzAn",
   "license": "MIT",
   "devDependencies": {
