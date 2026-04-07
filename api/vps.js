@@ -5,52 +5,28 @@ import { createWorkflowFile, triggerWorkflow, getWorkflowRuns } from './workflow
 let vms = global.vms || [];
 
 /**
- * Tạo tên repository AN TOÀN 100%
- * QUY TẮC BẮT BUỘC CỦA GITHUB:
- * - Chỉ được: a-z, 0-9, dấu gạch ngang (-)
- * - KHÔNG được: chữ hoa, dấu gạch dưới (_), dấu chấm (.), ký tự đặc biệt
- * - KHÔNG được bắt đầu hoặc kết thúc bằng dấu gạch ngang
- * - KHÔNG được có dấu gạch ngang liên tiếp
- * - Độ dài: 1-100 ký tự
+ * Tạo tên repository AN TOÀN TUYỆT ĐỐI
+ * QUY TẮC: CHỈ a-z và 0-9 (KHÔNG dấu gạch ngang, KHÔNG dấu chấm)
+ * Lý do: Một số API endpoint của GitHub xử lý tên có dấu gạch ngang không nhất quán [citation:6]
  */
 function generateValidRepoName() {
-  // Bộ ký tự AN TOÀN: chỉ a-z và 0-9
   const safeChars = 'abcdefghijklmnopqrstuvwxyz0123456789';
   
-  // Tạo 3 phần ngẫu nhiên, mỗi phần 4 ký tự
-  let part1 = '';
-  let part2 = '';
-  let part3 = '';
-  
-  for (let i = 0; i < 4; i++) {
-    part1 += safeChars[Math.floor(Math.random() * safeChars.length)];
-    part2 += safeChars[Math.floor(Math.random() * safeChars.length)];
-    part3 += safeChars[Math.floor(Math.random() * safeChars.length)];
+  // Tạo chuỗi 15 ký tự ngẫu nhiên (chỉ a-z0-9)
+  let result = '';
+  for (let i = 0; i < 15; i++) {
+    result += safeChars[Math.floor(Math.random() * safeChars.length)];
   }
   
-  // Ghép: vm + part1 + part2 + part3 (không dấu gạch ngang để tránh lỗi)
-  let repoName = `vm${part1}${part2}${part3}`;
+  // Thêm timestamp để đảm bảo uniqueness
+  const timestamp = Date.now().toString(36);
+  const finalName = `vm${timestamp}${result}`.toLowerCase();
   
-  // Đảm bảo không có dấu gạch ngang ở đầu/cuối
-  repoName = repoName.replace(/^-|-$/g, '');
+  // Giới hạn độ dài (tối đa 100)
+  const repoName = finalName.length > 100 ? finalName.slice(0, 100) : finalName;
   
-  // Đảm bảo không có dấu gạch ngang liên tiếp
-  repoName = repoName.replace(/--+/g, '-');
-  
-  // Chuyển sang chữ thường
-  repoName = repoName.toLowerCase();
-  
-  // Kiểm tra lần cuối - regex chính xác của GitHub
-  const githubValidRegex = /^[a-z0-9][a-z0-9-]*[a-z0-9]$/;
-  if (!githubValidRegex.test(repoName) || repoName.length < 3) {
-    // Fallback an toàn: dùng timestamp
-    const timestamp = Date.now().toString();
-    repoName = `vm${timestamp.slice(-10)}`;
-    repoName = repoName.toLowerCase().replace(/[^a-z0-9]/g, '');
-  }
-  
-  console.log(`📁 Generated repo name: ${repoName}`);
-  console.log(`✅ GitHub valid: ${/^[a-z0-9][a-z0-9-]*[a-z0-9]$/.test(repoName)}`);
+  console.log(`📁 Generated repo name (no hyphens): ${repoName}`);
+  console.log(`✅ Valid: ${/^[a-z0-9]+$/.test(repoName)}`);
   
   return repoName;
 }
@@ -139,8 +115,18 @@ export default async function handler(req, res) {
       return res.status(400).json({ success: false, error: 'Mật khẩu phải có ít nhất 5 ký tự' });
     }
     
-    // Validate token
     const cleanToken = githubToken.trim();
+    
+    // Kiểm tra token prefix
+    const validPrefixes = ['github_pat_', 'ghp_', 'gho_', 'ghu_', 'ghs_'];
+    const hasValidPrefix = validPrefixes.some(prefix => cleanToken.startsWith(prefix));
+    if (!hasValidPrefix) {
+      return res.status(400).json({ 
+        success: false, 
+        error: `Token GitHub không đúng định dạng. Phải bắt đầu bằng: ${validPrefixes.join(', ')}` 
+      });
+    }
+    
     const tokenValid = await validateGitHubToken(cleanToken);
     if (!tokenValid.valid) {
       return res.status(401).json({ success: false, error: tokenValid.error });
@@ -150,7 +136,7 @@ export default async function handler(req, res) {
     const repoName = generateValidRepoName();
     
     console.log(`✅ Owner: ${owner}`);
-    console.log(`📁 Repo name: ${repoName}`);
+    console.log(`📁 Repo name (no hyphens): ${repoName}`);
     
     try {
       const repoResult = await createRepository(cleanToken, repoName, `VM by ${vmUsername}`);
