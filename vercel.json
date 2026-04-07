@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "name": "singularity-vm",
+  "name": "singularityvm",
   "functions": {
     "api/*.js": {
       "maxDuration": 60
@@ -10,7 +10,6 @@
     {
       "src": "/api/(.*)",
       "dest": "/api/$1",
-      "methods": ["GET", "POST", "DELETE", "OPTIONS"],
       "headers": {
         "Access-Control-Allow-Origin": "*",
         "Access-Control-Allow-Methods": "*",
@@ -18,18 +17,15 @@
       }
     },
     {
-      "src": "/.*",
+      "src": "/(.*)",
       "dest": "/index.html"
     }
   ],
   "headers": [
     {
-      "source": "/api/(.*)",
+      "source": "/(.*)",
       "headers": [
-        { "key": "Access-Control-Allow-Origin", "value": "*" },
-        { "key": "Access-Control-Allow-Methods", "value": "*" },
-        { "key": "Access-Control-Allow-Headers", "value": "*" },
-        { "key": "User-Agent", "value": "*" }
+        { "key": "User-Agent", "value": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36" }
       ]
     }
   ]
