@@ -981,7 +981,7 @@
           <input type="password" id="githubToken" placeholder="ghp_xxxxx...">
         </div>
         <div class="input-hint" id="githubHint">
-          <span class="example-token">✅ Token phải bắt đầu bằng: ghp_ (GitHub Classic Token)</span><br>
+          <span class="example-token">✅ Hỗ trợ: ghp_ (Classic) | github_pat_ (Fine-grained) | gho_, ghu_, ghs_</span><br>
           <span class="example-token">📌 Cần quyền: repo, workflow</span>
         </div>
       </div>
@@ -1088,9 +1088,9 @@
         manageTab: "🖥️ Quản lý VM",
         authTitle: "🔐 Khởi tạo Virtual Machine",
         githubLabel: "🌌 GitHub Token",
-        githubHint: "Token phải bắt đầu bằng ghp_ • Cần quyền repo, workflow",
+        githubHint: "Hỗ trợ: ghp_, github_pat_, gho_, ghu_, ghs_ • Cần quyền repo, workflow",
         tailscaleLabel: "🌀 Tailscale Auth Key",
-        tailscaleHint: "Lấy key từ Tailscale Admin Console",
+        tailscaleHint: "Lấy key từ Tailscale Admin Console (bắt đầu bằng tskey-)",
         usernameLabel: "👤 Tên đăng nhập VM",
         passwordLabel: "🔐 Mật khẩu VM",
         passwordHint: "💡 Bấm Random để tạo user/pass mạnh tự động",
@@ -1122,7 +1122,7 @@
         creating: "🔄 Đang khởi tạo VM...",
         createSuccess: "✅ Virtual Machine đã được khởi tạo!",
         createError: "❌ Lỗi khi tạo VM",
-        missingToken: "❌ Vui lòng nhập GitHub Token (phải bắt đầu bằng ghp_) và Tailscale Key",
+        missingToken: "❌ Vui lòng nhập GitHub Token và Tailscale Key",
         invalidUsername: "❌ Tên đăng nhập phải có ít nhất 5 ký tự",
         invalidPassword: "❌ Mật khẩu phải có ít nhất 5 ký tự",
         copySuccess: "✅ Đã sao chép vào clipboard!"
@@ -1134,9 +1134,9 @@
         manageTab: "🖥️ Manage VM",
         authTitle: "🔐 Initialize Virtual Machine",
         githubLabel: "🌌 GitHub Token",
-        githubHint: "Token must start with ghp_ • Required: repo, workflow",
+        githubHint: "Supports: ghp_, github_pat_, gho_, ghu_, ghs_ • Required: repo, workflow",
         tailscaleLabel: "🌀 Tailscale Auth Key",
-        tailscaleHint: "Get key from Tailscale Admin Console",
+        tailscaleHint: "Get key from Tailscale Admin Console (starts with tskey-)",
         usernameLabel: "👤 VM Username",
         passwordLabel: "🔐 VM Password",
         passwordHint: "💡 Click Random to generate strong credentials",
@@ -1168,7 +1168,7 @@
         creating: "🔄 Creating VM...",
         createSuccess: "✅ Virtual Machine created!",
         createError: "❌ Error creating VM",
-        missingToken: "❌ Please enter GitHub Token (must start with ghp_) and Tailscale Key",
+        missingToken: "❌ Please enter GitHub Token and Tailscale Key",
         invalidUsername: "❌ Username must be at least 5 characters",
         invalidPassword: "❌ Password must be at least 5 characters",
         copySuccess: "✅ Copied to clipboard!"
@@ -1176,6 +1176,24 @@
     };
 
     function t(key) { return translations[currentLang][key] || key; }
+
+    // ==================== VALIDATION FUNCTIONS (FIXED) ====================
+    function isValidGitHubToken(token) {
+      if (!token || typeof token !== 'string') return false;
+      const validPatterns = [
+        /^ghp_[A-Za-z0-9]+$/,           // Classic personal access token
+        /^github_pat_[A-Za-z0-9_]+$/,    // Fine-grained token (QUAN TRỌNG)
+        /^gho_[A-Za-z0-9]+$/,           // OAuth App token
+        /^ghu_[A-Za-z0-9]+$/,           // GitHub App User-to-Server token
+        /^ghs_[A-Za-z0-9]+$/            // GitHub App Server-to-Server token
+      ];
+      return validPatterns.some(pattern => pattern.test(token));
+    }
+
+    function isValidTailscaleKey(key) {
+      if (!key || typeof key !== 'string') return false;
+      return /^tskey-[a-zA-Z0-9_-]+$/.test(key);
+    }
 
     // ==================== RANDOM GENERATORS ====================
     function generateRandomUsername() {
@@ -1405,37 +1423,50 @@
       let vmUsername = document.getElementById('vmUsername').value.trim();
       let vmPassword = document.getElementById('vmPassword').value.trim();
 
-      // Validate token format
+      // ========== FIXED VALIDATION ==========
+      // Validate GitHub Token (hỗ trợ nhiều định dạng)
       if (!githubToken) {
         showToast('❌ Vui lòng nhập GitHub Token', 'error');
         return;
       }
       
-      if (!githubToken.startsWith('ghp_')) {
-        const errorMsg = 'Token GitHub KHÔNG HỢP LỆ! Token phải bắt đầu bằng "ghp_". Vui lòng tạo token mới tại https://github.com/settings/tokens';
+      if (!isValidGitHubToken(githubToken)) {
+        const errorMsg = '❌ Token GitHub KHÔNG HỢP LỆ!\n\nToken phải thuộc một trong các dạng:\n• ghp_xxxx (Classic Token)\n• github_pat_xxxx (Fine-grained Token)\n• gho_xxxx, ghu_xxxx, ghs_xxxx\n\n📌 Cách tạo token đúng:\n1️⃣ Truy cập https://github.com/settings/tokens\n2️⃣ Chọn "Generate new token (classic)"\n3️⃣ Chọn quyền: repo + workflow\n4️⃣ Token sẽ bắt đầu bằng ghp_';
         showToast(errorMsg, 'error');
         document.getElementById('createResult').innerHTML = `
           <div style="color:#ef4444; padding:0.8rem; background:rgba(239,68,68,0.1); border-radius:14px; margin-top:1rem; font-size:0.8rem;">
-            ❌ ${errorMsg}
+            ❌ ${errorMsg.replace(/\n/g, '<br>')}
             <div class="error-detail" style="margin-top:0.5rem;">
-              <div class="error-detail-title">🔍 Cách tạo token đúng:</div>
-              1️⃣ Truy cập <a href="https://github.com/settings/tokens" target="_blank" style="color:#ffaa77;">GitHub Tokens</a><br>
-              2️⃣ Chọn "Generate new token (classic)"<br>
-              3️⃣ Đặt tên: Singularity Cloud<br>
-              4️⃣ Chọn thời hạn: No expiration<br>
-              5️⃣ Chọn quyền: <strong>repo</strong> và <strong>workflow</strong><br>
-              6️⃣ Token sẽ bắt đầu bằng <strong style="color:#facc15;">ghp_</strong>
+              <div class="error-detail-title">🔍 Các loại token được hỗ trợ:</div>
+              ✅ ghp_xxxxxxxx (Classic Token)<br>
+              ✅ github_pat_xxxxxxxx (Fine-grained Token)<br>
+              ✅ gho_, ghu_, ghs_ (OAuth/GitHub App)<br>
+              <span style="color:#facc15;">👉 Token của bạn: ${githubToken.substring(0, 15)}...</span>
             </div>
           </div>
         `;
         return;
       }
 
+      // Validate Tailscale Key
       if (!tailscaleKey) {
         showToast('❌ Vui lòng nhập Tailscale Key', 'error');
         return;
       }
+      
+      if (!isValidTailscaleKey(tailscaleKey)) {
+        showToast('❌ Tailscale Key không đúng định dạng. Phải bắt đầu bằng "tskey-"', 'error');
+        document.getElementById('createResult').innerHTML = `
+          <div style="color:#ef4444; padding:0.8rem; background:rgba(239,68,68,0.1); border-radius:14px; margin-top:1rem; font-size:0.8rem;">
+            ❌ Tailscale Key không hợp lệ!<br>
+            Key phải bắt đầu bằng <strong>tskey-</strong><br>
+            Ví dụ: <span class="example-token">tskey-auth_abc123xyz...</span>
+          </div>
+        `;
+        return;
+      }
 
+      // Auto generate missing fields
       if (!vmUsername) {
         vmUsername = generateRandomUsername();
         document.getElementById('vmUsername').value = vmUsername;
@@ -1444,6 +1475,7 @@
         vmPassword = generateRandomPassword();
         document.getElementById('vmPassword').value = vmPassword;
       }
+      
       if (!validateInputs()) {
         showToast(t('invalidUsername'), 'error');
         return;
