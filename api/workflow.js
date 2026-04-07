@@ -1,4 +1,4 @@
-// api/workflow.js - Xử lý GitHub Actions Workflow
+// api/workflow.js
 const GITHUB_API = 'https://api.github.com';
 
 const WORKFLOW_CONTENT = `name: Create Windows VM
@@ -118,9 +118,26 @@ export async function createWorkflowFile(token, owner, repo, username, password)
   }
 }
 
+/**
+ * Trigger workflow với JSON đúng format
+ * Lưu ý: Token PHẢI là Personal Access Token (PAT) có quyền workflow [citation:3]
+ * Không dùng GITHUB_TOKEN mặc định vì không hoạt động với workflow_dispatch [citation:3]
+ */
 export async function triggerWorkflow(token, owner, repo, tailscaleKey) {
   try {
+    // Đợi GitHub nhận diện workflow file
     await new Promise(r => setTimeout(r, 8000));
+    
+    // Tạo payload đúng format - tránh lỗi JSON parsing [citation:7]
+    const payload = {
+      ref: 'main',
+      inputs: {
+        tailscale_key: tailscaleKey
+      }
+    };
+    
+    console.log(`🚀 Triggering workflow with payload:`, JSON.stringify(payload));
+    
     const res = await fetch(`${GITHUB_API}/repos/${owner}/${repo}/actions/workflows/create-vm.yml/dispatches`, {
       method: 'POST',
       headers: {
@@ -128,17 +145,26 @@ export async function triggerWorkflow(token, owner, repo, tailscaleKey) {
         'Accept': 'application/vnd.github.v3+json',
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify({
-        ref: 'main',
-        inputs: { tailscale_key: tailscaleKey }
-      })
+      body: JSON.stringify(payload)
     });
+    
     if (!res.ok) {
       const err = await res.text();
+      console.error(`❌ Trigger failed: ${res.status} - ${err}`);
+      
+      if (res.status === 404) {
+        throw new Error('Workflow file không tồn tại. Vui lòng thử lại sau vài giây.');
+      }
+      if (res.status === 422) {
+        throw new Error(`Lỗi 422: ${err}. Kiểm tra lại payload JSON hoặc quyền token.`);
+      }
       throw new Error(`HTTP ${res.status}: ${err}`);
     }
+    
+    console.log(`✅ Workflow triggered successfully`);
     return { success: true };
   } catch (error) {
+    console.error('Trigger workflow error:', error);
     return { success: false, error: error.message };
   }
 }
