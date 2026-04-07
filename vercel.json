@@ -1,17 +1,32 @@
 {
+  "version": 2,
   "name": "singularity-cloud",
-  "version": "7.0.0",
-  "type": "module",
-  "description": "Next-Gen Virtual Machine Platform",
-  "main": "public/index.html",
-  "scripts": {
-    "dev": "npx serve .",
-    "start": "npx serve ."
+  "functions": {
+    "api/*.js": {
+      "maxDuration": 60,
+      "memory": 1024
+    }
   },
-  "keywords": ["vps", "github-actions", "tailscale", "windows", "novnc"],
-  "author": "SuperDzAn",
-  "license": "MIT",
-  "devDependencies": {
-    "serve": "^14.2.0"
-  }
+  "routes": [
+    {
+      "src": "/api/vps",
+      "methods": ["GET", "POST", "DELETE", "OPTIONS"],
+      "dest": "/api/vps.js"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/public/index.html"
+    }
+  ],
+  "headers": [
+    {
+      "source": "/api/(.*)",
+      "headers": [
+        { "key": "Access-Control-Allow-Origin", "value": "*" },
+        { "key": "Access-Control-Allow-Methods", "value": "GET, POST, DELETE, OPTIONS" },
+        { "key": "Access-Control-Allow-Headers", "value": "*" },
+        { "key": "Access-Control-Allow-Credentials", "value": "true" }
+      ]
+    }
+  ]
 }
