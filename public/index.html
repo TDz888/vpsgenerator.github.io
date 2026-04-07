@@ -158,6 +158,25 @@
       50% { transform: translateY(-25px) translateX(15px);}
       100% { transform: translateY(0px) translateX(0px);}
     }
+    @keyframes slideInRight {
+      from { transform: translateX(100%); opacity: 0; }
+      to { transform: translateX(0); opacity: 1; }
+    }
+    @keyframes slideInLeft {
+      from { transform: translateX(-100%); opacity: 0; }
+      to { transform: translateX(0); opacity: 1; }
+    }
+    @keyframes fadeInUp {
+      from { transform: translateY(20px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
 
     /* ==================== CONTAINER ==================== */
     .container {
@@ -174,6 +193,7 @@
       padding: 1.8rem;
       margin-bottom: 1.8rem;
       transition: all 0.3s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+      animation: fadeInUp 0.5s ease;
     }
     body.hell .glass-card {
       background: rgba(8, 10, 25, 0.75);
@@ -188,7 +208,7 @@
       box-shadow: 0 15px 35px -10px rgba(0, 0, 0, 0.08);
     }
 
-    /* ==================== TYPOGRAPHY - AUTO COLOR ==================== */
+    /* ==================== TYPOGRAPHY ==================== */
     body.hell h1, body.hell h2, body.hell h3, body.hell h4 {
       color: #ffffff !important;
     }
@@ -436,6 +456,7 @@
       text-align: center;
       border-radius: 24px;
       transition: all 0.3s;
+      animation: fadeInUp 0.5s ease;
     }
     body.hell .tech-card {
       background: rgba(0, 0, 0, 0.55);
@@ -475,7 +496,7 @@
     /* ==================== VM GRID ==================== */
     .vm-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+      grid-template-columns: repeat(auto-fill, minmax(420px, 1fr));
       gap: 1.5rem;
       margin-top: 1.5rem;
     }
@@ -485,6 +506,7 @@
       cursor: pointer;
       transition: all 0.25s;
       position: relative;
+      animation: fadeInUp 0.4s ease;
     }
     body.hell .vm-card {
       background: rgba(12, 15, 30, 0.9) !important;
@@ -539,7 +561,7 @@
       margin-top: 0.3rem;
     }
     .status-running { background: #22c55e; color: white; }
-    .status-creating { background: #eab308; color: black; }
+    .status-creating { background: #eab308; color: black; animation: pulse 1.5s infinite; }
     .status-failed { background: #ef4444; color: white; }
     
     .vm-error {
@@ -570,120 +592,115 @@
       transform: scale(1.02);
     }
 
-    /* ==================== TERMINAL LOGS ==================== */
-    .terminal-logs {
-      margin-top: 0.8rem;
-      padding: 0.6rem;
-      border-radius: 14px;
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 0.65rem;
-      max-height: 120px;
-      overflow-y: auto;
-    }
-    body.hell .terminal-logs {
-      background: #0a0c15;
-      border: 1px solid #ff663355;
-      color: #a5f3c3;
-    }
-    body.heaven .terminal-logs {
-      background: #f1f5f9;
-      border: 1px solid #cbd5e1;
-      color: #166534;
-    }
-    .log-line {
-      padding: 0.2rem 0;
-      border-bottom: 1px solid rgba(255,255,255,0.05);
-      font-family: 'JetBrains Mono', monospace;
-    }
-    .log-time {
-      color: #facc15;
-      margin-right: 0.8rem;
-    }
-    body.heaven .log-time { color: #eab308; }
-
-    /* ==================== MODAL ==================== */
-    .modal {
-      display: none;
+    /* ==================== DEBUG PANEL ==================== */
+    .debug-panel {
       position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      backdrop-filter: blur(28px);
-      justify-content: center;
-      align-items: center;
-      z-index: 1000;
-    }
-    body.hell .modal { background: rgba(0, 0, 0, 0.95); }
-    body.heaven .modal { background: rgba(0, 0, 0, 0.6); }
-    .modal-content {
-      max-width: 650px;
-      width: 90%;
-      border-radius: 32px;
-      padding: 1.8rem;
-      max-height: 85vh;
-      overflow-y: auto;
-      animation: modalFadeIn 0.3s ease;
-    }
-    @keyframes modalFadeIn {
-      from { opacity: 0; transform: scale(0.95); }
-      to { opacity: 1; transform: scale(1); }
-    }
-    body.hell .modal-content {
-      background: #0a0d1c;
-      border: 1px solid #ff8844;
-    }
-    body.heaven .modal-content {
-      background: #ffffff;
-      border: 1px solid #cbd5e1;
-    }
-    .result-box {
+      bottom: 20px;
+      right: 20px;
+      width: 420px;
+      max-width: calc(100vw - 40px);
+      z-index: 150;
       border-radius: 20px;
+      transition: all 0.3s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+      transform: translateX(calc(100% + 20px));
+    }
+    .debug-panel.open {
+      transform: translateX(0);
+    }
+    body.hell .debug-panel {
+      background: rgba(5, 8, 22, 0.98);
+      backdrop-filter: blur(24px);
+      border: 1px solid #ff7744aa;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+    }
+    body.heaven .debug-panel {
+      background: rgba(255, 255, 250, 0.98);
+      backdrop-filter: blur(20px);
+      border: 1px solid #cbd5e1;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+    }
+    .debug-header {
       padding: 1rem;
-      margin: 0.8rem 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      cursor: pointer;
+      border-bottom: 1px solid rgba(255, 102, 51, 0.3);
+    }
+    .debug-header h4 {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.9rem;
+    }
+    .debug-badge {
+      background: #ef4444;
+      color: white;
+      border-radius: 20px;
+      padding: 0.15rem 0.5rem;
+      font-size: 0.65rem;
+      font-weight: 600;
+    }
+    .debug-content {
+      max-height: 400px;
+      overflow-y: auto;
+      padding: 0.8rem;
+    }
+    .debug-log-item {
+      padding: 0.6rem;
+      border-radius: 12px;
+      margin-bottom: 0.5rem;
+      font-size: 0.7rem;
+      transition: all 0.2s;
+      cursor: pointer;
+    }
+    body.hell .debug-log-item {
+      background: rgba(255, 255, 255, 0.05);
       border-left: 3px solid #ff6633;
     }
-    body.hell .result-box { background: #0f172a; }
-    body.heaven .result-box { background: #f1f5f9; }
-    
-    .info-row {
-      display: flex;
-      align-items: flex-start;
-      gap: 1rem;
-      margin-bottom: 0.6rem;
-      flex-wrap: wrap;
+    body.heaven .debug-log-item {
+      background: rgba(0, 0, 0, 0.03);
+      border-left: 3px solid #ff6633;
     }
-    .info-label {
-      font-weight: 700;
-      min-width: 100px;
-      font-size: 0.85rem;
+    .debug-log-item:hover {
+      transform: translateX(-3px);
     }
-    body.hell .info-label { color: #ffaa77 !important; }
-    .info-value {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 0.85rem;
-      word-break: break-all;
-      flex: 1;
+    .debug-log-time {
+      font-size: 0.6rem;
+      opacity: 0.6;
+      margin-bottom: 0.2rem;
+    }
+    .debug-log-title {
+      font-weight: 600;
+      margin-bottom: 0.2rem;
+    }
+    .debug-log-detail {
+      font-size: 0.65rem;
+      opacity: 0.7;
+      word-break: break-word;
+    }
+    .debug-empty {
+      text-align: center;
+      padding: 1.5rem;
+      opacity: 0.5;
+      font-size: 0.8rem;
+    }
+    .debug-clear-btn {
+      background: transparent;
+      border: none;
+      cursor: pointer;
       padding: 0.2rem 0.5rem;
       border-radius: 8px;
-      cursor: pointer;
-      transition: all 0.2s;
+      font-size: 0.7rem;
     }
-    body.hell .info-value {
-      background: #1e293b;
-      color: #facc15 !important;
+    body.hell .debug-clear-btn {
+      color: #ffaa77;
     }
-    body.heaven .info-value {
-      background: #e2e8f0;
-      color: #1e293b;
+    body.heaven .debug-clear-btn {
+      color: #2c5282;
     }
-    .info-value:hover {
-      opacity: 0.8;
-    }
-    .copy-hint {
-      font-size: 0.6rem;
-      margin-left: 0.5rem;
-      opacity: 0.6;
+    .debug-clear-btn:hover {
+      background: rgba(239,68,68,0.2);
     }
 
     /* ==================== SETTINGS PANEL ==================== */
@@ -722,7 +739,7 @@
       border-radius: 28px;
       padding: 1.2rem;
       transform: translateX(-120%);
-      transition: transform 0.3s;
+      transition: transform 0.3s cubic-bezier(0.2, 0.9, 0.4, 1.1);
     }
     body.hell .settings-panel {
       background: rgba(5, 8, 22, 0.98);
@@ -836,6 +853,119 @@
       color: white;
     }
 
+    /* ==================== DEBUG BUTTON ==================== */
+    .debug-btn {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      z-index: 160;
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-size: 1.2rem;
+    }
+    body.hell .debug-btn {
+      background: linear-gradient(135deg, #ff6600, #ff33aa);
+      box-shadow: 0 4px 15px rgba(255, 68, 0, 0.4);
+    }
+    body.heaven .debug-btn {
+      background: linear-gradient(135deg, #1e3a5f, #3b5a8a);
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    }
+    .debug-btn:hover {
+      transform: scale(1.1);
+    }
+    .debug-btn.has-error {
+      animation: pulse 1s infinite;
+    }
+
+    /* ==================== MODAL ==================== */
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      backdrop-filter: blur(28px);
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+      animation: fadeInUp 0.3s ease;
+    }
+    body.hell .modal { background: rgba(0, 0, 0, 0.95); }
+    body.heaven .modal { background: rgba(0, 0, 0, 0.6); }
+    .modal-content {
+      max-width: 650px;
+      width: 90%;
+      border-radius: 32px;
+      padding: 1.8rem;
+      max-height: 85vh;
+      overflow-y: auto;
+      animation: slideInRight 0.3s ease;
+    }
+    body.hell .modal-content {
+      background: #0a0d1c;
+      border: 1px solid #ff8844;
+    }
+    body.heaven .modal-content {
+      background: #ffffff;
+      border: 1px solid #cbd5e1;
+    }
+    .result-box {
+      border-radius: 20px;
+      padding: 1rem;
+      margin: 0.8rem 0;
+      border-left: 3px solid #ff6633;
+    }
+    body.hell .result-box { background: #0f172a; }
+    body.heaven .result-box { background: #f1f5f9; }
+    
+    .info-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 1rem;
+      margin-bottom: 0.6rem;
+      flex-wrap: wrap;
+    }
+    .info-label {
+      font-weight: 700;
+      min-width: 100px;
+      font-size: 0.85rem;
+    }
+    body.hell .info-label { color: #ffaa77 !important; }
+    .info-value {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.85rem;
+      word-break: break-all;
+      flex: 1;
+      padding: 0.2rem 0.5rem;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    body.hell .info-value {
+      background: #1e293b;
+      color: #facc15 !important;
+    }
+    body.heaven .info-value {
+      background: #e2e8f0;
+      color: #1e293b;
+    }
+    .info-value:hover {
+      opacity: 0.8;
+    }
+    .copy-hint {
+      font-size: 0.6rem;
+      margin-left: 0.5rem;
+      opacity: 0.6;
+    }
+
     /* ==================== FOOTER ==================== */
     .footer {
       margin-top: 2.5rem;
@@ -852,19 +982,15 @@
     .hidden { display: none; }
     .toast {
       position: fixed;
-      bottom: 30px;
-      right: 30px;
+      bottom: 80px;
+      right: 80px;
       padding: 0.8rem 1.2rem;
       border-radius: 50px;
       z-index: 1000;
-      animation: slideIn 0.3s ease;
+      animation: slideInRight 0.3s ease;
       color: white;
       font-size: 0.85rem;
       font-weight: 500;
-    }
-    @keyframes slideIn {
-      from { transform: translateX(100%); opacity: 0; }
-      to { transform: translateX(0); opacity: 1; }
     }
     .loading-spinner {
       display: inline-block;
@@ -876,9 +1002,6 @@
       animation: spin 0.6s linear infinite;
       margin-right: 8px;
       vertical-align: middle;
-    }
-    @keyframes spin {
-      to { transform: rotate(360deg); }
     }
     .error-detail {
       background: rgba(239, 68, 68, 0.15);
@@ -902,11 +1025,14 @@
       .vm-grid { grid-template-columns: 1fr; }
       .tech-section { grid-template-columns: 1fr; }
       .settings-panel { width: 280px; left: 10px; top: 75px; }
+      .debug-panel { width: calc(100vw - 40px); right: 20px; bottom: 80px; }
       .input-wrapper { flex-direction: column; }
       .input-wrapper input { width: 100%; }
       .random-btn { width: 100%; justify-content: center; }
       .info-row { flex-direction: column; gap: 0.3rem; }
       .info-label { min-width: auto; }
+      .debug-btn { bottom: 20px; right: 20px; }
+      .toast { bottom: 80px; right: 20px; left: 20px; text-align: center; }
     }
     @media (max-width: 480px) {
       .glow-text { font-size: 1.6rem; }
@@ -932,21 +1058,21 @@
   <!-- Settings Panel -->
   <div class="settings-panel" id="settingsPanel">
     <div class="settings-box">
-      <h4>🌀 Chế độ hiển thị <span id="designIndicator" class="design-indicator">🌑 Hell</span></h4>
+      <h4><i class="fas fa-palette"></i> <span data-i18n="design_mode">Chế độ hiển thị</span> <span id="designIndicator" class="design-indicator">🌑 Hell</span></h4>
       <div class="switch-group">
-        <div class="switch-option active" data-design="hell">🌑 Hell Mode</div>
-        <div class="switch-option" data-design="heaven">☁️ Heaven Mode</div>
+        <div class="switch-option active" data-design="hell">🌑 <span data-i18n="hell_mode">Hell Mode</span></div>
+        <div class="switch-option" data-design="heaven">☁️ <span data-i18n="heaven_mode">Heaven Mode</span></div>
       </div>
     </div>
     <div class="settings-box">
-      <h4>📘 Hướng dẫn</h4>
-      <div class="step"><span class="step-number">1</span><span>Lấy GitHub Token (cần quyền repo, workflow)</span></div>
-      <div class="step"><span class="step-number">2</span><span>Lấy Tailscale Auth Key</span></div>
-      <div class="step"><span class="step-number">3</span><span>Bấm Random để tạo user/pass</span></div>
-      <div class="step"><span class="step-number">4</span><span>Nhấn "Tạo VM" và chờ 2-3 phút</span></div>
+      <h4><i class="fas fa-question-circle"></i> <span data-i18n="guide_title">Hướng dẫn</span></h4>
+      <div class="step"><span class="step-number">1</span><span data-i18n="step1">Lấy GitHub Token (cần quyền repo, workflow)</span></div>
+      <div class="step"><span class="step-number">2</span><span data-i18n="step2">Lấy Tailscale Auth Key</span></div>
+      <div class="step"><span class="step-number">3</span><span data-i18n="step3">Bấm Random để tạo user/pass</span></div>
+      <div class="step"><span class="step-number">4</span><span data-i18n="step4">Nhấn "Tạo VM" và chờ 2-3 phút</span></div>
     </div>
     <div class="settings-box">
-      <h4>📡 Liên hệ</h4>
+      <h4><i class="fas fa-envelope"></i> <span data-i18n="contact">Liên hệ</span></h4>
       <div style="font-size: 0.8rem;">📧 <a href="mailto:thienantran1268@gmail.com" style="text-decoration: none;">thienantran1268@gmail.com</a></div>
       <div style="font-size: 0.7rem; opacity: 0.6;">🔮 Singularity Beta • Quantum-ready</div>
     </div>
@@ -958,6 +1084,22 @@
     <button class="lang-btn" data-lang="en">🇬🇧 EN</button>
   </div>
 
+  <!-- Debug Button -->
+  <div class="debug-btn" id="debugBtn">
+    <i class="fas fa-bug"></i>
+  </div>
+
+  <!-- Debug Panel -->
+  <div class="debug-panel" id="debugPanel">
+    <div class="debug-header" id="debugHeader">
+      <h4><i class="fas fa-terminal"></i> <span data-i18n="debug_title">Debug Console</span> <span id="debugCount" class="debug-badge">0</span></h4>
+      <button class="debug-clear-btn" id="clearDebugBtn"><i class="fas fa-trash-alt"></i></button>
+    </div>
+    <div class="debug-content" id="debugContent">
+      <div class="debug-empty"><i class="fas fa-check-circle"></i> <span data-i18n="debug_empty">Chưa có lỗi nào</span></div>
+    </div>
+  </div>
+
   <div class="container">
     <!-- Header -->
     <div class="header" style="margin: 1rem 0 1.5rem 0;">
@@ -967,63 +1109,63 @@
 
     <!-- Tab Switcher -->
     <div class="tab-container">
-      <button class="tab-btn active" data-tab="create" id="createTabBtn">✨ Tạo VM</button>
-      <button class="tab-btn" data-tab="manage" id="manageTabBtn">🖥️ Quản lý VM</button>
+      <button class="tab-btn active" data-tab="create" id="createTabBtn"><i class="fas fa-plus-circle"></i> <span data-i18n="create_tab">Tạo VM</span></button>
+      <button class="tab-btn" data-tab="manage" id="manageTabBtn"><i class="fas fa-server"></i> <span data-i18n="manage_tab">Quản lý VM</span></button>
     </div>
 
     <!-- Create VM Panel -->
     <div id="createPanel" class="glass-card">
-      <h2 style="margin-bottom: 1.2rem; font-size: 1.3rem;" id="authTitle">🔐 Khởi tạo Virtual Machine</h2>
+      <h2 style="margin-bottom: 1.2rem; font-size: 1.3rem;" id="authTitle"><i class="fas fa-key"></i> <span data-i18n="auth_title">Khởi tạo Virtual Machine</span></h2>
       
       <div class="input-group">
-        <label id="githubTokenLabel">🌌 GitHub Token</label>
+        <label id="githubTokenLabel"><i class="fab fa-github"></i> <span data-i18n="github_label">GitHub Token</span></label>
         <div class="input-wrapper">
           <input type="password" id="githubToken" placeholder="ghp_xxxxx...">
         </div>
         <div class="input-hint" id="githubHint">
-          <span class="example-token">✅ Hỗ trợ: ghp_ (Classic) | github_pat_ (Fine-grained) | gho_, ghu_, ghs_</span><br>
-          <span class="example-token">📌 Cần quyền: repo, workflow</span>
+          <span class="example-token">✅ <span data-i18n="github_hint">Hỗ trợ: ghp_, github_pat_, gho_, ghu_, ghs_</span></span><br>
+          <span class="example-token">📌 <span data-i18n="github_scope">Cần quyền: repo, workflow</span></span>
         </div>
       </div>
 
       <div class="input-group">
-        <label id="tailscaleLabel">🌀 Tailscale Auth Key</label>
+        <label id="tailscaleLabel"><i class="fas fa-network-wired"></i> <span data-i18n="tailscale_label">Tailscale Auth Key</span></label>
         <div class="input-wrapper">
           <input type="password" id="tailscaleKey" placeholder="tskey-auth_xxxxx...">
         </div>
         <div class="input-hint" id="tailscaleHint">
-          <span class="example-token">✅ Đúng: tskey-auth_abc123xyz...</span>
+          <span class="example-token">✅ <span data-i18n="tailscale_hint">Đúng: tskey-auth_abc123xyz...</span></span>
         </div>
       </div>
 
       <div class="input-group">
-        <label id="usernameLabel">👤 Tên đăng nhập VM</label>
+        <label id="usernameLabel"><i class="fas fa-user"></i> <span data-i18n="username_label">Tên đăng nhập VM</span></label>
         <div class="input-wrapper">
           <input type="text" id="vmUsername" placeholder="Tên đăng nhập (tự động random)">
-          <button class="random-btn" id="randomUsernameBtn"><i class="fas fa-dice-d6"></i> Random</button>
+          <button class="random-btn" id="randomUsernameBtn"><i class="fas fa-dice-d6"></i> <span data-i18n="random_btn">Random</span></button>
         </div>
-        <div class="input-error" id="usernameError">Tên đăng nhập phải có ít nhất 5 ký tự</div>
+        <div class="input-error" id="usernameError"><span data-i18n="username_error">Tên đăng nhập phải có ít nhất 5 ký tự</span></div>
       </div>
 
       <div class="input-group">
-        <label id="passwordLabel">🔐 Mật khẩu VM</label>
+        <label id="passwordLabel"><i class="fas fa-lock"></i> <span data-i18n="password_label">Mật khẩu VM</span></label>
         <div class="input-wrapper">
           <input type="text" id="vmPassword" placeholder="Mật khẩu (tự động random 30-32 ký tự)">
-          <button class="random-btn" id="randomPasswordBtn"><i class="fas fa-dice-d6"></i> Random</button>
+          <button class="random-btn" id="randomPasswordBtn"><i class="fas fa-dice-d6"></i> <span data-i18n="random_btn">Random</span></button>
         </div>
-        <div class="input-error" id="passwordError">Mật khẩu phải có ít nhất 5 ký tự</div>
-        <div class="input-hint" id="passwordHint">💡 Bấm Random để tạo user/pass mạnh tự động</div>
+        <div class="input-error" id="passwordError"><span data-i18n="password_error">Mật khẩu phải có ít nhất 5 ký tự</span></div>
+        <div class="input-hint" id="passwordHint">💡 <span data-i18n="password_hint">Bấm Random để tạo user/pass mạnh tự động</span></div>
       </div>
 
-      <button class="btn-primary" id="createBtn">🚀 Tạo Virtual Machine</button>
+      <button class="btn-primary" id="createBtn"><i class="fas fa-rocket"></i> <span data-i18n="create_btn">Tạo Virtual Machine</span></button>
       <div id="createResult" style="margin-top: 1rem;"></div>
     </div>
 
     <!-- Manage VM Panel -->
     <div id="managePanel" class="glass-card hidden">
-      <h2 style="margin-bottom: 1.2rem; font-size: 1.3rem;" id="manageTitle">🖥️ Virtual Machines</h2>
+      <h2 style="margin-bottom: 1.2rem; font-size: 1.3rem;" id="manageTitle"><i class="fas fa-database"></i> <span data-i18n="manage_title">Virtual Machines</span></h2>
       <div id="vmList" class="vm-grid">
-        <div style="text-align:center; padding: 2rem;">🌀 Đang tải danh sách...</div>
+        <div style="text-align:center; padding: 2rem;"><i class="fas fa-spinner fa-pulse"></i> <span data-i18n="loading">Đang tải danh sách...</span></div>
       </div>
     </div>
 
@@ -1031,26 +1173,26 @@
     <div class="tech-section">
       <div class="tech-card">
         <div class="tech-icon">⚡</div>
-        <div class="tech-title">Quantum Engine</div>
-        <div class="tech-desc">4 vCPU • 16 GB DDR5<br>NVMe SSD 56GB</div>
+        <div class="tech-title"><span data-i18n="tech1_title">Quantum Engine</span></div>
+        <div class="tech-desc"><span data-i18n="tech1_desc">4 vCPU • 16 GB DDR5<br>NVMe SSD 56GB</span></div>
         <div><span class="spec-badge">4 Cores</span><span class="spec-badge">16GB RAM</span><span class="spec-badge">56GB SSD</span></div>
       </div>
       <div class="tech-card">
         <div class="tech-icon">🌐</div>
-        <div class="tech-title">Hyperfast Network</div>
-        <div class="tech-desc">1~2 Gbps • &lt;5ms latency<br>Tailscale 500+ Mbps</div>
+        <div class="tech-title"><span data-i18n="tech2_title">Hyperfast Network</span></div>
+        <div class="tech-desc"><span data-i18n="tech2_desc">1~2 Gbps • &lt;5ms latency<br>Tailscale 500+ Mbps</span></div>
         <div><span class="spec-badge">2Gbps</span><span class="spec-badge">WireGuard</span><span class="spec-badge">Tailscale</span></div>
       </div>
       <div class="tech-card">
         <div class="tech-icon">⏱️</div>
-        <div class="tech-title">Auto Lifecycle</div>
-        <div class="tech-desc">Tự động reset sau 6 giờ<br>Zero-downtime orchestration</div>
+        <div class="tech-title"><span data-i18n="tech3_title">Auto Lifecycle</span></div>
+        <div class="tech-desc"><span data-i18n="tech3_desc">Tự động reset sau 6 giờ<br>Zero-downtime orchestration</span></div>
         <div><span class="spec-badge">6h Cycle</span><span class="spec-badge">99.9%</span></div>
       </div>
       <div class="tech-card">
         <div class="tech-icon">🔒</div>
-        <div class="tech-title">Zero-Trust Security</div>
-        <div class="tech-desc">WireGuard® E2EE<br>IDS/IPS Protection</div>
+        <div class="tech-title"><span data-i18n="tech4_title">Zero-Trust Security</span></div>
+        <div class="tech-desc"><span data-i18n="tech4_desc">WireGuard® E2EE<br>IDS/IPS Protection</span></div>
         <div><span class="spec-badge">E2EE</span><span class="spec-badge">WireGuard</span></div>
       </div>
     </div>
@@ -1058,7 +1200,7 @@
     <!-- Footer -->
     <div class="footer">
       ⚡ Singularity Cloud | Hell & Heaven Virtual Machine Platform
-      <div style="font-size: 0.6rem; opacity: 0.5; margin-top: 0.4rem;">Developed by SuperDzAn • v6.0</div>
+      <div style="font-size: 0.6rem; opacity: 0.5; margin-top: 0.4rem;">Developed by SuperDzAn • v7.0</div>
     </div>
   </div>
 
@@ -1067,7 +1209,7 @@
     <div class="modal-content">
       <h2 id="modalTitle" style="margin-bottom: 1rem;"></h2>
       <div id="modalBody"></div>
-      <button class="btn-primary" id="closeModal" style="margin-top: 1rem;">Đóng</button>
+      <button class="btn-primary" id="closeModal"><span data-i18n="close_btn">Đóng</span></button>
     </div>
   </div>
 
@@ -1078,114 +1220,239 @@
     let currentLang = 'vi';
     let vms = [];
     let refreshInterval = null;
+    let debugLogs = [];
 
     // ==================== TRANSLATIONS ====================
     const translations = {
       vi: {
-        mainTitle: "🌀 SINGULARITY CLOUD",
-        subText: "Hell & Heaven Virtual Machine Platform • 144Hz Quantum Fabric",
-        createTab: "✨ Tạo VM",
-        manageTab: "🖥️ Quản lý VM",
-        authTitle: "🔐 Khởi tạo Virtual Machine",
-        githubLabel: "🌌 GitHub Token",
-        githubHint: "Hỗ trợ: ghp_, github_pat_, gho_, ghu_, ghs_ • Cần quyền repo, workflow",
-        tailscaleLabel: "🌀 Tailscale Auth Key",
-        tailscaleHint: "Lấy key từ Tailscale Admin Console (bắt đầu bằng tskey-)",
-        usernameLabel: "👤 Tên đăng nhập VM",
-        passwordLabel: "🔐 Mật khẩu VM",
-        passwordHint: "💡 Bấm Random để tạo user/pass mạnh tự động",
-        createBtn: "🚀 Tạo Virtual Machine",
-        manageTitle: "🖥️ Virtual Machines",
-        loading: "🌀 Đang tải danh sách...",
-        noVM: "📭 Chưa có Virtual Machine nào. Hãy tạo VM đầu tiên",
-        closeBtn: "Đóng",
-        modalConnection: "🔗 Thông tin kết nối",
-        modalUser: "👤 Tên đăng nhập",
-        modalPass: "🔐 Mật khẩu",
-        modalIP: "🌐 Tailscale IP",
-        modalVNC: "🖥️ noVNC",
-        modalTime: "📅 Thời gian",
-        modalCreated: "🕳️ Tạo lúc",
-        modalExpires: "⏱️ Hết hạn",
-        modalRepo: "📦 Repository",
-        modalConfig: "⚡ Cấu hình",
-        modalCPU: "🖥️ CPU: 4 vCPU (Intel Xeon)",
-        modalRAM: "🧠 RAM: 16 GB DDR5 ECC",
-        modalStorage: "💾 Ổ cứng: 56 GB NVMe SSD",
-        modalNetwork: "📶 Mạng: 1-2 Gbps",
-        modalVPN: "🔗 VPN: Tailscale + WireGuard",
-        modalNote: "🔄 VM sẽ tự động xóa sau 6 giờ. Kết nối qua Tailscale để dùng RDP.",
-        modalError: "⚠️ Lỗi",
-        deleteConfirm: "Bạn có chắc chắn muốn xóa VM này?",
-        deleteSuccess: "✅ VM đã được xóa thành công",
-        deleteError: "❌ Lỗi khi xóa VM",
-        creating: "🔄 Đang khởi tạo VM...",
-        createSuccess: "✅ Virtual Machine đã được khởi tạo!",
-        createError: "❌ Lỗi khi tạo VM",
-        missingToken: "❌ Vui lòng nhập GitHub Token và Tailscale Key",
-        invalidUsername: "❌ Tên đăng nhập phải có ít nhất 5 ký tự",
-        invalidPassword: "❌ Mật khẩu phải có ít nhất 5 ký tự",
-        copySuccess: "✅ Đã sao chép vào clipboard!"
+        // General
+        design_mode: "Chế độ hiển thị",
+        hell_mode: "Hell Mode",
+        heaven_mode: "Heaven Mode",
+        guide_title: "Hướng dẫn",
+        step1: "Lấy GitHub Token (cần quyền repo, workflow)",
+        step2: "Lấy Tailscale Auth Key",
+        step3: "Bấm Random để tạo user/pass",
+        step4: "Nhấn 'Tạo VM' và chờ 2-3 phút",
+        contact: "Liên hệ",
+        
+        // Debug
+        debug_title: "Debug Console",
+        debug_empty: "Chưa có lỗi nào",
+        debug_error: "Lỗi",
+        debug_time: "Thời gian",
+        debug_cause: "Nguyên nhân",
+        debug_solution: "Cách khắc phục",
+        
+        // Tabs
+        create_tab: "Tạo VM",
+        manage_tab: "Quản lý VM",
+        
+        // Auth
+        auth_title: "Khởi tạo Virtual Machine",
+        github_label: "GitHub Token",
+        github_hint: "Hỗ trợ: ghp_, github_pat_, gho_, ghu_, ghs_",
+        github_scope: "Cần quyền: repo, workflow",
+        tailscale_label: "Tailscale Auth Key",
+        tailscale_hint: "Đúng: tskey-auth_abc123xyz...",
+        username_label: "Tên đăng nhập VM",
+        password_label: "Mật khẩu VM",
+        random_btn: "Random",
+        username_error: "Tên đăng nhập phải có ít nhất 5 ký tự",
+        password_error: "Mật khẩu phải có ít nhất 5 ký tự",
+        password_hint: "Bấm Random để tạo user/pass mạnh tự động",
+        create_btn: "Tạo Virtual Machine",
+        
+        // Manage
+        manage_title: "Virtual Machines",
+        loading: "Đang tải danh sách...",
+        no_vm: "Chưa có Virtual Machine nào. Hãy tạo VM đầu tiên",
+        
+        // Modal
+        close_btn: "Đóng",
+        modal_connection: "Thông tin kết nối",
+        modal_user: "Tên đăng nhập",
+        modal_pass: "Mật khẩu",
+        modal_ip: "Tailscale IP",
+        modal_vnc: "noVNC",
+        modal_time: "Thời gian",
+        modal_created: "Tạo lúc",
+        modal_expires: "Hết hạn",
+        modal_repo: "Repository",
+        modal_config: "Cấu hình",
+        modal_cpu: "CPU: 4 vCPU (Intel Xeon)",
+        modal_ram: "RAM: 16 GB DDR5 ECC",
+        modal_storage: "Ổ cứng: 56 GB NVMe SSD",
+        modal_network: "Mạng: 1-2 Gbps",
+        modal_vpn: "VPN: Tailscale + WireGuard",
+        modal_note: "VM sẽ tự động xóa sau 6 giờ. Kết nối qua Tailscale để dùng RDP.",
+        modal_error: "Lỗi",
+        
+        // Actions
+        delete_confirm: "Bạn có chắc chắn muốn xóa VM này?",
+        delete_success: "VM đã được xóa thành công",
+        delete_error: "Lỗi khi xóa VM",
+        creating: "Đang khởi tạo VM...",
+        create_success: "Virtual Machine đã được khởi tạo!",
+        create_error: "Lỗi khi tạo VM",
+        missing_token: "Vui lòng nhập GitHub Token và Tailscale Key",
+        invalid_token: "Token GitHub không hợp lệ",
+        copy_success: "Đã sao chép vào clipboard!",
+        
+        // Tech
+        tech1_title: "Quantum Engine",
+        tech1_desc: "4 vCPU • 16 GB DDR5<br>NVMe SSD 56GB",
+        tech2_title: "Hyperfast Network",
+        tech2_desc: "1~2 Gbps • <5ms latency<br>Tailscale 500+ Mbps",
+        tech3_title: "Auto Lifecycle",
+        tech3_desc: "Tự động reset sau 6 giờ<br>Zero-downtime orchestration",
+        tech4_title: "Zero-Trust Security",
+        tech4_desc: "WireGuard® E2EE<br>IDS/IPS Protection",
+        
+        // Status
+        status_running: "Đang chạy",
+        status_creating: "Đang tạo",
+        status_failed: "Thất bại",
+        status_expired: "Hết hạn"
       },
       en: {
-        mainTitle: "🌀 SINGULARITY CLOUD",
-        subText: "Hell & Heaven Virtual Machine Platform • 144Hz Quantum Fabric",
-        createTab: "✨ Create VM",
-        manageTab: "🖥️ Manage VM",
-        authTitle: "🔐 Initialize Virtual Machine",
-        githubLabel: "🌌 GitHub Token",
-        githubHint: "Supports: ghp_, github_pat_, gho_, ghu_, ghs_ • Required: repo, workflow",
-        tailscaleLabel: "🌀 Tailscale Auth Key",
-        tailscaleHint: "Get key from Tailscale Admin Console (starts with tskey-)",
-        usernameLabel: "👤 VM Username",
-        passwordLabel: "🔐 VM Password",
-        passwordHint: "💡 Click Random to generate strong credentials",
-        createBtn: "🚀 Create Virtual Machine",
-        manageTitle: "🖥️ Virtual Machines",
-        loading: "🌀 Loading list...",
-        noVM: "📭 No Virtual Machine yet. Create your first VM",
-        closeBtn: "Close",
-        modalConnection: "🔗 Connection Info",
-        modalUser: "👤 Username",
-        modalPass: "🔐 Password",
-        modalIP: "🌐 Tailscale IP",
-        modalVNC: "🖥️ noVNC",
-        modalTime: "📅 Time Information",
-        modalCreated: "🕳️ Created at",
-        modalExpires: "⏱️ Expires at",
-        modalRepo: "📦 Repository",
-        modalConfig: "⚡ Configuration",
-        modalCPU: "🖥️ CPU: 4 vCPU (Intel Xeon)",
-        modalRAM: "🧠 RAM: 16 GB DDR5 ECC",
-        modalStorage: "💾 Storage: 56 GB NVMe SSD",
-        modalNetwork: "📶 Network: 1-2 Gbps",
-        modalVPN: "🔗 VPN: Tailscale + WireGuard",
-        modalNote: "🔄 VM will auto-delete after 6 hours. Connect via Tailscale for RDP.",
-        modalError: "⚠️ Error",
-        deleteConfirm: "Are you sure you want to delete this VM?",
-        deleteSuccess: "✅ VM deleted successfully",
-        deleteError: "❌ Error deleting VM",
-        creating: "🔄 Creating VM...",
-        createSuccess: "✅ Virtual Machine created!",
-        createError: "❌ Error creating VM",
-        missingToken: "❌ Please enter GitHub Token and Tailscale Key",
-        invalidUsername: "❌ Username must be at least 5 characters",
-        invalidPassword: "❌ Password must be at least 5 characters",
-        copySuccess: "✅ Copied to clipboard!"
+        // General
+        design_mode: "Display Mode",
+        hell_mode: "Hell Mode",
+        heaven_mode: "Heaven Mode",
+        guide_title: "Guide",
+        step1: "Get GitHub Token (requires repo, workflow)",
+        step2: "Get Tailscale Auth Key",
+        step3: "Click Random to generate user/pass",
+        step4: "Click 'Create VM' and wait 2-3 minutes",
+        contact: "Contact",
+        
+        // Debug
+        debug_title: "Debug Console",
+        debug_empty: "No errors yet",
+        debug_error: "Error",
+        debug_time: "Time",
+        debug_cause: "Cause",
+        debug_solution: "Solution",
+        
+        // Tabs
+        create_tab: "Create VM",
+        manage_tab: "Manage VM",
+        
+        // Auth
+        auth_title: "Initialize Virtual Machine",
+        github_label: "GitHub Token",
+        github_hint: "Supports: ghp_, github_pat_, gho_, ghu_, ghs_",
+        github_scope: "Required: repo, workflow",
+        tailscale_label: "Tailscale Auth Key",
+        tailscale_hint: "Valid: tskey-auth_abc123xyz...",
+        username_label: "VM Username",
+        password_label: "VM Password",
+        random_btn: "Random",
+        username_error: "Username must be at least 5 characters",
+        password_error: "Password must be at least 5 characters",
+        password_hint: "Click Random to generate strong credentials",
+        create_btn: "Create Virtual Machine",
+        
+        // Manage
+        manage_title: "Virtual Machines",
+        loading: "Loading list...",
+        no_vm: "No Virtual Machine yet. Create your first VM",
+        
+        // Modal
+        close_btn: "Close",
+        modal_connection: "Connection Info",
+        modal_user: "Username",
+        modal_pass: "Password",
+        modal_ip: "Tailscale IP",
+        modal_vnc: "noVNC",
+        modal_time: "Time Information",
+        modal_created: "Created at",
+        modal_expires: "Expires at",
+        modal_repo: "Repository",
+        modal_config: "Configuration",
+        modal_cpu: "CPU: 4 vCPU (Intel Xeon)",
+        modal_ram: "RAM: 16 GB DDR5 ECC",
+        modal_storage: "Storage: 56 GB NVMe SSD",
+        modal_network: "Network: 1-2 Gbps",
+        modal_vpn: "VPN: Tailscale + WireGuard",
+        modal_note: "VM will auto-delete after 6 hours. Connect via Tailscale for RDP.",
+        modal_error: "Error",
+        
+        // Actions
+        delete_confirm: "Are you sure you want to delete this VM?",
+        delete_success: "VM deleted successfully",
+        delete_error: "Error deleting VM",
+        creating: "Creating VM...",
+        create_success: "Virtual Machine created!",
+        create_error: "Error creating VM",
+        missing_token: "Please enter GitHub Token and Tailscale Key",
+        invalid_token: "Invalid GitHub Token",
+        copy_success: "Copied to clipboard!",
+        
+        // Tech
+        tech1_title: "Quantum Engine",
+        tech1_desc: "4 vCPU • 16 GB DDR5<br>NVMe SSD 56GB",
+        tech2_title: "Hyperfast Network",
+        tech2_desc: "1~2 Gbps • <5ms latency<br>Tailscale 500+ Mbps",
+        tech3_title: "Auto Lifecycle",
+        tech3_desc: "Auto reset after 6 hours<br>Zero-downtime orchestration",
+        tech4_title: "Zero-Trust Security",
+        tech4_desc: "WireGuard® E2EE<br>IDS/IPS Protection",
+        
+        // Status
+        status_running: "Running",
+        status_creating: "Creating",
+        status_failed: "Failed",
+        status_expired: "Expired"
       }
     };
 
-    function t(key) { return translations[currentLang][key] || key; }
+    // ==================== HELPER FUNCTIONS ====================
+    function t(key) {
+      return translations[currentLang][key] || key;
+    }
 
-    // ==================== VALIDATION FUNCTIONS (FIXED) ====================
+    function updateAllTexts() {
+      // Update all elements with data-i18n
+      document.querySelectorAll('[data-i18n]').forEach(el => {
+        const key = el.getAttribute('data-i18n');
+        if (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA') {
+          el.placeholder = t(key);
+        } else {
+          el.innerHTML = t(key);
+        }
+      });
+      
+      // Update buttons that don't have data-i18n
+      document.getElementById('createTabBtn').innerHTML = `<i class="fas fa-plus-circle"></i> ${t('create_tab')}`;
+      document.getElementById('manageTabBtn').innerHTML = `<i class="fas fa-server"></i> ${t('manage_tab')}`;
+      document.getElementById('createBtn').innerHTML = `<i class="fas fa-rocket"></i> ${t('create_btn')}`;
+      document.getElementById('closeModal').innerHTML = t('close_btn');
+      
+      // Update tech titles
+      document.querySelectorAll('.tech-title').forEach((el, idx) => {
+        const keys = ['tech1_title', 'tech2_title', 'tech3_title', 'tech4_title'];
+        if (idx < keys.length) el.innerHTML = t(keys[idx]);
+      });
+      document.querySelectorAll('.tech-desc').forEach((el, idx) => {
+        const keys = ['tech1_desc', 'tech2_desc', 'tech3_desc', 'tech4_desc'];
+        if (idx < keys.length) el.innerHTML = t(keys[idx]);
+      });
+      
+      // Update status texts in VM list if exists
+      if (vms.length) renderVMList();
+    }
+
+    // ==================== VALIDATION FUNCTIONS ====================
     function isValidGitHubToken(token) {
       if (!token || typeof token !== 'string') return false;
       const validPatterns = [
-        /^ghp_[A-Za-z0-9]+$/,           // Classic personal access token
-        /^github_pat_[A-Za-z0-9_]+$/,    // Fine-grained token (QUAN TRỌNG)
-        /^gho_[A-Za-z0-9]+$/,           // OAuth App token
-        /^ghu_[A-Za-z0-9]+$/,           // GitHub App User-to-Server token
-        /^ghs_[A-Za-z0-9]+$/            // GitHub App Server-to-Server token
+        /^ghp_[A-Za-z0-9]+$/,
+        /^github_pat_[A-Za-z0-9_]+$/,
+        /^gho_[A-Za-z0-9]+$/,
+        /^ghu_[A-Za-z0-9]+$/,
+        /^ghs_[A-Za-z0-9]+$/
       ];
       return validPatterns.some(pattern => pattern.test(token));
     }
@@ -1222,7 +1489,6 @@
       return shuffled;
     }
 
-    // ==================== VALIDATION ====================
     function validateInputs() {
       let isValid = true;
       const username = document.getElementById('vmUsername').value.trim();
@@ -1235,25 +1501,6 @@
     }
 
     // ==================== UI HELPERS ====================
-    function updateUI() {
-      const data = translations[currentLang];
-      document.getElementById('mainTitle').innerHTML = data.mainTitle;
-      document.getElementById('subText').innerHTML = data.subText;
-      document.getElementById('createTabBtn').innerHTML = data.createTab;
-      document.getElementById('manageTabBtn').innerHTML = data.manageTab;
-      document.getElementById('authTitle').innerHTML = data.authTitle;
-      document.getElementById('githubTokenLabel').innerHTML = data.githubLabel;
-      document.getElementById('githubHint').innerHTML = data.githubHint;
-      document.getElementById('tailscaleLabel').innerHTML = data.tailscaleLabel;
-      document.getElementById('tailscaleHint').innerHTML = data.tailscaleHint;
-      document.getElementById('usernameLabel').innerHTML = data.usernameLabel;
-      document.getElementById('passwordLabel').innerHTML = data.passwordLabel;
-      document.getElementById('passwordHint').innerHTML = data.passwordHint;
-      document.getElementById('createBtn').innerHTML = data.createBtn;
-      document.getElementById('manageTitle').innerHTML = data.manageTitle;
-      document.getElementById('closeModal').innerHTML = data.closeBtn;
-    }
-
     function applyDesign() {
       document.body.classList.remove('hell', 'heaven');
       document.body.classList.add(currentDesign);
@@ -1276,17 +1523,108 @@
       const toast = document.createElement('div');
       toast.className = 'toast';
       toast.style.background = type === 'success' ? '#22c55e' : type === 'error' ? '#ef4444' : '#3b82f6';
-      toast.innerHTML = message;
+      toast.innerHTML = `<i class="fas ${type === 'success' ? 'fa-check-circle' : type === 'error' ? 'fa-exclamation-triangle' : 'fa-info-circle'}"></i> ${message}`;
       document.body.appendChild(toast);
       setTimeout(() => toast.remove(), 4000);
     }
 
     function copyToClipboard(text, label) {
       navigator.clipboard.writeText(text).then(() => {
-        showToast(`${label} ${t('copySuccess')}`, 'success');
+        showToast(`${label} ${t('copy_success')}`, 'success');
       }).catch(() => {
         showToast(`Không thể sao chép ${label}`, 'error');
       });
+    }
+
+    // ==================== DEBUG FUNCTIONS ====================
+    function addDebugLog(errorData, vmContext = null) {
+      const logEntry = {
+        id: `debug_${Date.now()}_${Math.random().toString(36).substr(2, 6)}`,
+        timestamp: new Date().toISOString(),
+        error: errorData,
+        vmContext: vmContext,
+        viewed: false
+      };
+      debugLogs.unshift(logEntry);
+      if (debugLogs.length > 50) debugLogs.pop();
+      renderDebugPanel();
+      
+      // Highlight debug button
+      const debugBtn = document.getElementById('debugBtn');
+      debugBtn.classList.add('has-error');
+      setTimeout(() => debugBtn.classList.remove('has-error'), 3000);
+    }
+
+    function renderDebugPanel() {
+      const container = document.getElementById('debugContent');
+      const countSpan = document.getElementById('debugCount');
+      countSpan.textContent = debugLogs.length;
+      
+      if (debugLogs.length === 0) {
+        container.innerHTML = `<div class="debug-empty"><i class="fas fa-check-circle"></i> ${t('debug_empty')}</div>`;
+        return;
+      }
+      
+      container.innerHTML = debugLogs.map(log => `
+        <div class="debug-log-item" data-debug-id="${log.id}" onclick="showDebugDetail('${log.id}')">
+          <div class="debug-log-time"><i class="far fa-clock"></i> ${new Date(log.timestamp).toLocaleString()}</div>
+          <div class="debug-log-title"><i class="fas ${log.error.icon || 'fa-exclamation-triangle'}"></i> ${log.error.title || 'Lỗi'}</div>
+          <div class="debug-log-detail">${log.error.originalError?.substring(0, 100) || 'Không có chi tiết'}...</div>
+          ${log.vmContext ? `<div class="debug-log-detail"><i class="fas fa-server"></i> VM: ${log.vmContext}</div>` : ''}
+        </div>
+      `).join('');
+    }
+
+    async function showDebugDetail(debugId) {
+      const log = debugLogs.find(l => l.id === debugId);
+      if (!log) return;
+      
+      const errorInfo = log.error;
+      const modalBody = document.getElementById('modalBody');
+      document.getElementById('modalTitle').innerHTML = `<i class="fas fa-bug"></i> ${errorInfo.title || t('debug_error')}`;
+      
+      modalBody.innerHTML = `
+        <div class="result-box">
+          <strong><i class="far fa-calendar-alt"></i> ${t('debug_time')}:</strong><br>
+          <span style="font-family: monospace;">${new Date(log.timestamp).toLocaleString()}</span>
+        </div>
+        <div class="result-box">
+          <strong><i class="fas fa-code"></i> Chi tiết lỗi:</strong><br>
+          <span style="font-family: monospace; font-size: 0.75rem; word-break: break-all;">${errorInfo.originalError || 'Không có chi tiết'}</span>
+        </div>
+        ${errorInfo.commonCauses ? `
+          <div class="result-box">
+            <strong><i class="fas fa-search"></i> ${t('debug_cause')}:</strong><br>
+            ${errorInfo.commonCauses.map(cause => `<div style="margin: 0.3rem 0;">• ${cause}</div>`).join('')}
+          </div>
+        ` : ''}
+        ${errorInfo.solutions ? `
+          <div class="result-box">
+            <strong><i class="fas fa-lightbulb"></i> ${t('debug_solution')}:</strong><br>
+            ${errorInfo.solutions.map(solution => `<div style="margin: 0.3rem 0;">✅ ${solution}</div>`).join('')}
+          </div>
+        ` : ''}
+        ${errorInfo.example ? `
+          <div class="result-box">
+            <strong><i class="fas fa-check-circle"></i> Định dạng đúng:</strong><br>
+            <span class="example-token" style="font-size: 0.7rem;">${errorInfo.example}</span>
+          </div>
+        ` : ''}
+        ${log.vmContext ? `
+          <div class="result-box">
+            <strong><i class="fas fa-server"></i> VM liên quan:</strong><br>
+            ${log.vmContext}
+          </div>
+        ` : ''}
+      `;
+      
+      document.getElementById('vmModal').style.display = 'flex';
+    }
+
+    function clearDebugLogs() {
+      debugLogs = [];
+      renderDebugPanel();
+      showToast('Đã xóa debug logs', 'success');
     }
 
     // ==================== API CALLS ====================
@@ -1296,76 +1634,92 @@
         const data = await response.json();
         if (data.success) {
           vms = data.vms || [];
+          if (data.debugLogs) {
+            debugLogs = data.debugLogs;
+            renderDebugPanel();
+          }
           renderVMList();
         }
       } catch (error) {
         console.error('Failed to load VMs:', error);
+        addDebugLog({
+          title: 'Lỗi tải danh sách VM',
+          originalError: error.message,
+          commonCauses: ['Mất kết nối đến server', 'API đang bảo trì'],
+          solutions: ['Làm mới trang (F5)', 'Kiểm tra kết nối mạng']
+        });
       }
     }
 
     async function deleteVM(vmId, event) {
       event.stopPropagation();
-      if (!confirm(t('deleteConfirm'))) return;
+      if (!confirm(t('delete_confirm'))) return;
       try {
         const response = await fetch(`${API_URL}?id=${vmId}`, { method: 'DELETE' });
         const data = await response.json();
         if (data.success) {
           vms = vms.filter(vm => vm.id !== vmId);
           renderVMList();
-          showToast(t('deleteSuccess'), 'success');
+          showToast(t('delete_success'), 'success');
         }
       } catch (error) {
-        showToast(t('deleteError'), 'error');
+        showToast(t('delete_error'), 'error');
       }
     }
 
     function renderVMList() {
       const container = document.getElementById('vmList');
       if (!vms.length) {
-        container.innerHTML = `<div style="text-align:center; padding:2rem;">${t('noVM')}</div>`;
+        container.innerHTML = `<div style="text-align:center; padding:2rem;"><i class="fas fa-inbox"></i> ${t('no_vm')}</div>`;
         return;
       }
-      container.innerHTML = vms.map(vm => `
+      container.innerHTML = vms.map(vm => {
+        let statusText = '';
+        if (vm.status === 'running') statusText = t('status_running');
+        else if (vm.status === 'creating') statusText = t('status_creating');
+        else if (vm.status === 'failed') statusText = t('status_failed');
+        else statusText = t('status_expired');
+        
+        return `
         <div class="vm-card" data-id="${vm.id}">
-          <div class="vm-name">🕳️ ${vm.name}</div>
+          <div class="vm-name"><i class="fas fa-microchip"></i> ${vm.name}</div>
           <div class="vm-info-row">
-            <span class="vm-info-label">👤</span>
-            <span class="vm-info-value" onclick="copyToClipboard('${vm.username}', 'Username')">${vm.username || 'N/A'} 📋</span>
+            <span class="vm-info-label"><i class="fas fa-user"></i></span>
+            <span class="vm-info-value" onclick="copyToClipboard('${vm.username}', 'Username')">${vm.username || 'N/A'} <i class="fas fa-copy"></i></span>
           </div>
           <div class="vm-info-row">
-            <span class="vm-info-label">🔐</span>
-            <span class="vm-info-value" onclick="copyToClipboard('${vm.password}', 'Password')">${vm.password ? '••••••••' : 'N/A'} 📋</span>
+            <span class="vm-info-label"><i class="fas fa-lock"></i></span>
+            <span class="vm-info-value" onclick="copyToClipboard('${vm.password}', 'Password')">${vm.password ? '••••••••' : 'N/A'} <i class="fas fa-copy"></i></span>
           </div>
           <div class="vm-info-row">
-            <span class="vm-info-label">🌐</span>
-            <span class="vm-info-value">${vm.tailscaleIP || 'Đang khởi tạo...'}</span>
+            <span class="vm-info-label"><i class="fas fa-network-wired"></i></span>
+            <span class="vm-info-value">${vm.tailscaleIP || t('status_creating')}</span>
           </div>
           <div class="vm-info-row">
-            <span class="vm-info-label">📅</span>
-            <span class="vm-info-value">${t('modalCreated')}: ${new Date(vm.createdAt).toLocaleString()}</span>
+            <span class="vm-info-label"><i class="far fa-calendar"></i></span>
+            <span class="vm-info-value">${t('modal_created')}: ${new Date(vm.createdAt).toLocaleString()}</span>
           </div>
           <div class="vm-info-row">
-            <span class="vm-info-label">⏱️</span>
-            <span class="vm-info-value">${t('modalExpires')}: ${new Date(vm.expiresAt).toLocaleString()}</span>
+            <span class="vm-info-label"><i class="far fa-hourglass-half"></i></span>
+            <span class="vm-info-value">${t('modal_expires')}: ${new Date(vm.expiresAt).toLocaleString()}</span>
           </div>
           <div>
-            <span class="vm-status status-${vm.status}">${vm.status === 'running' ? 'Đang chạy' : vm.status === 'creating' ? 'Đang tạo' : vm.status === 'failed' ? 'Thất bại' : 'Hết hạn'}</span>
+            <span class="vm-status status-${vm.status}"><i class="fas ${vm.status === 'running' ? 'fa-play' : vm.status === 'creating' ? 'fa-spinner fa-pulse' : 'fa-stop'}"></i> ${statusText}</span>
           </div>
           ${vm.error ? `<div class="vm-error"><i class="fas fa-exclamation-triangle"></i> ${vm.error}</div>` : ''}
           <div class="terminal-logs" id="logs-${vm.id}">
-            <div class="log-line"><span class="log-time">[${new Date(vm.createdAt).toLocaleTimeString()}]</span> 🚀 Bắt đầu khởi tạo Virtual Machine</div>
+            <div class="log-line"><span class="log-time">[${new Date(vm.createdAt).toLocaleTimeString()}]</span> 🚀 ${t('status_creating')}</div>
             <div class="log-line"><span class="log-time">[${new Date(vm.createdAt).toLocaleTimeString()}]</span> 📁 Tạo repository: ${vm.name}</div>
-            <div class="log-line"><span class="log-time">[${new Date(vm.createdAt).toLocaleTimeString()}]</span> ⚙️ Cấu hình GitHub Actions workflow</div>
             ${vm.status === 'running' ? '<div class="log-line"><span class="log-time">[Đã hoàn thành]</span> ✅ VM đã sẵn sàng!</div>' : ''}
             ${vm.status === 'failed' ? '<div class="log-line"><span class="log-time">[Lỗi]</span> ❌ Quá trình tạo VM thất bại</div>' : ''}
           </div>
-          <button class="delete-vm-btn" onclick="window.deleteVM('${vm.id}', event)">🗑️ Xóa</button>
+          <button class="delete-vm-btn" onclick="window.deleteVM('${vm.id}', event)"><i class="fas fa-trash-alt"></i> Xóa</button>
         </div>
-      `).join('');
+      `}).join('');
       
       document.querySelectorAll('.vm-card').forEach(card => {
         card.addEventListener('click', (e) => {
-          if (e.target.classList.contains('delete-vm-btn')) return;
+          if (e.target.classList.contains('delete-vm-btn') || e.target.closest('.delete-vm-btn')) return;
           const vm = vms.find(v => v.id === card.dataset.id);
           if (vm) showVMDetails(vm);
         });
@@ -1374,44 +1728,44 @@
 
     function showVMDetails(vm) {
       const noVNCUrl = vm.tailscaleIP ? `http://${vm.tailscaleIP}:6080/vnc.html` : '#';
-      document.getElementById('modalTitle').innerHTML = `🕳️ ${vm.name}`;
+      document.getElementById('modalTitle').innerHTML = `<i class="fas fa-microchip"></i> ${vm.name}`;
       document.getElementById('modalBody').innerHTML = `
         <div class="result-box">
-          <strong>${t('modalConnection')}</strong><br><br>
+          <strong><i class="fas fa-plug"></i> ${t('modal_connection')}</strong><br><br>
           <div class="info-row">
-            <span class="info-label">${t('modalUser')}:</span>
+            <span class="info-label"><i class="fas fa-user"></i> ${t('modal_user')}:</span>
             <span class="info-value" onclick="copyToClipboard('${vm.username}', 'Username')">${vm.username || 'N/A'} <span class="copy-hint">(click để copy)</span></span>
           </div>
           <div class="info-row">
-            <span class="info-label">${t('modalPass')}:</span>
+            <span class="info-label"><i class="fas fa-lock"></i> ${t('modal_pass')}:</span>
             <span class="info-value" onclick="copyToClipboard('${vm.password}', 'Password')">${vm.password || 'N/A'} <span class="copy-hint">(click để copy)</span></span>
           </div>
           <div class="info-row">
-            <span class="info-label">${t('modalIP')}:</span>
-            <span class="info-value" onclick="copyToClipboard('${vm.tailscaleIP}', 'IP')">${vm.tailscaleIP || 'Đang khởi tạo...'} <span class="copy-hint">(click để copy)</span></span>
+            <span class="info-label"><i class="fas fa-network-wired"></i> ${t('modal_ip')}:</span>
+            <span class="info-value" onclick="copyToClipboard('${vm.tailscaleIP}', 'IP')">${vm.tailscaleIP || t('status_creating')} <span class="copy-hint">(click để copy)</span></span>
           </div>
           <div class="info-row">
-            <span class="info-label">${t('modalVNC')}:</span>
-            <span class="info-value" onclick="copyToClipboard('${noVNCUrl}', 'noVNC URL')">${vm.tailscaleIP ? `${noVNCUrl}` : 'Đang khởi tạo...'} <span class="copy-hint">(click để copy)</span></span>
+            <span class="info-label"><i class="fas fa-globe"></i> ${t('modal_vnc')}:</span>
+            <span class="info-value" onclick="copyToClipboard('${noVNCUrl}', 'noVNC URL')">${vm.tailscaleIP ? `${noVNCUrl}` : t('status_creating')} <span class="copy-hint">(click để copy)</span></span>
           </div>
         </div>
         <div class="result-box">
-          <strong>${t('modalTime')}</strong><br><br>
-          <div class="info-row"><span class="info-label">${t('modalCreated')}:</span><span class="info-value">${new Date(vm.createdAt).toLocaleString()}</span></div>
-          <div class="info-row"><span class="info-label">${t('modalExpires')}:</span><span class="info-value">${new Date(vm.expiresAt).toLocaleString()}</span></div>
-          <div class="info-row"><span class="info-label">${t('modalRepo')}:</span><span class="info-value"><a href="${vm.repoUrl}" target="_blank" style="color: #ffaa77;">GitHub →</a></span></div>
+          <strong><i class="far fa-clock"></i> ${t('modal_time')}</strong><br><br>
+          <div class="info-row"><span class="info-label">${t('modal_created')}:</span><span class="info-value">${new Date(vm.createdAt).toLocaleString()}</span></div>
+          <div class="info-row"><span class="info-label">${t('modal_expires')}:</span><span class="info-value">${new Date(vm.expiresAt).toLocaleString()}</span></div>
+          <div class="info-row"><span class="info-label">${t('modal_repo')}:</span><span class="info-value"><a href="${vm.repoUrl}" target="_blank" style="color: #ffaa77;">GitHub <i class="fas fa-external-link-alt"></i></a></span></div>
         </div>
         <div class="result-box">
-          <strong>${t('modalConfig')}</strong><br><br>
-          <div class="info-row"><span class="info-label">🖥️ CPU:</span><span class="info-value">${t('modalCPU')}</span></div>
-          <div class="info-row"><span class="info-label">🧠 RAM:</span><span class="info-value">${t('modalRAM')}</span></div>
-          <div class="info-row"><span class="info-label">💾 Storage:</span><span class="info-value">${t('modalStorage')}</span></div>
-          <div class="info-row"><span class="info-label">📶 Network:</span><span class="info-value">${t('modalNetwork')}</span></div>
-          <div class="info-row"><span class="info-label">🔗 VPN:</span><span class="info-value">${t('modalVPN')}</span></div>
+          <strong><i class="fas fa-microchip"></i> ${t('modal_config')}</strong><br><br>
+          <div class="info-row"><span class="info-label">🖥️ CPU:</span><span class="info-value">${t('modal_cpu')}</span></div>
+          <div class="info-row"><span class="info-label">🧠 RAM:</span><span class="info-value">${t('modal_ram')}</span></div>
+          <div class="info-row"><span class="info-label">💾 Storage:</span><span class="info-value">${t('modal_storage')}</span></div>
+          <div class="info-row"><span class="info-label">📶 Network:</span><span class="info-value">${t('modal_network')}</span></div>
+          <div class="info-row"><span class="info-label">🔗 VPN:</span><span class="info-value">${t('modal_vpn')}</span></div>
         </div>
-        ${vm.error ? `<div class="error-message"><strong>${t('modalError')}:</strong> ${vm.error}</div>` : ''}
+        ${vm.error ? `<div class="error-message" style="background: rgba(239,68,68,0.1); padding: 0.8rem; border-radius: 12px;"><strong><i class="fas fa-exclamation-triangle"></i> ${t('modal_error')}:</strong> ${vm.error}</div>` : ''}
         <p style="margin-top:0.8rem; padding:0.7rem; background:#ff663322; border-radius:14px; font-size:0.8rem;">
-          ${t('modalNote')}
+          <i class="fas fa-info-circle"></i> ${t('modal_note')}
         </p>
       `;
       document.getElementById('vmModal').style.display = 'flex';
@@ -1423,25 +1777,39 @@
       let vmUsername = document.getElementById('vmUsername').value.trim();
       let vmPassword = document.getElementById('vmPassword').value.trim();
 
-      // ========== FIXED VALIDATION ==========
-      // Validate GitHub Token (hỗ trợ nhiều định dạng)
+      // Validate GitHub Token
       if (!githubToken) {
-        showToast('❌ Vui lòng nhập GitHub Token', 'error');
+        showToast(t('missing_token'), 'error');
         return;
       }
       
       if (!isValidGitHubToken(githubToken)) {
-        const errorMsg = '❌ Token GitHub KHÔNG HỢP LỆ!\n\nToken phải thuộc một trong các dạng:\n• ghp_xxxx (Classic Token)\n• github_pat_xxxx (Fine-grained Token)\n• gho_xxxx, ghu_xxxx, ghs_xxxx\n\n📌 Cách tạo token đúng:\n1️⃣ Truy cập https://github.com/settings/tokens\n2️⃣ Chọn "Generate new token (classic)"\n3️⃣ Chọn quyền: repo + workflow\n4️⃣ Token sẽ bắt đầu bằng ghp_';
-        showToast(errorMsg, 'error');
+        const errorDetail = {
+          title: 'GitHub Token không hợp lệ',
+          originalError: `Token "${githubToken.substring(0, 15)}..." không đúng định dạng`,
+          commonCauses: [
+            'Token không bắt đầu bằng đúng prefix (ghp_, github_pat_, gho_, ghu_, ghs_)',
+            'Token bị thiếu hoặc thừa ký tự',
+            'Token chứa khoảng trắng hoặc ký tự đặc biệt'
+          ],
+          solutions: [
+            'Tạo token mới tại https://github.com/settings/tokens',
+            'Chọn "Generate new token (classic)"',
+            'Chọn quyền: repo (tất cả) và workflow',
+            'Copy token ngay sau khi tạo (bắt đầu bằng ghp_)'
+          ],
+          example: 'ghp_aBcDeFgHiJkLmNoPqRsTuVwXyZ123456789',
+          icon: '🔑'
+        };
+        addDebugLog(errorDetail, { step: 'frontend_validation' });
+        
         document.getElementById('createResult').innerHTML = `
           <div style="color:#ef4444; padding:0.8rem; background:rgba(239,68,68,0.1); border-radius:14px; margin-top:1rem; font-size:0.8rem;">
-            ❌ ${errorMsg.replace(/\n/g, '<br>')}
-            <div class="error-detail" style="margin-top:0.5rem;">
-              <div class="error-detail-title">🔍 Các loại token được hỗ trợ:</div>
-              ✅ ghp_xxxxxxxx (Classic Token)<br>
-              ✅ github_pat_xxxxxxxx (Fine-grained Token)<br>
-              ✅ gho_, ghu_, ghs_ (OAuth/GitHub App)<br>
-              <span style="color:#facc15;">👉 Token của bạn: ${githubToken.substring(0, 15)}...</span>
+            <strong><i class="fas fa-exclamation-triangle"></i> ${errorDetail.title}</strong><br>
+            <span style="font-size:0.7rem;">${errorDetail.originalError}</span>
+            <div style="margin-top:0.5rem; padding:0.5rem; background:rgba(0,0,0,0.2); border-radius:8px;">
+              <strong>✅ Cách khắc phục:</strong><br>
+              ${errorDetail.solutions.map(s => `• ${s}`).join('<br>')}
             </div>
           </div>
         `;
@@ -1450,17 +1818,33 @@
 
       // Validate Tailscale Key
       if (!tailscaleKey) {
-        showToast('❌ Vui lòng nhập Tailscale Key', 'error');
+        showToast(t('missing_token'), 'error');
         return;
       }
       
       if (!isValidTailscaleKey(tailscaleKey)) {
-        showToast('❌ Tailscale Key không đúng định dạng. Phải bắt đầu bằng "tskey-"', 'error');
+        const errorDetail = {
+          title: 'Tailscale Key không hợp lệ',
+          originalError: `Key "${tailscaleKey.substring(0, 15)}..." không đúng định dạng`,
+          commonCauses: [
+            'Key không bắt đầu bằng "tskey-"',
+            'Key đã hết hạn hoặc bị thu hồi',
+            'Key không có quyền reusable'
+          ],
+          solutions: [
+            'Tạo key mới tại https://login.tailscale.com/admin/authkeys',
+            'Chọn "Reusable" khi tạo key',
+            'Copy toàn bộ key (bắt đầu bằng tskey-)'
+          ],
+          example: 'tskey-auth_abc123xyz789',
+          icon: '🌀'
+        };
+        addDebugLog(errorDetail, { step: 'frontend_validation' });
+        
         document.getElementById('createResult').innerHTML = `
           <div style="color:#ef4444; padding:0.8rem; background:rgba(239,68,68,0.1); border-radius:14px; margin-top:1rem; font-size:0.8rem;">
-            ❌ Tailscale Key không hợp lệ!<br>
-            Key phải bắt đầu bằng <strong>tskey-</strong><br>
-            Ví dụ: <span class="example-token">tskey-auth_abc123xyz...</span>
+            <strong><i class="fas fa-exclamation-triangle"></i> ${errorDetail.title}</strong><br>
+            <span style="font-size:0.7rem;">${errorDetail.originalError}</span>
           </div>
         `;
         return;
@@ -1477,7 +1861,7 @@
       }
       
       if (!validateInputs()) {
-        showToast(t('invalidUsername'), 'error');
+        showToast(t('username_error'), 'error');
         return;
       }
 
@@ -1487,8 +1871,8 @@
       createBtn.innerHTML = '<span class="loading-spinner"></span>' + t('creating');
       document.getElementById('createResult').innerHTML = `
         <div style="margin-top:1rem;">
-          <div style="height:3px; background:linear-gradient(90deg,#ff6600,#ff33aa); width:100%; animation:progress 2s ease-in-out infinite;"></div>
-          <p style="margin-top:0.8rem; font-size:0.8rem;">🔄 Đang khởi tạo Virtual Machine...</p>
+          <div style="height:3px; background:linear-gradient(90deg,#ff6600,#ff33aa); width:100%; animation: spin 2s ease-in-out infinite;"></div>
+          <p style="margin-top:0.8rem; font-size:0.8rem;"><i class="fas fa-spinner fa-pulse"></i> ${t('creating')}</p>
         </div>
       `;
 
@@ -1506,8 +1890,8 @@
           renderVMList();
           document.getElementById('createResult').innerHTML = `
             <div style="color:#22c55e; padding:0.8rem; background:rgba(34,197,94,0.1); border-radius:14px; margin-top:1rem; font-size:0.8rem;">
-              ✅ ${t('createSuccess')}<br>
-              <span style="font-size:0.75rem;">🔄 VM sẽ sẵn sàng trong 2-3 phút. Click vào tab "Quản lý VM" để xem trạng thái.</span>
+              <i class="fas fa-check-circle"></i> ${t('create_success')}<br>
+              <span style="font-size:0.75rem;"><i class="fas fa-info-circle"></i> VM sẽ sẵn sàng trong 2-3 phút. Click vào tab "Quản lý VM" để xem trạng thái.</span>
             </div>
           `;
           document.getElementById('githubToken').value = '';
@@ -1517,26 +1901,45 @@
             loadVMs();
           }, 2000);
         } else {
+          // Add debug log from backend response
+          if (data.debug) {
+            addDebugLog(data.debug, { step: 'backend', vmName: data.name });
+          } else {
+            addDebugLog({
+              title: t('create_error'),
+              originalError: data.error || t('create_error'),
+              commonCauses: ['Token thiếu quyền', 'GitHub API lỗi', 'Network issue'],
+              solutions: ['Kiểm tra lại token', 'Thử lại sau', 'Liên hệ support']
+            });
+          }
+          
           document.getElementById('createResult').innerHTML = `
             <div style="color:#ef4444; padding:0.8rem; background:rgba(239,68,68,0.1); border-radius:14px; margin-top:1rem; font-size:0.8rem;">
-              ❌ ${data.error || t('createError')}
+              <i class="fas fa-exclamation-triangle"></i> ${data.error || t('create_error')}
             </div>
           `;
-          showToast(data.error || t('createError'), 'error');
+          showToast(data.error || t('create_error'), 'error');
         }
       } catch (error) {
         console.error('Create error:', error);
+        addDebugLog({
+          title: 'Lỗi kết nối',
+          originalError: error.message,
+          commonCauses: ['Mất kết nối internet', 'Server đang bận', 'CORS error'],
+          solutions: ['Kiểm tra lại mạng', 'Làm mới trang', 'Thử lại sau']
+        });
+        
         document.getElementById('createResult').innerHTML = `
           <div style="color:#ef4444; padding:0.8rem; background:rgba(239,68,68,0.1); border-radius:14px; margin-top:1rem; font-size:0.8rem;">
-            ❌ Lỗi kết nối: ${error.message}
+            <i class="fas fa-exclamation-triangle"></i> Lỗi kết nối: ${error.message}
           </div>
         `;
-        showToast(t('createError'), 'error');
+        showToast(t('create_error'), 'error');
       } finally {
         createBtn.disabled = false;
         createBtn.innerHTML = originalText;
         setTimeout(() => {
-          if (document.getElementById('createResult').innerHTML.includes('progress')) {
+          if (document.getElementById('createResult').innerHTML.includes('spinner')) {
             document.getElementById('createResult').innerHTML = '';
           }
         }, 8000);
@@ -1560,7 +1963,7 @@
       if (savedLang) currentLang = savedLang;
       
       applyDesign();
-      updateUI();
+      updateAllTexts();
       loadVMs();
       startAutoRefresh();
 
@@ -1593,7 +1996,7 @@
         }
       });
 
-      // Tab switching
+      // Tab switching with animation
       document.getElementById('createTabBtn').addEventListener('click', () => {
         document.getElementById('createTabBtn').classList.add('active');
         document.getElementById('manageTabBtn').classList.remove('active');
@@ -1608,15 +2011,38 @@
         loadVMs();
       });
 
-      // Settings
+      // Settings panel
       const settingsBtn = document.getElementById('settingsBtn');
       const settingsPanel = document.getElementById('settingsPanel');
-      settingsBtn.addEventListener('click', () => settingsPanel.classList.toggle('open'));
+      settingsBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        settingsPanel.classList.toggle('open');
+      });
       document.addEventListener('click', (e) => {
         if (!settingsPanel.contains(e.target) && !settingsBtn.contains(e.target)) {
           settingsPanel.classList.remove('open');
         }
       });
+
+      // Debug panel
+      const debugBtn = document.getElementById('debugBtn');
+      const debugPanel = document.getElementById('debugPanel');
+      const debugHeader = document.getElementById('debugHeader');
+      
+      debugBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        debugPanel.classList.toggle('open');
+      });
+      debugHeader.addEventListener('click', () => {
+        debugPanel.classList.remove('open');
+      });
+      document.addEventListener('click', (e) => {
+        if (!debugPanel.contains(e.target) && !debugBtn.contains(e.target)) {
+          debugPanel.classList.remove('open');
+        }
+      });
+      
+      document.getElementById('clearDebugBtn').addEventListener('click', clearDebugLogs);
 
       // Design switcher
       document.querySelectorAll('[data-design]').forEach(opt => {
@@ -1626,16 +2052,17 @@
         });
       });
 
-      // Language switcher
+      // Language switcher with UI update
       document.querySelectorAll('.lang-btn').forEach(btn => {
         if (btn.dataset.lang === currentLang) btn.classList.add('active');
         btn.addEventListener('click', () => {
           document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
           btn.classList.add('active');
           currentLang = btn.dataset.lang;
-          updateUI();
+          updateAllTexts();
           localStorage.setItem('singularity_lang', currentLang);
           renderVMList();
+          renderDebugPanel();
         });
       });
     }
@@ -1643,6 +2070,7 @@
     // Make functions global for onclick
     window.deleteVM = deleteVM;
     window.copyToClipboard = copyToClipboard;
+    window.showDebugDetail = showDebugDetail;
     
     init();
   </script>
