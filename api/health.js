@@ -1,6 +1,6 @@
+// api/health.js - Health check endpoint
 export default function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
-  
   if (req.method === 'OPTIONS') return res.status(200).end();
   
   const uptime = process.uptime();
@@ -18,10 +18,7 @@ export default function handler(req, res) {
       rss: `${Math.round(memory.rss / 1024 / 1024)} MB`,
       heapUsed: `${Math.round(memory.heapUsed / 1024 / 1024)} MB`
     },
-    version: '4.0.0',
-    endpoints: {
-      health: '/api/health',
-      vps: '/api/vps'
-    }
+    version: '5.0.0',
+    endpoints: { health: '/api/health', vps: '/api/vps' }
   });
 }
