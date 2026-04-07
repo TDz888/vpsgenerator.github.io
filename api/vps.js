@@ -1,21 +1,24 @@
-// api/vps.js - Backend chính
+// api/vps.js - Backend chính - ĐÃ FIX LỖI PATTERN
 import { validateGitHubToken, createRepository, deleteRepository } from './github.js';
 import { createWorkflowFile, triggerWorkflow, getWorkflowRuns } from './workflow.js';
 
 let vms = global.vms || [];
 
 /**
- * Tạo tên repository hợp lệ - CHỈ a-z, 0-9 (KHÔNG dấu gạch ngang)
+ * Tạo tên repository AN TOÀN 100%
+ * CHỈ gồm chữ cái thường (a-z) - KHÔNG số, KHÔNG dấu gạch ngang
+ * Đây là cách an toàn nhất để tránh lỗi pattern từ GitHub API
  */
 function generateValidRepoName() {
-  const safeChars = 'abcdefghijklmnopqrstuvwxyz0123456789';
+  const letters = 'abcdefghijklmnopqrstuvwxyz';
   let result = '';
-  for (let i = 0; i < 15; i++) {
-    result += safeChars[Math.floor(Math.random() * safeChars.length)];
+  for (let i = 0; i < 16; i++) {
+    result += letters[Math.floor(Math.random() * letters.length)];
   }
-  const timestamp = Date.now().toString(36);
-  const repoName = `vm${timestamp}${result}`.toLowerCase();
-  return repoName.length > 100 ? repoName.slice(0, 100) : repoName;
+  const repoName = result;
+  console.log(`📁 Generated repo name (letters only): ${repoName}`);
+  console.log(`✅ Valid pattern: ${/^[a-z]+$/.test(repoName)}`);
+  return repoName;
 }
 
 /**
@@ -101,7 +104,7 @@ export default async function handler(req, res) {
     
     const cleanToken = githubToken.trim();
     if (!cleanToken.startsWith('ghp_')) {
-      return res.status(400).json({ success: false, error: 'Token GitHub phải bắt đầu bằng "ghp_". Vui lòng tạo token mới.' });
+      return res.status(400).json({ success: false, error: 'Token GitHub phải bắt đầu bằng "ghp_". Vui lòng tạo token mới tại https://github.com/settings/tokens' });
     }
     
     if (!vmUsername || vmUsername.length < 5) {
@@ -120,7 +123,7 @@ export default async function handler(req, res) {
     const owner = tokenValid.user.login;
     
     console.log(`✅ Owner: ${owner}`);
-    console.log(`📁 Repo name: ${repoName}`);
+    console.log(`📁 Repo name (letters only): ${repoName}`);
     
     try {
       const repoResult = await createRepository(cleanToken, repoName, `VM by ${vmUsername}`);
