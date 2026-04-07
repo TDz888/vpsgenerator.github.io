@@ -1,24 +1,15 @@
-// api/github.js
+// api/github.js - Xử lý GitHub API
 const GITHUB_API = 'https://api.github.com';
 
 function isValidGitHubTokenFormat(token) {
   if (!token || typeof token !== 'string') return false;
-  const validPatterns = [
-    /^github_pat_[A-Za-z0-9_]+$/,
-    /^ghp_[A-Za-z0-9]+$/,
-    /^gho_[A-Za-z0-9]+$/,
-    /^ghu_[A-Za-z0-9]+$/,
-    /^ghs_[A-Za-z0-9]+$/
-  ];
-  return validPatterns.some(pattern => pattern.test(token));
+  return /^ghp_[A-Za-z0-9]+$/.test(token);
 }
 
 function isValidRepoName(name) {
   if (!name || typeof name !== 'string') return false;
   if (name.length < 1 || name.length > 100) return false;
-  // Regex chính xác của GitHub: bắt đầu và kết thúc bằng a-z0-9, ở giữa có thể có a-z0-9 hoặc dấu gạch ngang
-  const repoRegex = /^[a-z0-9][a-z0-9-]*[a-z0-9]$/;
-  return repoRegex.test(name);
+  return /^[a-z0-9]+$/.test(name);
 }
 
 async function getGitHubUser(token) {
@@ -36,7 +27,7 @@ async function getGitHubUser(token) {
 
 export async function validateGitHubToken(token) {
   if (!isValidGitHubTokenFormat(token)) {
-    return { valid: false, error: 'Token GitHub không đúng định dạng. Phải bắt đầu bằng github_pat_ hoặc ghp_' };
+    return { valid: false, error: 'Token GitHub không đúng định dạng. Phải bắt đầu bằng "ghp_".' };
   }
   const user = await getGitHubUser(token);
   if (!user) return { valid: false, error: 'Token không hợp lệ hoặc đã hết hạn' };
@@ -46,7 +37,7 @@ export async function validateGitHubToken(token) {
 export async function createRepository(token, name, description) {
   try {
     if (!isValidRepoName(name)) {
-      throw new Error(`Tên "${name}" không hợp lệ. Chỉ được dùng chữ thường, số và dấu gạch ngang (-). Không được bắt đầu hoặc kết thúc bằng dấu gạch ngang.`);
+      throw new Error(`Tên "${name}" không hợp lệ. Chỉ được dùng chữ thường và số.`);
     }
     const user = await getGitHubUser(token);
     if (!user) throw new Error('Không xác thực được user');
