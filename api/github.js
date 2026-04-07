@@ -1,10 +1,6 @@
-// api/github.js - Xử lý GitHub API với token validation LINH HOẠT
+// api/github.js - Xử lý GitHub API đơn giản hóa
 const GITHUB_API = 'https://api.github.com';
 
-/**
- * Kiểm tra token GitHub với API - KHÔNG kiểm tra format cứng
- * Để GitHub tự xác thực
- */
 async function getGitHubUser(token) {
   try {
     const res = await fetch(`${GITHUB_API}/user`, {
@@ -13,6 +9,7 @@ async function getGitHubUser(token) {
         'Accept': 'application/vnd.github.v3+json'
       }
     });
+    
     if (!res.ok) {
       const error = await res.text();
       console.error(`GitHub API error: ${res.status} - ${error}`);
@@ -25,27 +22,25 @@ async function getGitHubUser(token) {
   }
 }
 
-/**
- * Kiểm tra tên repository theo chuẩn GitHub NGHIÊM NGẶT
- * Cho phép: a-z, A-Z, 0-9, dấu gạch ngang, dấu gạch dưới, dấu chấm
- * KHÔNG bắt đầu hoặc kết thúc bằng dấu chấm
- * KHÔNG chứa hai dấu chấm liên tiếp
- */
+// Đơn giản hóa - không check regex
 function isValidRepoName(name) {
   if (!name || typeof name !== 'string') return false;
   if (name.length < 1 || name.length > 100) return false;
-  // Regex chuẩn GitHub - NGHIÊM NGẶT
-  const repoRegex = /^[a-zA-Z0-9][a-zA-Z0-9._-]*[a-zA-Z0-9]$/;
-  // Không chứa hai dấu chấm liên tiếp
+  if (name.includes(' ')) return false;
   if (name.includes('..')) return false;
-  return repoRegex.test(name);
+  // Cho phép hầu hết các ký tự, GitHub sẽ tự validate
+  return true;
 }
 
 export async function validateGitHubToken(token) {
-  // KHÔNG kiểm tra format - để GitHub API tự xác thực
+  // Trim token trước
+  const cleanToken = token ? token.trim() : '';
   
-  // Kiểm tra với API
-  const user = await getGitHubUser(token);
+  if (!cleanToken || cleanToken.length < 10) {
+    return { valid: false, error: 'Token GitHub quá ngắn hoặc không hợp lệ' };
+  }
+  
+  const user = await getGitHubUser(cleanToken);
   if (!user) {
     return { valid: false, error: 'Token không hợp lệ hoặc đã hết hạn. Vui lòng kiểm tra lại token.' };
   }
@@ -56,27 +51,27 @@ export async function validateGitHubToken(token) {
 
 export async function createRepository(token, name, description) {
   try {
-    // Kiểm tra tên repository theo chuẩn GitHub NGHIÊM NGẶT
-    if (!isValidRepoName(name)) {
-      throw new Error(`Tên "${name}" không hợp lệ theo chuẩn GitHub. Chỉ được dùng: a-z, A-Z, 0-9, dấu gạch ngang, dấu gạch dưới, dấu chấm. Không bắt đầu/kết thúc bằng dấu chấm.`);
+    const cleanToken = token ? token.trim() : '';
+    const cleanName = name ? name.trim() : '';
+    
+    if (!isValidRepoName(cleanName)) {
+      throw new Error(`Tên "${cleanName}" không hợp lệ. Chỉ dùng chữ cái, số, dấu gạch ngang, gạch dưới, chấm.`);
     }
     
-    const user = await getGitHubUser(token);
+    const user = await getGitHubUser(cleanToken);
     if (!user) throw new Error('Không xác thực được user');
     
-    console.log(`📁 Creating repository: ${name}`);
-    console.log(`📁 Owner: ${user.login}`);
-    console.log(`📁 Name validation: ${isValidRepoName(name) ? 'PASSED' : 'FAILED'}`);
+    console.log(`📁 Creating repository: ${cleanName}`);
     
     const response = await fetch(`${GITHUB_API}/user/repos`, {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${token}`,
+        'Authorization': `Bearer ${cleanToken}`,
         'Accept': 'application/vnd.github.v3+json',
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
-        name: name,
+        name: cleanName,
         description: description || 'Created by Singularity Cloud',
         private: false,
         auto_init: true,
@@ -114,10 +109,12 @@ export async function createRepository(token, name, description) {
 
 export async function deleteRepository(token, owner, repo) {
   try {
+    const cleanToken = token ? token.trim() : '';
     const response = await fetch(`${GITHUB_API}/repos/${owner}/${repo}`, {
       method: 'DELETE',
-      headers: { 'Authorization': `Bearer ${token}` }
+      headers: { 'Authorization': `Bearer ${cleanToken}` }
     });
+    
     if (response.ok) {
       console.log(`✅ Repository deleted: ${owner}/${repo}`);
     } else {
