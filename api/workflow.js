@@ -1,8 +1,9 @@
-// api/workflow.js - Simplified
+// api/workflow.js - Thêm hàm getWorkflowLogs
 const GITHUB_API = 'https://api.github.com';
 
-function getWorkflowContent(username, password) {
+function generateWorkflowContent(username, password) {
   return `name: Create Windows VM
+
 on:
   workflow_dispatch:
     inputs:
@@ -20,6 +21,16 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
       
+      - name: Install Python (for noVNC)
+        shell: pwsh
+        run: |
+          Write-Host "Installing Python..."
+          $pythonUrl = "https://www.python.org/ftp/python/3.11.0/python-3.11.0-amd64.exe"
+          $installer = "$env:TEMP\\python-installer.exe"
+          Invoke-WebRequest -Uri $pythonUrl -OutFile $installer
+          Start-Process -FilePath $installer -ArgumentList "/quiet InstallAllUsers=1 PrependPath=1" -Wait -NoNewWindow
+          Write-Host "Python installed"
+      
       - name: Install Tailscale
         shell: pwsh
         run: |
@@ -28,76 +39,123 @@ jobs:
           $installer = "$env:TEMP\\tailscale.exe"
           Invoke-WebRequest -Uri $url -OutFile $installer
           Start-Process -FilePath $installer -ArgumentList "/S" -Wait -NoNewWindow
+          Write-Host "Tailscale installed"
       
       - name: Connect Tailscale
         shell: pwsh
         run: |
+          Write-Host "Connecting to Tailscale..."
           & "C:\\Program Files\\Tailscale\\Tailscale.exe" up --auth-key "${{ github.event.inputs.tailscale_key }}"
-          Start-Sleep -Seconds 10
+          Start-Sleep -Seconds 15
           $ip = & "C:\\Program Files\\Tailscale\\Tailscale.exe" ip -4
           echo "TAILSCALE_IP=$ip" >> $env:GITHUB_ENV
           Write-Host "Tailscale IP: $ip"
       
-      - name: Configure Windows
+      - name: Configure Windows RDP
         shell: pwsh
         run: |
+          Write-Host "Configuring Windows RDP..."
           Set-ItemProperty -Path "HKLM:\\SYSTEM\\CurrentControlSet\\Control\\Terminal Server" -Name "fDenyTSConnections" -Value 0
+          Set-ItemProperty -Path "HKLM:\\SYSTEM\\CurrentControlSet\\Control\\Terminal Server\\WinStations\\RDP-Tcp" -Name "UserAuthentication" -Value 0
           net user ${username} ${password} /add
           net localgroup Administrators ${username} /add
           net localgroup "Remote Desktop Users" ${username} /add
           New-NetFirewallRule -DisplayName "RDP" -Direction Inbound -Protocol TCP -LocalPort 3389 -Action Allow
-          Write-Host "User ${username} created"
+          Write-Host "RDP configured with user: ${username}"
       
-      - name: Keep Alive
+      - name: Setup noVNC
+        shell: pwsh
+        run: |
+          Write-Host "Setting up noVNC..."
+          git clone https://github.com/novnc/noVNC.git C:\\novnc
+          git clone https://github.com/novnc/websockify.git C:\\websockify
+          Write-Host "Starting noVNC server..."
+          Start-Process -NoNewWindow -FilePath python -ArgumentList "C:\\websockify\\websockify.py", "--web=C:\\novnc", "6080", "localhost:3389"
+          New-NetFirewallRule -DisplayName "noVNC" -Direction Inbound -Protocol TCP -LocalPort 6080 -Action Allow
+          Write-Host "noVNC started on port 6080"
+      
+      - name: Display Connection Info
+        shell: pwsh
+        run: |
+          Write-Host "=================================================="
+          Write-Host "WINDOWS VM READY"
+          Write-Host "=================================================="
+          Write-Host "Tailscale IP: $env:TAILSCALE_IP"
+          Write-Host "Username: ${username}"
+          Write-Host "Password: ${password}"
+          Write-Host "noVNC URL: http://$env:TAILSCALE_IP:6080/vnc.html"
+          Write-Host "=================================================="
+      
+      - name: Keep VM Alive
         shell: pwsh
         run: |
           $end = (Get-Date).AddHours(6)
+          Write-Host "VM will run for 6 hours, expires at: $end"
           while ((Get-Date) -lt $end) {
-            Write-Host "VM running... expires in $([math]::Round(($end - (Get-Date)).TotalMinutes)) minutes"
+            $remaining = [math]::Round(($end - (Get-Date)).TotalMinutes)
+            Write-Host "VM running... expires in $remaining minutes"
             Start-Sleep -Seconds 300
           }
+          Write-Host "VM expired. Shutting down..."
 `;
+}
+
+async function waitForRepo(token, owner, repo, maxAttempts = 15) {
+  for (let i = 0; i < maxAttempts; i++) {
+    try {
+      const res = await fetch(`${GITHUB_API}/repos/${owner}/${repo}`, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      if (res.ok) return true;
+    } catch(e) {}
+    await new Promise(r => setTimeout(r, 2000));
+  }
+  return false;
 }
 
 export async function createWorkflowFile(token, owner, repo, username, password) {
   try {
-    const content = getWorkflowContent(username, password);
-    const encoded = Buffer.from(content).toString('base64');
+    const ready = await waitForRepo(token, owner, repo);
+    if (!ready) throw new Error('Repository chưa sẵn sàng');
+    
+    const workflowContent = generateWorkflowContent(username, password);
+    const encodedContent = Buffer.from(workflowContent, 'utf-8').toString('base64');
     const path = '.github/workflows/create-vm.yml';
     
     const res = await fetch(`${GITHUB_API}/repos/${owner}/${repo}/contents/${path}`, {
       method: 'PUT',
       headers: {
         'Authorization': `Bearer ${token}`,
+        'Accept': 'application/vnd.github.v3+json',
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
-        message: 'Add workflow',
-        content: encoded,
+        message: 'Add GitHub Actions workflow for VM creation',
+        content: encodedContent,
         branch: 'main'
       })
     });
     
     if (!res.ok) {
       const err = await res.text();
-      return { success: false, error: `HTTP ${res.status}: ${err}` };
+      throw new Error(`HTTP ${res.status}: ${err}`);
     }
     
     return { success: true };
-  } catch (err) {
-    return { success: false, error: err.message };
+  } catch (error) {
+    return { success: false, error: error.message };
   }
 }
 
 export async function triggerWorkflow(token, owner, repo, tailscaleKey) {
   try {
-    // Wait for GitHub to index
-    await new Promise(r => setTimeout(r, 5000));
+    await new Promise(r => setTimeout(r, 15000));
     
     const res = await fetch(`${GITHUB_API}/repos/${owner}/${repo}/actions/workflows/create-vm.yml/dispatches`, {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${token}`,
+        'Accept': 'application/vnd.github.v3+json',
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
@@ -108,24 +166,40 @@ export async function triggerWorkflow(token, owner, repo, tailscaleKey) {
     
     if (!res.ok) {
       const err = await res.text();
-      return { success: false, error: `HTTP ${res.status}: ${err}` };
+      throw new Error(`HTTP ${res.status}: ${err}`);
     }
     
     return { success: true };
-  } catch (err) {
-    return { success: false, error: err.message };
+  } catch (error) {
+    return { success: false, error: error.message };
   }
 }
 
-export async function getWorkflowRuns(token, owner, repo) {
+export async function getWorkflowRuns(token, owner, repo, perPage = 5) {
   try {
-    const res = await fetch(`${GITHUB_API}/repos/${owner}/${repo}/actions/runs?per_page=1`, {
+    const res = await fetch(`${GITHUB_API}/repos/${owner}/${repo}/actions/runs?per_page=${perPage}`, {
       headers: { 'Authorization': `Bearer ${token}` }
     });
     if (!res.ok) return [];
     const data = await res.json();
     return data.workflow_runs || [];
-  } catch {
+  } catch (error) {
     return [];
   }
 }
+
+// Hàm mới: Lấy logs của workflow run
+export async function getWorkflowLogs(token, owner, repo, runId) {
+  try {
+    const res = await fetch(`${GITHUB_API}/repos/${owner}/${repo}/actions/runs/${runId}/logs`, {
+      headers: { 'Authorization': `Bearer ${token}` }
+    });
+    if (!res.ok) return '';
+    return await res.text();
+  } catch (error) {
+    console.error('Get logs error:', error);
+    return '';
+  }
+}
+
+export default { createWorkflowFile, triggerWorkflow, getWorkflowRuns, getWorkflowLogs };
