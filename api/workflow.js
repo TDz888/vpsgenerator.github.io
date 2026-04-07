@@ -1,9 +1,8 @@
-// api/workflow.js - Xử lý GitHub Actions Workflow - REFACTOR PRODUCTION READY
+// api/workflow.js - Xử lý GitHub Actions Workflow
 const GITHUB_API = 'https://api.github.com';
 
 /**
  * Tạo nội dung workflow với username và password thực tế
- * KHÔNG hardcode password
  */
 function generateWorkflowContent(username, password) {
   return `name: Create Windows VM
@@ -131,7 +130,6 @@ export async function createWorkflowFile(token, owner, repo, username, password)
     const path = '.github/workflows/create-vm.yml';
     console.log(`📝 Creating workflow file: ${owner}/${repo}/${path}`);
     
-    // FIX: Đúng encoding UTF-8
     const encodedContent = Buffer.from(workflowContent, 'utf-8').toString('base64');
     
     const res = await fetch(`${GITHUB_API}/repos/${owner}/${repo}/contents/${path}`, {
@@ -171,7 +169,7 @@ export async function createWorkflowFile(token, owner, repo, username, password)
 
 export async function triggerWorkflow(token, owner, repo, tailscaleKey) {
   try {
-    // FIX: Đợi đủ lâu để GitHub index workflow file (QUAN TRỌNG)
+    // Đợi đủ lâu để GitHub index workflow file
     console.log(`⏳ Waiting 15 seconds for GitHub to index workflow file...`);
     await new Promise(r => setTimeout(r, 15000));
     
