@@ -1,5 +1,6 @@
 {
   "version": 2,
+  "name": "singularity-vm",
   "functions": {
     "api/*.js": {
       "maxDuration": 60
@@ -8,11 +9,17 @@
   "routes": [
     {
       "src": "/api/(.*)",
-      "dest": "/api/$1"
+      "dest": "/api/$1",
+      "methods": ["GET", "POST", "DELETE", "OPTIONS"],
+      "headers": {
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Methods": "*",
+        "Access-Control-Allow-Headers": "*"
+      }
     },
     {
       "src": "/(.*)",
-      "dest": "/public/index.html"
+      "dest": "/index.html"
     }
   ]
 }
