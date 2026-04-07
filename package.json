@@ -1,13 +1,13 @@
 {
   "name": "singularity-cloud",
-  "version": "6.0.0",
-  "description": "Hell & Heaven Virtual Machine Platform - Tự động tạo VM Windows qua GitHub Actions",
+  "version": "7.0.0",
+  "description": "Next-Gen Virtual Machine Platform - Tự động tạo VM Windows qua GitHub Actions",
   "main": "public/index.html",
   "scripts": {
     "dev": "npx serve .",
     "start": "npx serve ."
   },
-  "keywords": ["vps", "github-actions", "tailscale", "windows", "novnc", "hell", "heaven"],
+  "keywords": ["vps", "github-actions", "tailscale", "windows", "novnc"],
   "author": "SuperDzAn",
   "license": "MIT",
   "devDependencies": {
