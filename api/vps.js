@@ -1,45 +1,35 @@
-// api/vps.js - Backend chính - Token validation LINH HOẠT
+// api/vps.js - Backend chính với debug logger tích hợp
 import { validateGitHubToken, createRepository, deleteRepository } from './github.js';
 import { createWorkflowFile, triggerWorkflow, getWorkflowRuns } from './workflow.js';
+import { analyzeError, logError, ERROR_TYPES } from './debug.js';
 
 let vms = global.vms || [];
+let debugLogs = global.debugLogs || [];
 
 /**
- * Tạo tên repository theo chuẩn GitHub NGHIÊM NGẶT
- * Quy tắc: a-z, 0-9, dấu gạch ngang, dấu chấm
- * Không bắt đầu hoặc kết thúc bằng dấu chấm
- * Không chứa dấu gạch dưới, không chứa ký tự đặc biệt
+ * Tạo tên repository theo chuẩn GitHub
  */
 function generateValidRepoName() {
-  // Dùng timestamp + random string đảm bảo chỉ có a-z và 0-9
-  const timestamp = Date.now().toString(36); // chỉ a-z, 0-9
-  const randomPart = Math.random().toString(36).substring(2, 10); // chỉ a-z, 0-9
+  const timestamp = Date.now().toString(36);
+  const randomPart = Math.random().toString(36).substring(2, 10);
   const repoName = `vm-${timestamp}-${randomPart}`;
   console.log(`📁 Generated repo name: ${repoName}`);
-  console.log(`✅ Valid GitHub repo name: ${/^[a-z0-9][a-z0-9.-]*[a-z0-9]$/i.test(repoName)}`);
   return repoName;
 }
 
 /**
- * Kiểm tra token GitHub với nhiều định dạng (NỚI LỎNG)
- * Chỉ kiểm tra token không rỗng và có độ dài tối thiểu
- * Để GitHub API tự xác thực
+ * Kiểm tra token cơ bản (nới lỏng)
  */
 function isTokenFormatValid(token) {
   if (!token || typeof token !== 'string') return false;
   const trimmed = token.trim();
-  // NỚI LỎNG: Chỉ cần token dài hơn 20 ký tự và không chứa khoảng trắng
-  // Không kiểm tra prefix cụ thể nữa
   if (trimmed.length < 20) return false;
   if (trimmed.includes(' ')) return false;
-  // Kiểm tra sơ bộ: có vẻ như là token GitHub (chứa các ký tự hợp lệ)
-  // Cho phép hầu hết các ký tự: chữ hoa, chữ thường, số, dấu gạch dưới, dấu gạch ngang
-  const validChars = /^[A-Za-z0-9_\-]+$/;
-  return validChars.test(trimmed);
+  return true;
 }
 
 /**
- * Theo dõi trạng thái workflow với retry logic
+ * Theo dõi trạng thái workflow
  */
 async function monitorWorkflowStatus(token, owner, repo, vmId, runId) {
   let attempts = 0;
@@ -103,10 +93,16 @@ export default async function handler(req, res) {
   
   if (req.method === 'OPTIONS') return res.status(200).end();
   
+  // GET: Lấy danh sách VM và debug logs
   if (req.method === 'GET') {
-    return res.status(200).json({ success: true, vms: vms });
+    const { debug } = req.query;
+    if (debug === 'logs') {
+      return res.status(200).json({ success: true, debugLogs: debugLogs });
+    }
+    return res.status(200).json({ success: true, vms: vms, debugLogs: debugLogs.slice(0, 20) });
   }
   
+  // POST: Tạo VM mới
   if (req.method === 'POST') {
     const { githubToken, tailscaleKey, vmUsername, vmPassword } = req.body;
     
@@ -115,32 +111,59 @@ export default async function handler(req, res) {
     console.log(`👤 Username: ${vmUsername}`);
     console.log('========================================');
     
-    // Validate input cơ bản
+    // Validate cơ bản
     if (!githubToken || !tailscaleKey) {
-      return res.status(400).json({ success: false, error: 'Thiếu GitHub Token hoặc Tailscale Key' });
+      const analysis = analyzeError('Missing GitHub Token or Tailscale Key', req.body);
+      logError(analysis, { step: 'validation' });
+      return res.status(400).json({ 
+        success: false, 
+        error: 'Thiếu GitHub Token hoặc Tailscale Key',
+        debug: analysis
+      });
     }
     
     const cleanToken = githubToken.trim();
     
-    // NỚI LỎNG: Chỉ kiểm tra token không rỗng và có độ dài hợp lý
     if (!isTokenFormatValid(cleanToken)) {
+      const analysis = analyzeError('Token format invalid - token too short or contains spaces', req.body);
+      logError(analysis, { step: 'validation' });
       return res.status(400).json({ 
         success: false, 
-        error: 'Token GitHub không hợp lệ. Token phải dài ít nhất 20 ký tự và không chứa khoảng trắng.' 
+        error: 'Token GitHub không hợp lệ. Token phải dài ít nhất 20 ký tự và không chứa khoảng trắng.',
+        debug: analysis
       });
     }
     
     if (!vmUsername || vmUsername.length < 5) {
-      return res.status(400).json({ success: false, error: 'Tên đăng nhập phải có ít nhất 5 ký tự' });
-    }
-    if (!vmPassword || vmPassword.length < 5) {
-      return res.status(400).json({ success: false, error: 'Mật khẩu phải có ít nhất 5 ký tự' });
+      const analysis = analyzeError('Username too short', req.body);
+      logError(analysis, { step: 'validation' });
+      return res.status(400).json({ 
+        success: false, 
+        error: 'Tên đăng nhập phải có ít nhất 5 ký tự',
+        debug: analysis
+      });
     }
     
-    // Validate GitHub Token với API (để lấy username và kiểm tra quyền)
+    if (!vmPassword || vmPassword.length < 5) {
+      const analysis = analyzeError('Password too short', req.body);
+      logError(analysis, { step: 'validation' });
+      return res.status(400).json({ 
+        success: false, 
+        error: 'Mật khẩu phải có ít nhất 5 ký tự',
+        debug: analysis
+      });
+    }
+    
+    // Validate với GitHub API
     const tokenValid = await validateGitHubToken(cleanToken);
     if (!tokenValid.valid) {
-      return res.status(401).json({ success: false, error: tokenValid.error });
+      const analysis = analyzeError(tokenValid.error, req.body);
+      logError(analysis, { step: 'github_auth', user: tokenValid.user?.login });
+      return res.status(401).json({ 
+        success: false, 
+        error: tokenValid.error,
+        debug: analysis
+      });
     }
     
     const repoName = generateValidRepoName();
@@ -154,12 +177,16 @@ export default async function handler(req, res) {
       console.log('📁 Step 1/3: Creating repository...');
       const repoResult = await createRepository(cleanToken, repoName, `VM by ${vmUsername}`);
       if (!repoResult.success) {
-        return res.status(500).json({ success: false, error: `Tạo repo thất bại: ${repoResult.error}` });
+        const analysis = analyzeError(repoResult.error, req.body);
+        logError(analysis, { step: 'create_repo', owner, repo: repoName });
+        return res.status(500).json({ 
+          success: false, 
+          error: `Tạo repo thất bại: ${repoResult.error}`,
+          debug: analysis
+        });
       }
       console.log('✅ Repository created');
       
-      // Đợi GitHub eventual consistency
-      console.log('⏳ Waiting for GitHub to finalize repository...');
       await new Promise(r => setTimeout(r, 5000));
       
       // Step 2: Tạo workflow file
@@ -167,19 +194,29 @@ export default async function handler(req, res) {
       const workflowResult = await createWorkflowFile(cleanToken, owner, repoName, vmUsername, vmPassword);
       if (!workflowResult.success) {
         await deleteRepository(cleanToken, owner, repoName);
-        return res.status(500).json({ success: false, error: `Tạo workflow thất bại: ${workflowResult.error}` });
+        const analysis = analyzeError(workflowResult.error, req.body);
+        logError(analysis, { step: 'create_workflow', owner, repo: repoName });
+        return res.status(500).json({ 
+          success: false, 
+          error: `Tạo workflow thất bại: ${workflowResult.error}`,
+          debug: analysis
+        });
       }
       console.log('✅ Workflow file created');
       
-      // Đợi GitHub index workflow file
-      console.log('⏳ Waiting for GitHub to index workflow file...');
       await new Promise(r => setTimeout(r, 5000));
       
       // Step 3: Trigger workflow
       console.log('🚀 Step 3/3: Triggering workflow...');
       const triggerResult = await triggerWorkflow(cleanToken, owner, repoName, tailscaleKey);
       if (!triggerResult.success) {
-        return res.status(500).json({ success: false, error: `Trigger workflow thất bại: ${triggerResult.error}` });
+        const analysis = analyzeError(triggerResult.error, req.body);
+        logError(analysis, { step: 'trigger_workflow', owner, repo: repoName });
+        return res.status(500).json({ 
+          success: false, 
+          error: `Trigger workflow thất bại: ${triggerResult.error}`,
+          debug: analysis
+        });
       }
       console.log('✅ Workflow triggered');
       
@@ -231,14 +268,23 @@ export default async function handler(req, res) {
       
     } catch (error) {
       console.error('❌ UNEXPECTED ERROR:', error);
-      return res.status(500).json({ success: false, error: error.message });
+      const analysis = analyzeError(error.message, req.body);
+      logError(analysis, { step: 'unexpected', owner, repo: repoName });
+      return res.status(500).json({ 
+        success: false, 
+        error: error.message,
+        debug: analysis
+      });
     }
   }
   
+  // DELETE: Xóa VM
   if (req.method === 'DELETE') {
     const { id } = req.query;
     const idx = vms.findIndex(vm => vm.id === id);
-    if (idx === -1) return res.status(404).json({ success: false, error: 'Không tìm thấy VM' });
+    if (idx === -1) {
+      return res.status(404).json({ success: false, error: 'Không tìm thấy VM' });
+    }
     vms.splice(idx, 1);
     global.vms = vms;
     return res.status(200).json({ success: true });
