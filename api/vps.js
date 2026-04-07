@@ -1,25 +1,41 @@
-// api/vps.js - Backend chính - REFACTOR PRODUCTION READY
+// api/vps.js - Backend chính - Token validation LINH HOẠT
 import { validateGitHubToken, createRepository, deleteRepository } from './github.js';
 import { createWorkflowFile, triggerWorkflow, getWorkflowRuns } from './workflow.js';
 
 let vms = global.vms || [];
 
 /**
- * Tạo tên repository theo chuẩn GitHub (a-z, 0-9, dấu gạch ngang)
- * KHÔNG ép về a-z đơn thuần
+ * Tạo tên repository theo chuẩn GitHub NGHIÊM NGẶT
+ * Quy tắc: a-z, 0-9, dấu gạch ngang, dấu chấm
+ * Không bắt đầu hoặc kết thúc bằng dấu chấm
+ * Không chứa dấu gạch dưới, không chứa ký tự đặc biệt
  */
 function generateValidRepoName() {
-  const chars = 'abcdefghijklmnopqrstuvwxyz0123456789';
-  let result = '';
-  for (let i = 0; i < 12; i++) {
-    result += chars[Math.floor(Math.random() * chars.length)];
-  }
-  const timestamp = Date.now().toString(36);
-  // Dùng dấu gạch ngang để dễ đọc
-  const repoName = `vm-${timestamp}-${result}`;
+  // Dùng timestamp + random string đảm bảo chỉ có a-z và 0-9
+  const timestamp = Date.now().toString(36); // chỉ a-z, 0-9
+  const randomPart = Math.random().toString(36).substring(2, 10); // chỉ a-z, 0-9
+  const repoName = `vm-${timestamp}-${randomPart}`;
   console.log(`📁 Generated repo name: ${repoName}`);
-  console.log(`✅ Pattern valid: ${/^[a-z0-9-]+$/.test(repoName)}`);
+  console.log(`✅ Valid GitHub repo name: ${/^[a-z0-9][a-z0-9.-]*[a-z0-9]$/i.test(repoName)}`);
   return repoName;
+}
+
+/**
+ * Kiểm tra token GitHub với nhiều định dạng (NỚI LỎNG)
+ * Chỉ kiểm tra token không rỗng và có độ dài tối thiểu
+ * Để GitHub API tự xác thực
+ */
+function isTokenFormatValid(token) {
+  if (!token || typeof token !== 'string') return false;
+  const trimmed = token.trim();
+  // NỚI LỎNG: Chỉ cần token dài hơn 20 ký tự và không chứa khoảng trắng
+  // Không kiểm tra prefix cụ thể nữa
+  if (trimmed.length < 20) return false;
+  if (trimmed.includes(' ')) return false;
+  // Kiểm tra sơ bộ: có vẻ như là token GitHub (chứa các ký tự hợp lệ)
+  // Cho phép hầu hết các ký tự: chữ hoa, chữ thường, số, dấu gạch dưới, dấu gạch ngang
+  const validChars = /^[A-Za-z0-9_\-]+$/;
+  return validChars.test(trimmed);
 }
 
 /**
@@ -27,7 +43,7 @@ function generateValidRepoName() {
  */
 async function monitorWorkflowStatus(token, owner, repo, vmId, runId) {
   let attempts = 0;
-  const maxAttempts = 36; // 6 phút
+  const maxAttempts = 36;
   const interval = setInterval(async () => {
     attempts++;
     try {
@@ -43,7 +59,6 @@ async function monitorWorkflowStatus(token, owner, repo, vmId, runId) {
             if (run.conclusion !== 'success') {
               vms[idx].error = `Workflow thất bại: ${run.conclusion}`;
             } else {
-              // Thử lấy IP từ logs
               try {
                 const logsRes = await fetch(`https://api.github.com/repos/${owner}/${repo}/actions/runs/${runId}/logs`, {
                   headers: { 'Authorization': `Bearer ${token}` }
@@ -100,19 +115,18 @@ export default async function handler(req, res) {
     console.log(`👤 Username: ${vmUsername}`);
     console.log('========================================');
     
-    // Validate input
+    // Validate input cơ bản
     if (!githubToken || !tailscaleKey) {
       return res.status(400).json({ success: false, error: 'Thiếu GitHub Token hoặc Tailscale Key' });
     }
     
     const cleanToken = githubToken.trim();
     
-    // FIX: Nhận đầy đủ các loại token GitHub
-    const validTokenPattern = /^gh[pousr]_|^github_pat_/;
-    if (!validTokenPattern.test(cleanToken)) {
+    // NỚI LỎNG: Chỉ kiểm tra token không rỗng và có độ dài hợp lý
+    if (!isTokenFormatValid(cleanToken)) {
       return res.status(400).json({ 
         success: false, 
-        error: 'Token GitHub không đúng định dạng. Phải bắt đầu bằng "ghp_", "github_pat_", "gho_", "ghu_" hoặc "ghs_".' 
+        error: 'Token GitHub không hợp lệ. Token phải dài ít nhất 20 ký tự và không chứa khoảng trắng.' 
       });
     }
     
@@ -123,7 +137,7 @@ export default async function handler(req, res) {
       return res.status(400).json({ success: false, error: 'Mật khẩu phải có ít nhất 5 ký tự' });
     }
     
-    // Validate GitHub Token với API
+    // Validate GitHub Token với API (để lấy username và kiểm tra quyền)
     const tokenValid = await validateGitHubToken(cleanToken);
     if (!tokenValid.valid) {
       return res.status(401).json({ success: false, error: tokenValid.error });
@@ -144,11 +158,11 @@ export default async function handler(req, res) {
       }
       console.log('✅ Repository created');
       
-      // FIX: Đợi GitHub eventual consistency (QUAN TRỌNG)
+      // Đợi GitHub eventual consistency
       console.log('⏳ Waiting for GitHub to finalize repository...');
       await new Promise(r => setTimeout(r, 5000));
       
-      // Step 2: Tạo workflow file với username và password thực tế
+      // Step 2: Tạo workflow file
       console.log('📝 Step 2/3: Creating workflow file...');
       const workflowResult = await createWorkflowFile(cleanToken, owner, repoName, vmUsername, vmPassword);
       if (!workflowResult.success) {
@@ -157,7 +171,7 @@ export default async function handler(req, res) {
       }
       console.log('✅ Workflow file created');
       
-      // FIX: Đợi GitHub index workflow file (QUAN TRỌNG)
+      // Đợi GitHub index workflow file
       console.log('⏳ Waiting for GitHub to index workflow file...');
       await new Promise(r => setTimeout(r, 5000));
       
