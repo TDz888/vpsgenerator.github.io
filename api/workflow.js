@@ -1,4 +1,4 @@
-// API xử lý GitHub Actions Workflow
+// api/workflow.js - Xử lý GitHub Actions Workflow
 const GITHUB_API = 'https://api.github.com';
 
 const WORKFLOW_CONTENT = `name: Create Windows VM
@@ -89,7 +89,7 @@ async function waitForRepo(token, owner, repo, maxAttempts = 10) {
 export async function createWorkflowFile(token, owner, repo, username, password) {
   try {
     const ready = await waitForRepo(token, owner, repo);
-    if (!ready) throw new Error('Repository chưa sẵn sàng');
+    if (!ready) throw new Error('Repository chưa sẵn sàng sau 20 giây');
     
     const path = '.github/workflows/create-vm.yml';
     const res = await fetch(`${GITHUB_API}/repos/${owner}/${repo}/contents/${path}`, {
@@ -100,7 +100,7 @@ export async function createWorkflowFile(token, owner, repo, username, password)
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
-        message: 'Add workflow',
+        message: 'Add GitHub Actions workflow',
         content: Buffer.from(WORKFLOW_CONTENT).toString('base64'),
         branch: 'main'
       })
@@ -121,7 +121,6 @@ export async function createWorkflowFile(token, owner, repo, username, password)
 export async function triggerWorkflow(token, owner, repo, tailscaleKey) {
   try {
     await new Promise(r => setTimeout(r, 8000));
-    
     const res = await fetch(`${GITHUB_API}/repos/${owner}/${repo}/actions/workflows/create-vm.yml/dispatches`, {
       method: 'POST',
       headers: {
@@ -134,12 +133,10 @@ export async function triggerWorkflow(token, owner, repo, tailscaleKey) {
         inputs: { tailscale_key: tailscaleKey }
       })
     });
-    
     if (!res.ok) {
       const err = await res.text();
       throw new Error(`HTTP ${res.status}: ${err}`);
     }
-    
     return { success: true };
   } catch (error) {
     return { success: false, error: error.message };
