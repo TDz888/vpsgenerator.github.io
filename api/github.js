@@ -1,4 +1,4 @@
-// api/github.js - Xử lý GitHub API
+// api/github.js - Xử lý GitHub API - ĐÃ FIX
 const GITHUB_API = 'https://api.github.com';
 
 function isValidGitHubTokenFormat(token) {
@@ -6,10 +6,11 @@ function isValidGitHubTokenFormat(token) {
   return /^ghp_[A-Za-z0-9]+$/.test(token);
 }
 
+// CHỈ CHO PHÉP CHỮ CÁI THƯỜNG (a-z) - AN TOÀN NHẤT
 function isValidRepoName(name) {
   if (!name || typeof name !== 'string') return false;
   if (name.length < 1 || name.length > 100) return false;
-  return /^[a-z0-9]+$/.test(name);
+  return /^[a-z]+$/.test(name);
 }
 
 async function getGitHubUser(token) {
@@ -37,10 +38,13 @@ export async function validateGitHubToken(token) {
 export async function createRepository(token, name, description) {
   try {
     if (!isValidRepoName(name)) {
-      throw new Error(`Tên "${name}" không hợp lệ. Chỉ được dùng chữ thường và số.`);
+      throw new Error(`Tên "${name}" không hợp lệ. Chỉ được dùng chữ cái thường (a-z).`);
     }
     const user = await getGitHubUser(token);
     if (!user) throw new Error('Không xác thực được user');
+    
+    console.log(`📁 Creating repository: ${name}`);
+    console.log(`📁 Name validation: ${/^[a-z]+$/.test(name) ? 'PASSED' : 'FAILED'}`);
     
     const res = await fetch(`${GITHUB_API}/user/repos`, {
       method: 'POST',
@@ -61,6 +65,7 @@ export async function createRepository(token, name, description) {
     
     if (!res.ok) {
       const err = await res.json();
+      console.error(`Create repo failed: ${res.status}`, err);
       if (res.status === 422) throw new Error(`Tên repo không hợp lệ hoặc đã tồn tại: ${err.message}`);
       if (res.status === 401) throw new Error('Token không có quyền tạo repo. Cần quyền "repo"');
       throw new Error(err.message || `HTTP ${res.status}`);
@@ -69,6 +74,7 @@ export async function createRepository(token, name, description) {
     await new Promise(r => setTimeout(r, 2000));
     return { success: true, repo: await res.json(), owner: user.login };
   } catch (error) {
+    console.error('Create repo error:', error);
     return { success: false, error: error.message };
   }
 }
