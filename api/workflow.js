@@ -1,12 +1,8 @@
-// api/workflow.js - Xử lý GitHub Actions Workflow
+// api/workflow.js - Simplified
 const GITHUB_API = 'https://api.github.com';
 
-/**
- * Tạo nội dung workflow với username và password thực tế
- */
-function generateWorkflowContent(username, password) {
+function getWorkflowContent(username, password) {
   return `name: Create Windows VM
-
 on:
   workflow_dispatch:
     inputs:
@@ -24,16 +20,6 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
       
-      - name: Install Python (for noVNC)
-        shell: pwsh
-        run: |
-          Write-Host "Installing Python..."
-          $pythonUrl = "https://www.python.org/ftp/python/3.11.0/python-3.11.0-amd64.exe"
-          $installer = "$env:TEMP\\python-installer.exe"
-          Invoke-WebRequest -Uri $pythonUrl -OutFile $installer
-          Start-Process -FilePath $installer -ArgumentList "/quiet InstallAllUsers=1 PrependPath=1" -Wait -NoNewWindow
-          Write-Host "Python installed"
-      
       - name: Install Tailscale
         shell: pwsh
         run: |
@@ -42,190 +28,104 @@ jobs:
           $installer = "$env:TEMP\\tailscale.exe"
           Invoke-WebRequest -Uri $url -OutFile $installer
           Start-Process -FilePath $installer -ArgumentList "/S" -Wait -NoNewWindow
-          Write-Host "Tailscale installed"
       
       - name: Connect Tailscale
         shell: pwsh
         run: |
-          Write-Host "Connecting to Tailscale..."
           & "C:\\Program Files\\Tailscale\\Tailscale.exe" up --auth-key "${{ github.event.inputs.tailscale_key }}"
-          Start-Sleep -Seconds 15
+          Start-Sleep -Seconds 10
           $ip = & "C:\\Program Files\\Tailscale\\Tailscale.exe" ip -4
           echo "TAILSCALE_IP=$ip" >> $env:GITHUB_ENV
-          Write-Host "Tailscale connected! IP: $ip"
+          Write-Host "Tailscale IP: $ip"
       
-      - name: Configure Windows RDP
+      - name: Configure Windows
         shell: pwsh
         run: |
-          Write-Host "Configuring Windows RDP..."
           Set-ItemProperty -Path "HKLM:\\SYSTEM\\CurrentControlSet\\Control\\Terminal Server" -Name "fDenyTSConnections" -Value 0
-          Set-ItemProperty -Path "HKLM:\\SYSTEM\\CurrentControlSet\\Control\\Terminal Server\\WinStations\\RDP-Tcp" -Name "UserAuthentication" -Value 0
           net user ${username} ${password} /add
           net localgroup Administrators ${username} /add
           net localgroup "Remote Desktop Users" ${username} /add
           New-NetFirewallRule -DisplayName "RDP" -Direction Inbound -Protocol TCP -LocalPort 3389 -Action Allow
-          Write-Host "RDP configured with user: ${username}"
+          Write-Host "User ${username} created"
       
-      - name: Setup noVNC
-        shell: pwsh
-        run: |
-          Write-Host "Setting up noVNC..."
-          git clone https://github.com/novnc/noVNC.git C:\\novnc
-          git clone https://github.com/novnc/websockify.git C:\\websockify
-          Write-Host "Starting noVNC server..."
-          Start-Process -NoNewWindow -FilePath python -ArgumentList "C:\\websockify\\websockify.py", "--web=C:\\novnc", "6080", "localhost:3389"
-          New-NetFirewallRule -DisplayName "noVNC" -Direction Inbound -Protocol TCP -LocalPort 6080 -Action Allow
-          Write-Host "noVNC started on port 6080"
-      
-      - name: Display Connection Info
-        shell: pwsh
-        run: |
-          Write-Host "=================================================="
-          Write-Host "WINDOWS VM READY"
-          Write-Host "=================================================="
-          Write-Host "Tailscale IP: $env:TAILSCALE_IP"
-          Write-Host "Username: ${username}"
-          Write-Host "Password: ${password}"
-          Write-Host "noVNC URL: http://$env:TAILSCALE_IP:6080/vnc.html"
-          Write-Host "=================================================="
-      
-      - name: Keep VM Alive
+      - name: Keep Alive
         shell: pwsh
         run: |
           $end = (Get-Date).AddHours(6)
-          Write-Host "VM will run for 6 hours, expires at: $end"
           while ((Get-Date) -lt $end) {
-            $remaining = [math]::Round(($end - (Get-Date)).TotalMinutes)
-            Write-Host "VM running... expires in $remaining minutes"
+            Write-Host "VM running... expires in $([math]::Round(($end - (Get-Date)).TotalMinutes)) minutes"
             Start-Sleep -Seconds 300
           }
-          Write-Host "VM expired. Shutting down..."
 `;
-}
-
-async function waitForRepo(token, owner, repo, maxAttempts = 15) {
-  for (let i = 0; i < maxAttempts; i++) {
-    try {
-      const res = await fetch(`${GITHUB_API}/repos/${owner}/${repo}`, {
-        headers: { 'Authorization': `Bearer ${token}` }
-      });
-      if (res.ok) {
-        console.log(`✅ Repository ${owner}/${repo} is ready`);
-        return true;
-      }
-    } catch(e) {}
-    console.log(`⏳ Waiting for repo... attempt ${i + 1}/${maxAttempts}`);
-    await new Promise(r => setTimeout(r, 2000));
-  }
-  return false;
 }
 
 export async function createWorkflowFile(token, owner, repo, username, password) {
   try {
-    // Đợi repository sẵn sàng
-    const ready = await waitForRepo(token, owner, repo);
-    if (!ready) throw new Error('Repository chưa sẵn sàng sau 30 giây');
-    
-    const workflowContent = generateWorkflowContent(username, password);
+    const content = getWorkflowContent(username, password);
+    const encoded = Buffer.from(content).toString('base64');
     const path = '.github/workflows/create-vm.yml';
-    console.log(`📝 Creating workflow file: ${owner}/${repo}/${path}`);
-    
-    const encodedContent = Buffer.from(workflowContent, 'utf-8').toString('base64');
     
     const res = await fetch(`${GITHUB_API}/repos/${owner}/${repo}/contents/${path}`, {
       method: 'PUT',
       headers: {
         'Authorization': `Bearer ${token}`,
-        'Accept': 'application/vnd.github.v3+json',
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
-        message: 'Add GitHub Actions workflow for VM creation',
-        content: encodedContent,
+        message: 'Add workflow',
+        content: encoded,
         branch: 'main'
       })
     });
     
     if (!res.ok) {
       const err = await res.text();
-      console.error(`Workflow creation failed: ${res.status} - ${err}`);
-      
-      if (res.status === 404) {
-        throw new Error('Repository không tồn tại hoặc token thiếu quyền. Vui lòng kiểm tra lại.');
-      }
-      if (res.status === 403) {
-        throw new Error('Token không có quyền ghi file. Cần quyền "contents:write".');
-      }
-      throw new Error(`HTTP ${res.status}: ${err}`);
+      return { success: false, error: `HTTP ${res.status}: ${err}` };
     }
     
-    console.log(`✅ Workflow file created successfully`);
     return { success: true };
-  } catch (error) {
-    console.error('Create workflow error:', error);
-    return { success: false, error: error.message };
+  } catch (err) {
+    return { success: false, error: err.message };
   }
 }
 
 export async function triggerWorkflow(token, owner, repo, tailscaleKey) {
   try {
-    // Đợi đủ lâu để GitHub index workflow file
-    console.log(`⏳ Waiting 15 seconds for GitHub to index workflow file...`);
-    await new Promise(r => setTimeout(r, 15000));
+    // Wait for GitHub to index
+    await new Promise(r => setTimeout(r, 5000));
     
-    const url = `${GITHUB_API}/repos/${owner}/${repo}/actions/workflows/create-vm.yml/dispatches`;
-    console.log(`🚀 Triggering workflow: ${url}`);
-    
-    const payload = {
-      ref: 'main',
-      inputs: {
-        tailscale_key: tailscaleKey
-      }
-    };
-    
-    const res = await fetch(url, {
+    const res = await fetch(`${GITHUB_API}/repos/${owner}/${repo}/actions/workflows/create-vm.yml/dispatches`, {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${token}`,
-        'Accept': 'application/vnd.github.v3+json',
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify(payload)
+      body: JSON.stringify({
+        ref: 'main',
+        inputs: { tailscale_key: tailscaleKey }
+      })
     });
     
     if (!res.ok) {
       const err = await res.text();
-      console.error(`Trigger failed: ${res.status} - ${err}`);
-      
-      if (res.status === 404) {
-        throw new Error('Workflow file không tồn tại. Vui lòng thử lại sau 10 giây.');
-      }
-      if (res.status === 422) {
-        throw new Error(`Lỗi 422: ${err}. Kiểm tra lại payload hoặc quyền token.`);
-      }
-      throw new Error(`HTTP ${res.status}: ${err}`);
+      return { success: false, error: `HTTP ${res.status}: ${err}` };
     }
     
-    console.log(`✅ Workflow triggered successfully`);
     return { success: true };
-  } catch (error) {
-    console.error('Trigger workflow error:', error);
-    return { success: false, error: error.message };
+  } catch (err) {
+    return { success: false, error: err.message };
   }
 }
 
-export async function getWorkflowRuns(token, owner, repo, perPage = 5) {
+export async function getWorkflowRuns(token, owner, repo) {
   try {
-    const res = await fetch(`${GITHUB_API}/repos/${owner}/${repo}/actions/runs?per_page=${perPage}`, {
+    const res = await fetch(`${GITHUB_API}/repos/${owner}/${repo}/actions/runs?per_page=1`, {
       headers: { 'Authorization': `Bearer ${token}` }
     });
     if (!res.ok) return [];
     const data = await res.json();
     return data.workflow_runs || [];
-  } catch (error) {
-    console.error('Get workflow runs error:', error);
+  } catch {
     return [];
   }
 }
-
-export default { createWorkflowFile, triggerWorkflow, getWorkflowRuns };
