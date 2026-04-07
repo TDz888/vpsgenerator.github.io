@@ -1,36 +1,26 @@
-// api/vps.js
+// api/vps.js - Backend chính
 import { validateGitHubToken, createRepository, deleteRepository } from './github.js';
 import { createWorkflowFile, triggerWorkflow, getWorkflowRuns } from './workflow.js';
 
 let vms = global.vms || [];
 
 /**
- * Tạo tên repository AN TOÀN TUYỆT ĐỐI
- * QUY TẮC: CHỈ a-z và 0-9 (KHÔNG dấu gạch ngang, KHÔNG dấu chấm)
- * Lý do: Một số API endpoint của GitHub xử lý tên có dấu gạch ngang không nhất quán [citation:6]
+ * Tạo tên repository hợp lệ - CHỈ a-z, 0-9 (KHÔNG dấu gạch ngang)
  */
 function generateValidRepoName() {
   const safeChars = 'abcdefghijklmnopqrstuvwxyz0123456789';
-  
-  // Tạo chuỗi 15 ký tự ngẫu nhiên (chỉ a-z0-9)
   let result = '';
   for (let i = 0; i < 15; i++) {
     result += safeChars[Math.floor(Math.random() * safeChars.length)];
   }
-  
-  // Thêm timestamp để đảm bảo uniqueness
   const timestamp = Date.now().toString(36);
-  const finalName = `vm${timestamp}${result}`.toLowerCase();
-  
-  // Giới hạn độ dài (tối đa 100)
-  const repoName = finalName.length > 100 ? finalName.slice(0, 100) : finalName;
-  
-  console.log(`📁 Generated repo name (no hyphens): ${repoName}`);
-  console.log(`✅ Valid: ${/^[a-z0-9]+$/.test(repoName)}`);
-  
-  return repoName;
+  const repoName = `vm${timestamp}${result}`.toLowerCase();
+  return repoName.length > 100 ? repoName.slice(0, 100) : repoName;
 }
 
+/**
+ * Theo dõi trạng thái workflow
+ */
 async function monitorWorkflowStatus(token, owner, repo, vmId, runId) {
   let attempts = 0;
   const maxAttempts = 36;
@@ -108,6 +98,12 @@ export default async function handler(req, res) {
     if (!githubToken || !tailscaleKey) {
       return res.status(400).json({ success: false, error: 'Thiếu GitHub Token hoặc Tailscale Key' });
     }
+    
+    const cleanToken = githubToken.trim();
+    if (!cleanToken.startsWith('ghp_')) {
+      return res.status(400).json({ success: false, error: 'Token GitHub phải bắt đầu bằng "ghp_". Vui lòng tạo token mới.' });
+    }
+    
     if (!vmUsername || vmUsername.length < 5) {
       return res.status(400).json({ success: false, error: 'Tên đăng nhập phải có ít nhất 5 ký tự' });
     }
@@ -115,28 +111,16 @@ export default async function handler(req, res) {
       return res.status(400).json({ success: false, error: 'Mật khẩu phải có ít nhất 5 ký tự' });
     }
     
-    const cleanToken = githubToken.trim();
-    
-    // Kiểm tra token prefix
-    const validPrefixes = ['github_pat_', 'ghp_', 'gho_', 'ghu_', 'ghs_'];
-    const hasValidPrefix = validPrefixes.some(prefix => cleanToken.startsWith(prefix));
-    if (!hasValidPrefix) {
-      return res.status(400).json({ 
-        success: false, 
-        error: `Token GitHub không đúng định dạng. Phải bắt đầu bằng: ${validPrefixes.join(', ')}` 
-      });
-    }
-    
     const tokenValid = await validateGitHubToken(cleanToken);
     if (!tokenValid.valid) {
       return res.status(401).json({ success: false, error: tokenValid.error });
     }
     
-    const owner = tokenValid.user.login;
     const repoName = generateValidRepoName();
+    const owner = tokenValid.user.login;
     
     console.log(`✅ Owner: ${owner}`);
-    console.log(`📁 Repo name (no hyphens): ${repoName}`);
+    console.log(`📁 Repo name: ${repoName}`);
     
     try {
       const repoResult = await createRepository(cleanToken, repoName, `VM by ${vmUsername}`);
