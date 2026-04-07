@@ -1,38 +1,10 @@
-// api/github.js - Xử lý GitHub API - REFACTOR PRODUCTION READY
+// api/github.js - Xử lý GitHub API với token validation LINH HOẠT
 const GITHUB_API = 'https://api.github.com';
 
 /**
- * Kiểm tra định dạng GitHub Token
- * Hỗ trợ tất cả các loại token hiện tại
+ * Kiểm tra token GitHub với API - KHÔNG kiểm tra format cứng
+ * Để GitHub tự xác thực
  */
-function isValidGitHubTokenFormat(token) {
-  if (!token || typeof token !== 'string') return false;
-  // Classic tokens: ghp_, gho_, ghu_, ghs_, ghr_
-  // Fine-grained tokens: github_pat_
-  const validPatterns = [
-    /^ghp_[A-Za-z0-9]+$/,      // Classic personal access token
-    /^gho_[A-Za-z0-9]+$/,      // OAuth App token
-    /^ghu_[A-Za-z0-9]+$/,      // GitHub App User-to-Server token
-    /^ghs_[A-Za-z0-9]+$/,      // GitHub App Server-to-Server token
-    /^ghr_[A-Za-z0-9]+$/,      // GitHub Action Runtime token
-    /^github_pat_[A-Za-z0-9_]+$/ // Fine-grained personal access token
-  ];
-  return validPatterns.some(pattern => pattern.test(token));
-}
-
-/**
- * Kiểm tra tên repository theo chuẩn GitHub
- * Cho phép: a-z, A-Z, 0-9, dấu gạch ngang, dấu gạch dưới, dấu chấm
- * Không bắt đầu hoặc kết thúc bằng dấu chấm
- */
-function isValidRepoName(name) {
-  if (!name || typeof name !== 'string') return false;
-  if (name.length < 1 || name.length > 100) return false;
-  // Regex chuẩn GitHub
-  const repoRegex = /^[A-Za-z0-9][A-Za-z0-9._-]*[A-Za-z0-9]$/;
-  return repoRegex.test(name);
-}
-
 async function getGitHubUser(token) {
   try {
     const res = await fetch(`${GITHUB_API}/user`, {
@@ -53,19 +25,29 @@ async function getGitHubUser(token) {
   }
 }
 
+/**
+ * Kiểm tra tên repository theo chuẩn GitHub NGHIÊM NGẶT
+ * Cho phép: a-z, A-Z, 0-9, dấu gạch ngang, dấu gạch dưới, dấu chấm
+ * KHÔNG bắt đầu hoặc kết thúc bằng dấu chấm
+ * KHÔNG chứa hai dấu chấm liên tiếp
+ */
+function isValidRepoName(name) {
+  if (!name || typeof name !== 'string') return false;
+  if (name.length < 1 || name.length > 100) return false;
+  // Regex chuẩn GitHub - NGHIÊM NGẶT
+  const repoRegex = /^[a-zA-Z0-9][a-zA-Z0-9._-]*[a-zA-Z0-9]$/;
+  // Không chứa hai dấu chấm liên tiếp
+  if (name.includes('..')) return false;
+  return repoRegex.test(name);
+}
+
 export async function validateGitHubToken(token) {
-  // Kiểm tra định dạng
-  if (!isValidGitHubTokenFormat(token)) {
-    return { 
-      valid: false, 
-      error: 'Token GitHub không đúng định dạng. Phải bắt đầu bằng "ghp_", "github_pat_", "gho_", "ghu_" hoặc "ghs_".' 
-    };
-  }
+  // KHÔNG kiểm tra format - để GitHub API tự xác thực
   
   // Kiểm tra với API
   const user = await getGitHubUser(token);
   if (!user) {
-    return { valid: false, error: 'Token không hợp lệ hoặc đã hết hạn' };
+    return { valid: false, error: 'Token không hợp lệ hoặc đã hết hạn. Vui lòng kiểm tra lại token.' };
   }
   
   console.log(`✅ Token valid for user: ${user.login}`);
@@ -74,9 +56,9 @@ export async function validateGitHubToken(token) {
 
 export async function createRepository(token, name, description) {
   try {
-    // Kiểm tra tên repository
+    // Kiểm tra tên repository theo chuẩn GitHub NGHIÊM NGẶT
     if (!isValidRepoName(name)) {
-      throw new Error(`Tên "${name}" không hợp lệ. Chuẩn GitHub: a-z, A-Z, 0-9, dấu gạch ngang, dấu gạch dưới, dấu chấm.`);
+      throw new Error(`Tên "${name}" không hợp lệ theo chuẩn GitHub. Chỉ được dùng: a-z, A-Z, 0-9, dấu gạch ngang, dấu gạch dưới, dấu chấm. Không bắt đầu/kết thúc bằng dấu chấm.`);
     }
     
     const user = await getGitHubUser(token);
@@ -152,6 +134,5 @@ export default {
   validateGitHubToken,
   createRepository,
   deleteRepository,
-  isValidRepoName,
-  isValidGitHubTokenFormat
+  isValidRepoName
 };
