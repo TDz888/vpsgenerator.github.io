@@ -9,27 +9,27 @@
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         :root {
-            --primary: #6366f1;
-            --primary-dark: #4f46e5;
-            --secondary: #8b5cf6;
+            --primary: #8b5cf6;
+            --primary-dark: #7c3aed;
+            --secondary: #ec4899;
             --success: #10b981;
             --warning: #f59e0b;
             --error: #ef4444;
             --info: #3b82f6;
-            --bg-dark: #0f172a;
-            --bg-card: rgba(30, 41, 59, 0.7);
-            --border: rgba(71, 85, 105, 0.5);
+            --bg: #0f0f1a;
+            --card: rgba(30, 30, 50, 0.7);
+            --border: rgba(255, 255, 255, 0.1);
             --text: #f1f5f9;
             --text-muted: #94a3b8;
         }
         body.light {
-            --bg-dark: #f1f5f9;
-            --bg-card: rgba(255, 255, 255, 0.8);
-            --border: rgba(203, 213, 225, 0.8);
+            --bg: #f1f5f9;
+            --card: rgba(255, 255, 255, 0.8);
+            --border: rgba(0, 0, 0, 0.1);
             --text: #0f172a;
             --text-muted: #475569;
         }
-        body { background: var(--bg-dark); font-family: 'Inter', sans-serif; color: var(--text); min-height: 100vh; transition: all 0.3s; }
+        body { background: var(--bg); font-family: 'Inter', sans-serif; color: var(--text); min-height: 100vh; transition: all 0.3s; }
         .container { max-width: 1400px; margin: 0 auto; padding: 24px; }
         
         /* Header */
@@ -37,64 +37,68 @@
         .logo { font-size: 2.5rem; font-weight: 800; background: linear-gradient(135deg, var(--primary), var(--secondary)); -webkit-background-clip: text; background-clip: text; color: transparent; }
         .subtitle { color: var(--text-muted); font-size: 0.85rem; margin-top: 8px; }
         .badge-container { display: flex; justify-content: center; gap: 12px; margin-top: 16px; flex-wrap: wrap; }
-        .badge { background: var(--bg-card); border: 1px solid var(--border); border-radius: 100px; padding: 6px 14px; font-size: 0.7rem; font-weight: 500; backdrop-filter: blur(10px); }
-        .theme-toggle { position: fixed; top: 20px; right: 20px; background: var(--bg-card); border: 1px solid var(--border); border-radius: 50%; width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 100; backdrop-filter: blur(10px); }
+        .badge { background: var(--card); border: 1px solid var(--border); border-radius: 100px; padding: 6px 14px; font-size: 0.7rem; backdrop-filter: blur(10px); }
+        .theme-toggle { position: fixed; top: 20px; right: 20px; background: var(--card); border: 1px solid var(--border); border-radius: 50%; width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 100; backdrop-filter: blur(10px); }
         
-        /* Stats Grid */
-        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 16px; margin-bottom: 32px; }
-        .stat-card { background: var(--bg-card); backdrop-filter: blur(10px); border: 1px solid var(--border); border-radius: 20px; padding: 20px; transition: all 0.3s; }
+        /* Stats */
+        .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 32px; }
+        @media (max-width: 768px) { .stats-grid { grid-template-columns: repeat(2, 1fr); } }
+        .stat-card { background: var(--card); backdrop-filter: blur(10px); border: 1px solid var(--border); border-radius: 20px; padding: 20px; transition: all 0.3s; }
         .stat-card:hover { transform: translateY(-2px); border-color: var(--primary); }
         .stat-label { font-size: 0.7rem; text-transform: uppercase; color: var(--text-muted); margin-bottom: 8px; }
-        .stat-value { font-size: 2rem; font-weight: 700; color: var(--primary); }
-        .stat-unit { font-size: 0.8rem; color: var(--text-muted); }
+        .stat-value { font-size: 2rem; font-weight: 700; background: linear-gradient(135deg, var(--primary), var(--secondary)); -webkit-background-clip: text; background-clip: text; color: transparent; }
         
         /* Two Columns */
         .two-columns { display: grid; grid-template-columns: 1fr 1.2fr; gap: 24px; }
         @media (max-width: 900px) { .two-columns { grid-template-columns: 1fr; } }
         
-        /* Form Card */
-        .form-card, .vm-card { background: var(--bg-card); backdrop-filter: blur(10px); border: 1px solid var(--border); border-radius: 24px; padding: 28px; }
+        /* Cards */
+        .form-card, .vm-card { background: var(--card); backdrop-filter: blur(10px); border: 1px solid var(--border); border-radius: 24px; padding: 28px; }
         .card-title { font-size: 1.2rem; font-weight: 600; margin-bottom: 24px; display: flex; align-items: center; gap: 10px; }
+        
+        /* Form */
         .input-group { margin-bottom: 20px; }
         .input-label { display: block; font-size: 0.8rem; font-weight: 500; margin-bottom: 8px; color: var(--text-muted); }
         .input-field { width: 100%; background: rgba(0,0,0,0.2); border: 1px solid var(--border); border-radius: 12px; padding: 12px 16px; color: var(--text); font-size: 0.9rem; transition: all 0.2s; }
-        .input-field:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 2px rgba(99,102,241,0.2); }
-        .input-row { display: grid; grid-template-columns: 1fr auto; gap: 12px; align-items: end; }
+        .input-field:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 2px rgba(139,92,246,0.2); }
+        
+        /* Input row with random button - FIXED */
+        .input-row { display: flex; gap: 12px; align-items: flex-end; }
+        .input-row .input-group { flex: 1; margin-bottom: 0; }
+        .random-btn { background: rgba(139,92,246,0.2); border: 1px solid var(--border); border-radius: 12px; padding: 12px 20px; color: var(--primary); cursor: pointer; font-size: 0.85rem; transition: all 0.2s; white-space: nowrap; }
+        .random-btn:hover { background: rgba(139,92,246,0.4); transform: translateY(-1px); }
         
         /* Buttons */
-        .btn { padding: 12px 20px; border-radius: 12px; font-weight: 600; font-size: 0.85rem; cursor: pointer; transition: all 0.2s; border: none; display: inline-flex; align-items: center; justify-content: center; gap: 8px; }
-        .btn-primary { background: linear-gradient(135deg, var(--primary), var(--secondary)); color: white; width: 100%; }
-        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 10px 20px rgba(99,102,241,0.3); }
-        .btn-primary:disabled { opacity: 0.6; cursor: not-allowed; }
-        .btn-secondary { background: rgba(255,255,255,0.1); border: 1px solid var(--border); color: var(--text); }
-        .btn-secondary:hover { background: rgba(99,102,241,0.2); border-color: var(--primary); }
-        .btn-random { background: rgba(99,102,241,0.2); color: var(--primary); padding: 12px 16px; }
+        .btn { padding: 14px 20px; border-radius: 12px; font-weight: 600; font-size: 0.9rem; cursor: pointer; transition: all 0.2s; border: none; display: inline-flex; align-items: center; justify-content: center; gap: 8px; width: 100%; }
+        .btn-primary { background: linear-gradient(135deg, var(--primary), var(--secondary)); color: white; }
+        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 10px 20px rgba(139,92,246,0.3); }
+        .btn-primary:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
         .quick-actions { display: flex; gap: 12px; margin-top: 24px; flex-wrap: wrap; }
         .quick-btn { flex: 1; background: rgba(0,0,0,0.2); border: 1px solid var(--border); border-radius: 10px; padding: 10px; font-size: 0.7rem; cursor: pointer; text-align: center; transition: all 0.2s; }
-        .quick-btn:hover { background: rgba(99,102,241,0.2); border-color: var(--primary); }
+        .quick-btn:hover { background: rgba(139,92,246,0.2); border-color: var(--primary); }
         
         /* Progress */
         .progress-container { margin-top: 20px; display: none; }
-        .progress-steps { display: flex; justify-content: space-between; margin-bottom: 12px; gap: 4px; }
-        .progress-step { flex: 1; text-align: center; font-size: 0.6rem; opacity: 0.4; padding: 4px; border-radius: 8px; }
-        .progress-step.active { opacity: 1; color: var(--primary); background: rgba(99,102,241,0.15); }
+        .progress-steps { display: flex; justify-content: space-between; margin-bottom: 12px; gap: 8px; }
+        .progress-step { flex: 1; text-align: center; font-size: 0.6rem; opacity: 0.4; padding: 6px; border-radius: 8px; }
+        .progress-step.active { opacity: 1; color: var(--primary); background: rgba(139,92,246,0.15); }
         .progress-step.completed { opacity: 1; color: var(--success); }
         .progress-bar { background: rgba(0,0,0,0.3); border-radius: 20px; height: 6px; overflow: hidden; }
         .progress-fill { background: linear-gradient(90deg, var(--primary), var(--secondary)); width: 0%; height: 100%; transition: width 0.3s; }
         .progress-text { font-size: 0.7rem; text-align: center; margin-top: 8px; color: var(--text-muted); }
         
-        /* VM List */
+        /* VM Controls */
         .vm-controls { display: flex; gap: 12px; margin-bottom: 20px; flex-wrap: wrap; }
         .vm-search { flex: 1; background: rgba(0,0,0,0.2); border: 1px solid var(--border); border-radius: 30px; padding: 10px 16px; color: var(--text); }
         .vm-filter, .vm-sort { background: rgba(0,0,0,0.2); border: 1px solid var(--border); border-radius: 30px; padding: 10px 16px; color: var(--text); cursor: pointer; }
-        .vm-count { background: rgba(99,102,241,0.2); border-radius: 30px; padding: 8px 16px; font-size: 0.8rem; }
+        .vm-count { background: rgba(139,92,246,0.2); border-radius: 30px; padding: 8px 16px; font-size: 0.8rem; display: flex; align-items: center; }
         
         /* VM Item */
         .vm-item { background: rgba(0,0,0,0.2); border-radius: 16px; margin-bottom: 12px; transition: all 0.2s; cursor: pointer; }
-        .vm-item:hover { background: rgba(99,102,241,0.1); transform: translateX(4px); }
+        .vm-item:hover { background: rgba(139,92,246,0.1); transform: translateX(4px); }
         .vm-header { display: flex; justify-content: space-between; align-items: center; padding: 16px 20px; flex-wrap: wrap; gap: 12px; }
         .vm-info { display: flex; align-items: center; gap: 12px; }
-        .vm-icon { width: 40px; height: 40px; background: linear-gradient(135deg, rgba(99,102,241,0.2), rgba(139,92,246,0.2)); border-radius: 12px; display: flex; align-items: center; justify-content: center; }
+        .vm-icon { width: 40px; height: 40px; background: linear-gradient(135deg, rgba(139,92,246,0.2), rgba(236,72,153,0.2)); border-radius: 12px; display: flex; align-items: center; justify-content: center; }
         .vm-name { font-weight: 600; }
         .vm-time { font-size: 0.65rem; color: var(--text-muted); margin-top: 4px; }
         .vm-status { font-size: 0.7rem; padding: 4px 12px; border-radius: 100px; }
@@ -103,21 +107,21 @@
         .status-failed { background: rgba(239,68,68,0.2); color: var(--error); }
         .vm-expand-icon { transition: transform 0.2s; }
         .vm-item.open .vm-expand-icon { transform: rotate(180deg); }
-        .vm-detail { max-height: 0; overflow: hidden; transition: max-height 0.3s; border-top: 1px solid transparent; }
-        .vm-item.open .vm-detail { max-height: 500px; border-top-color: var(--border); padding: 20px; }
+        .vm-detail { max-height: 0; overflow: hidden; transition: max-height 0.3s ease; border-top: 1px solid transparent; }
+        .vm-item.open .vm-detail { max-height: 600px; border-top-color: var(--border); padding: 20px; }
         .info-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px; }
         .info-box { background: rgba(0,0,0,0.2); border-radius: 12px; padding: 16px; }
         .info-title { font-size: 0.7rem; text-transform: uppercase; color: var(--text-muted); margin-bottom: 12px; }
-        .info-value { font-family: monospace; font-size: 0.85rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; }
-        .copy-btn { background: rgba(99,102,241,0.2); border: none; color: var(--primary); padding: 4px 10px; border-radius: 8px; font-size: 0.7rem; cursor: pointer; }
+        .info-value { font-family: monospace; font-size: 0.85rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; word-break: break-all; }
+        .copy-btn { background: rgba(139,92,246,0.2); border: none; color: var(--primary); padding: 4px 10px; border-radius: 8px; font-size: 0.7rem; cursor: pointer; }
         .vm-links { display: flex; gap: 12px; margin-top: 16px; flex-wrap: wrap; }
         .vm-link { background: rgba(59,130,246,0.2); padding: 8px 16px; border-radius: 10px; font-size: 0.75rem; text-decoration: none; color: var(--info); display: inline-flex; align-items: center; gap: 6px; }
-        .vm-delete { background: rgba(239,68,68,0.2); color: var(--error); padding: 8px 16px; border-radius: 10px; font-size: 0.75rem; cursor: pointer; border: none; }
+        .vm-delete { background: rgba(239,68,68,0.2); color: var(--error); padding: 8px 16px; border-radius: 10px; font-size: 0.75rem; cursor: pointer; border: none; display: inline-flex; align-items: center; gap: 6px; }
         .vm-progress-bar { margin-top: 16px; background: rgba(0,0,0,0.3); border-radius: 10px; height: 6px; overflow: hidden; }
         .vm-progress-fill { background: linear-gradient(90deg, var(--primary), var(--secondary)); height: 100%; width: 0%; transition: width 0.3s; }
         
         /* Debug Panel */
-        .debug-panel { background: var(--bg-card); backdrop-filter: blur(10px); border: 1px solid var(--border); border-radius: 24px; margin-top: 24px; overflow: hidden; }
+        .debug-panel { background: var(--card); backdrop-filter: blur(10px); border: 1px solid var(--border); border-radius: 24px; margin-top: 24px; overflow: hidden; }
         .debug-header { display: flex; justify-content: space-between; align-items: center; padding: 16px 24px; background: rgba(0,0,0,0.2); cursor: pointer; }
         .debug-content { padding: 16px 24px; max-height: 300px; overflow-y: auto; font-family: monospace; font-size: 0.7rem; }
         .debug-content.hidden { display: none; }
@@ -128,23 +132,13 @@
         .debug-error { color: var(--error); }
         
         /* Toast */
-        .toast { position: fixed; bottom: 24px; right: 24px; background: var(--bg-card); backdrop-filter: blur(10px); border: 1px solid var(--border); border-radius: 16px; padding: 12px 20px; display: flex; align-items: center; gap: 12px; transform: translateX(400px); transition: transform 0.3s; z-index: 1000; border-left: 3px solid var(--primary); }
+        .toast { position: fixed; bottom: 24px; right: 24px; background: var(--card); backdrop-filter: blur(10px); border: 1px solid var(--border); border-radius: 16px; padding: 12px 20px; display: flex; align-items: center; gap: 12px; transform: translateX(400px); transition: transform 0.3s; z-index: 1000; border-left: 3px solid var(--primary); }
         .toast.show { transform: translateX(0); }
         
-        /* Empty State */
         .empty-state { text-align: center; padding: 60px 20px; color: var(--text-muted); }
         .empty-icon { font-size: 4rem; margin-bottom: 16px; opacity: 0.5; }
-        
-        /* Loading */
         .spinner { width: 18px; height: 18px; border: 2px solid rgba(255,255,255,0.3); border-top-color: white; border-radius: 50%; animation: spin 0.6s linear infinite; display: inline-block; }
         @keyframes spin { to { transform: rotate(360deg); } }
-        
-        /* Responsive */
-        @media (max-width: 640px) {
-            .container { padding: 16px; }
-            .form-card, .vm-card { padding: 20px; }
-            .stats-grid { grid-template-columns: repeat(2, 1fr); }
-        }
     </style>
 </head>
 <body>
@@ -152,7 +146,7 @@
     <div class="container">
         <div class="header">
             <div class="logo"><i class="fas fa-infinity"></i> SINGULARITY CLUB</div>
-            <div class="subtitle">Next-Gen Virtual Machine Platform • Powered by GitHub Actions</div>
+            <div class="subtitle">Hell & Heaven Virtual Machine Platform • 144Hz Quantum Fabric</div>
             <div class="badge-container">
                 <div class="badge"><i class="fab fa-github"></i> GitHub Actions</div>
                 <div class="badge"><i class="fas fa-network-wired"></i> Tailscale Mesh</div>
@@ -162,37 +156,36 @@
         </div>
 
         <div class="stats-grid">
-            <div class="stat-card"><div class="stat-label">TOTAL VMS</div><div class="stat-value" id="statTotal">0</div><div class="stat-unit">virtual machines</div></div>
-            <div class="stat-card"><div class="stat-label">ACTIVE VMS</div><div class="stat-value" id="statActive">0</div><div class="stat-unit">running</div></div>
-            <div class="stat-card"><div class="stat-label">UPTIME</div><div class="stat-value" id="statUptime">00:00:00</div><div class="stat-unit">session</div></div>
-            <div class="stat-card"><div class="stat-label">SUCCESS RATE</div><div class="stat-value" id="statRate">100<span style="font-size:1rem;">%</span></div><div class="stat-unit">successful</div></div>
+            <div class="stat-card"><div class="stat-label">TOTAL VMS</div><div class="stat-value" id="statTotal">0</div></div>
+            <div class="stat-card"><div class="stat-label">ACTIVE VMS</div><div class="stat-value" id="statActive">0</div></div>
+            <div class="stat-card"><div class="stat-label">UPTIME</div><div class="stat-value" id="statUptime">00:00:00</div></div>
+            <div class="stat-card"><div class="stat-label">SUCCESS RATE</div><div class="stat-value" id="statRate">100<span style="font-size:1rem;">%</span></div></div>
         </div>
 
         <div class="two-columns">
             <div class="form-card">
-                <div class="card-title"><i class="fas fa-rocket"></i> Create Virtual Machine</div>
+                <div class="card-title"><i class="fas fa-rocket"></i> Khởi tạo Virtual Machine</div>
                 <div class="input-group"><label class="input-label"><i class="fab fa-github"></i> GitHub Token</label><input type="password" class="input-field" id="githubToken" placeholder="ghp_xxxxxxxxxxxx"></div>
                 <div class="input-group"><label class="input-label"><i class="fas fa-network-wired"></i> Tailscale Key</label><input type="password" class="input-field" id="tailscaleKey" placeholder="tskey-xxxxxxxxxxxx"></div>
-                <div class="input-row"><div class="input-group"><label class="input-label"><i class="fas fa-user"></i> Username</label><input type="text" class="input-field" id="vmUsername" placeholder="username"></div><button class="btn btn-random" id="randomUserBtn"><i class="fas fa-dice"></i> Random</button></div>
-                <div class="input-row"><div class="input-group"><label class="input-label"><i class="fas fa-lock"></i> Password</label><input type="password" class="input-field" id="vmPassword" placeholder="password"></div><button class="btn btn-random" id="randomPassBtn"><i class="fas fa-dice"></i> Random</button></div>
-                <div class="progress-container" id="progressContainer"><div class="progress-steps" id="progressSteps"><div class="progress-step">Token</div><div class="progress-step">Repo</div><div class="progress-step">Workflow</div><div class="progress-step">Trigger</div><div class="progress-step">Done</div></div><div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div><div class="progress-text" id="progressText">Ready</div></div>
-                <button class="btn btn-primary" id="createBtn"><i class="fas fa-play"></i> Create VM</button>
-                <div class="quick-actions"><div class="quick-btn" id="demoBtn"><i class="fas fa-flask"></i> Demo</div><div class="quick-btn" id="clearBtn"><i class="fas fa-eraser"></i> Clear</div><div class="quick-btn" id="refreshBtn"><i class="fas fa-sync-alt"></i> Refresh</div><div class="quick-btn" id="saveConfigBtn"><i class="fas fa-save"></i> Save</div><div class="quick-btn" id="loadConfigBtn"><i class="fas fa-folder-open"></i> Load</div></div>
+                
+                <div class="input-row"><div class="input-group"><label class="input-label"><i class="fas fa-user"></i> Tên đăng nhập</label><input type="text" class="input-field" id="vmUsername" placeholder="username"></div><button class="random-btn" id="randomUserBtn"><i class="fas fa-dice"></i> Random</button></div>
+                <div class="input-row"><div class="input-group"><label class="input-label"><i class="fas fa-lock"></i> Mật khẩu</label><input type="password" class="input-field" id="vmPassword" placeholder="password"></div><button class="random-btn" id="randomPassBtn"><i class="fas fa-dice"></i> Random</button></div>
+                
+                <div class="progress-container" id="progressContainer"><div class="progress-steps" id="progressSteps"><div class="progress-step">Token</div><div class="progress-step">Repo</div><div class="progress-step">Workflow</div><div class="progress-step">Trigger</div><div class="progress-step">Done</div></div><div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div><div class="progress-text" id="progressText">Sẵn sàng</div></div>
+                <button class="btn btn-primary" id="createBtn"><i class="fas fa-play"></i> Tạo VM Ngay</button>
+                <div class="quick-actions"><div class="quick-btn" id="demoBtn"><i class="fas fa-flask"></i> Demo</div><div class="quick-btn" id="clearBtn"><i class="fas fa-eraser"></i> Xóa form</div><div class="quick-btn" id="refreshBtn"><i class="fas fa-sync-alt"></i> Làm mới</div><div class="quick-btn" id="saveConfigBtn"><i class="fas fa-save"></i> Lưu config</div><div class="quick-btn" id="loadConfigBtn"><i class="fas fa-folder-open"></i> Tải config</div></div>
             </div>
 
             <div class="vm-card">
-                <div class="card-title"><i class="fas fa-server"></i> Virtual Machines</div>
-                <div class="vm-controls"><input type="text" class="vm-search" id="searchInput" placeholder="🔍 Search..."><select class="vm-filter" id="filterSelect"><option value="all">All</option><option value="running">Running</option><option value="creating">Creating</option><option value="failed">Failed</option></select><select class="vm-sort" id="sortSelect"><option value="newest">Newest</option><option value="oldest">Oldest</option><option value="name">Name</option></select><div class="vm-count" id="vmCount">0</div></div>
-                <div id="vmList"><div class="empty-state"><div class="empty-icon"><i class="fas fa-cloud-upload-alt"></i></div><div>No virtual machines yet<br>Create your first VM on the left</div></div></div>
+                <div class="card-title"><i class="fas fa-server"></i> Danh sách Virtual Machines</div>
+                <div class="vm-controls"><input type="text" class="vm-search" id="searchInput" placeholder="🔍 Tìm kiếm..."><select class="vm-filter" id="filterSelect"><option value="all">Tất cả</option><option value="running">Đang chạy</option><option value="creating">Đang tạo</option><option value="failed">Thất bại</option></select><select class="vm-sort" id="sortSelect"><option value="newest">Mới nhất</option><option value="oldest">Cũ nhất</option><option value="name">Tên A-Z</option></select><div class="vm-count" id="vmCount">0</div></div>
+                <div id="vmList"><div class="empty-state"><div class="empty-icon"><i class="fas fa-cloud-upload-alt"></i></div><div>✨ Chưa có VM nào | Tạo VM đầu tiên bên trái ✨</div></div></div>
             </div>
         </div>
 
-        <div class="debug-panel">
-            <div class="debug-header" id="debugHeader"><div><i class="fas fa-terminal"></i> Debug Console</div><div><button class="debug-clear" id="clearLogsBtn" style="background:none; border:none; color:var(--warning); cursor:pointer;"><i class="fas fa-trash"></i> Clear</button> <span id="debugToggle">▼</span></div></div>
-            <div class="debug-content" id="debugLogs"><div class="debug-log"><span class="debug-time">--:--:--</span><span class="debug-info">🚀 System initialized</span></div><div class="debug-log"><span class="debug-time">--:--:--</span><span class="debug-info">📡 API ready at /api/vps</span></div></div>
-        </div>
+        <div class="debug-panel"><div class="debug-header" id="debugHeader"><div><i class="fas fa-terminal"></i> Quantum Debug Console</div><div><button class="debug-clear" id="clearLogsBtn" style="background:none; border:none; color:var(--warning); cursor:pointer;"><i class="fas fa-trash"></i> Xóa</button> <span id="debugToggle">▼</span></div></div><div class="debug-content" id="debugLogs"><div class="debug-log"><span class="debug-time">--:--:--</span><span class="debug-info">🚀 Hệ thống khởi tạo thành công</span></div><div class="debug-log"><span class="debug-time">--:--:--</span><span class="debug-info">📡 API kết nối /api/vps</span></div></div></div>
     </div>
-    <div id="toast" class="toast"><i class="fas fa-check-circle"></i> <span id="toastMsg">Success</span></div>
+    <div id="toast" class="toast"><i class="fas fa-check-circle"></i> <span id="toastMsg"></span></div>
 
     <script>
         // ============================================ // CONFIG // ============================================
@@ -201,7 +194,7 @@
         let currentFilter = 'all', currentSort = 'newest';
         let totalCreations = 0, successfulCreations = 0;
         
-        // ============================================ // DOM Elements // ============================================
+        // DOM Elements
         const elements = {
             githubToken: document.getElementById('githubToken'), tailscaleKey: document.getElementById('tailscaleKey'),
             vmUsername: document.getElementById('vmUsername'), vmPassword: document.getElementById('vmPassword'),
@@ -226,11 +219,38 @@
             if (elements.debugLogs.children.length > 100) elements.debugLogs.removeChild(elements.debugLogs.lastChild);
         }
         
-        function showToast(msg, type = 'success') { elements.toastMsg.textContent = msg; elements.toast.classList.add('show'); setTimeout(() => elements.toast.classList.remove('show'), 3000); addLog(msg, type); }
+        function showToast(msg, type = 'success') { 
+            elements.toastMsg.textContent = msg; 
+            elements.toast.classList.add('show'); 
+            setTimeout(() => elements.toast.classList.remove('show'), 3000); 
+            addLog(msg, type); 
+        }
         
-        function randomStr(len, isPass = false) {
-            const chars = isPass ? 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*' : 'abcdefghijklmnopqrstuvwxyz0123456789';
-            return Array(len).fill().map(() => chars[Math.floor(Math.random() * chars.length)]).join('');
+        // Random username: 8 chữ thường + số
+        function randomUsername() {
+            const chars = 'abcdefghijklmnopqrstuvwxyz0123456789';
+            let result = '';
+            for (let i = 0; i < 8; i++) result += chars[Math.floor(Math.random() * chars.length)];
+            return result;
+        }
+        
+        // Random password: 23 ký tự (chữ hoa, chữ thường, số, ký tự đặc biệt)
+        function randomPassword() {
+            const upper = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+            const lower = 'abcdefghijklmnopqrstuvwxyz';
+            const numbers = '0123456789';
+            const special = '!@#$%^&*()_+-=[]{}|;:,.<>?';
+            const all = upper + lower + numbers + special;
+            let result = '';
+            // Đảm bảo có ít nhất 1 ký tự mỗi loại
+            result += upper[Math.floor(Math.random() * upper.length)];
+            result += lower[Math.floor(Math.random() * lower.length)];
+            result += numbers[Math.floor(Math.random() * numbers.length)];
+            result += special[Math.floor(Math.random() * special.length)];
+            // Thêm 19 ký tự ngẫu nhiên nữa để tổng 23
+            for (let i = 0; i < 19; i++) result += all[Math.floor(Math.random() * all.length)];
+            // Trộn ngẫu nhiên
+            return result.split('').sort(() => Math.random() - 0.5).join('');
         }
         
         function updateStats() {
@@ -264,35 +284,35 @@
             else filtered.sort((a,b) => (a.name || '').localeCompare(b.name || ''));
             elements.vmCount.textContent = filtered.length;
             updateStats();
-            if (filtered.length === 0) { elements.vmList.innerHTML = `<div class="empty-state"><div class="empty-icon"><i class="fas fa-cloud-upload-alt"></i></div><div>No virtual machines yet</div></div>`; return; }
+            if (filtered.length === 0) { elements.vmList.innerHTML = `<div class="empty-state"><div class="empty-icon"><i class="fas fa-cloud-upload-alt"></i></div><div>✨ Chưa có VM nào | Tạo VM đầu tiên bên trái ✨</div></div>`; return; }
             elements.vmList.innerHTML = filtered.map(vm => {
                 const progress = vm.status === 'creating' ? Math.min(95, Math.floor((Date.now() - new Date(vm.createdAt).getTime()) / 360000)) : (vm.status === 'running' ? 100 : 0);
-                const stepName = progress < 20 ? 'Creating repo...' : progress < 40 ? 'Creating workflow...' : progress < 60 ? 'Triggering...' : progress < 80 ? 'Waiting runner...' : progress < 95 ? 'Installing...' : 'Ready!';
-                return `<div class="vm-item" data-id="${vm.id}"><div class="vm-header" onclick="toggleVM('${vm.id}')"><div class="vm-info"><div class="vm-icon"><i class="fas ${vm.status === 'running' ? 'fa-play-circle' : 'fa-spinner fa-pulse'}"></i></div><div><div class="vm-name">${vm.name || vm.id.substring(0,15)}</div><div class="vm-time">${new Date(vm.createdAt).toLocaleString()}</div></div></div><div style="display:flex; gap:12px; align-items:center;"><span class="vm-status status-${vm.status || 'creating'}">${vm.status || 'creating'}</span><i class="fas fa-chevron-down vm-expand-icon"></i></div></div><div class="vm-detail"><div class="info-grid"><div class="info-box"><div class="info-title"><i class="fas fa-user"></i> Login Credentials</div><div class="info-value"><span>${vm.username || 'N/A'}</span><button class="copy-btn" onclick="copyText('${(vm.username || '').replace(/'/g, "\\'")}')">Copy</button></div><div class="info-value" style="margin-top:8px;"><span>••••••••</span><button class="copy-btn" onclick="copyText('${(vm.password || '').replace(/'/g, "\\'")}')">Copy</button></div></div>${vm.tailscaleIP ? `<div class="info-box"><div class="info-title"><i class="fas fa-network-wired"></i> Network</div><div class="info-value"><span>${vm.tailscaleIP}</span><button class="copy-btn" onclick="copyText('${vm.tailscaleIP}')">Copy</button></div></div>` : ''}<div class="info-box"><div class="info-title"><i class="fas fa-clock"></i> Expiration</div><div class="info-value">${vm.expiresAt ? new Date(vm.expiresAt).toLocaleString() : '6 hours'}</div></div></div><div class="vm-progress-bar"><div class="vm-progress-fill" style="width:${progress}%"></div></div><div class="vm-links">${vm.repoUrl ? `<a href="${vm.repoUrl}" target="_blank" class="vm-link"><i class="fab fa-github"></i> Repository</a>` : ''}${vm.workflowUrl ? `<a href="${vm.workflowUrl}" target="_blank" class="vm-link"><i class="fas fa-code-branch"></i> Actions</a>` : ''}<button class="vm-delete" onclick="deleteVM('${vm.id}')"><i class="fas fa-trash"></i> Delete</button></div></div></div>`;
+                const stepName = progress < 20 ? 'Đang tạo repository...' : progress < 40 ? 'Đang tạo workflow...' : progress < 60 ? 'Đang trigger...' : progress < 80 ? 'Đợi GitHub Runner...' : progress < 95 ? 'Đang cài đặt...' : 'Đã sẵn sàng!';
+                return `<div class="vm-item" data-id="${vm.id}"><div class="vm-header" onclick="toggleVM('${vm.id}')"><div class="vm-info"><div class="vm-icon"><i class="fas ${vm.status === 'running' ? 'fa-play-circle' : 'fa-spinner fa-pulse'}"></i></div><div><div class="vm-name">${vm.name || vm.id.substring(0,15)}</div><div class="vm-time">${new Date(vm.createdAt).toLocaleString()}</div></div></div><div style="display:flex; gap:12px; align-items:center;"><span class="vm-status status-${vm.status || 'creating'}">${vm.status || 'creating'}</span><i class="fas fa-chevron-down vm-expand-icon"></i></div></div><div class="vm-detail"><div class="info-grid"><div class="info-box"><div class="info-title"><i class="fas fa-user"></i> Thông tin đăng nhập</div><div class="info-value"><span>${vm.username || 'N/A'}</span><button class="copy-btn" onclick="copyText('${(vm.username || '').replace(/'/g, "\\'")}')">Sao chép</button></div><div class="info-value" style="margin-top:8px;"><span>••••••••</span><button class="copy-btn" onclick="copyText('${(vm.password || '').replace(/'/g, "\\'")}')">Sao chép</button></div></div>${vm.tailscaleIP ? `<div class="info-box"><div class="info-title"><i class="fas fa-network-wired"></i> Mạng</div><div class="info-value"><span>${vm.tailscaleIP}</span><button class="copy-btn" onclick="copyText('${vm.tailscaleIP}')">Sao chép</button></div></div>` : ''}<div class="info-box"><div class="info-title"><i class="fas fa-clock"></i> Thời gian hết hạn</div><div class="info-value">${vm.expiresAt ? new Date(vm.expiresAt).toLocaleString() : '6 giờ'}</div></div></div><div class="vm-progress-bar"><div class="vm-progress-fill" style="width:${progress}%"></div></div><div class="vm-links">${vm.repoUrl ? `<a href="${vm.repoUrl}" target="_blank" class="vm-link"><i class="fab fa-github"></i> Repository</a>` : ''}${vm.workflowUrl ? `<a href="${vm.workflowUrl}" target="_blank" class="vm-link"><i class="fas fa-code-branch"></i> GitHub Actions</a>` : ''}<button class="vm-delete" onclick="deleteVM('${vm.id}')"><i class="fas fa-trash"></i> Xóa VM</button></div></div></div>`;
             }).join('');
         }
         
         window.toggleVM = function(id) { document.querySelector(`.vm-item[data-id="${id}"]`).classList.toggle('open'); };
-        window.copyText = function(text) { navigator.clipboard.writeText(text); showToast('Copied!', 'success'); };
+        window.copyText = function(text) { navigator.clipboard.writeText(text); showToast('Đã sao chép!', 'success'); };
         
         // ============================================ // API Calls // ============================================
         async function loadVMs() {
             try {
                 const res = await fetch(API_URL);
                 const data = await res.json();
-                if (data.success && data.vms) { vms = data.vms; renderVMList(); addLog(`Loaded ${vms.length} VMs`, 'success'); }
-                else addLog(`Load failed: ${data.error}`, 'error');
-            } catch(e) { addLog(`Load error: ${e.message}`, 'error'); }
+                if (data.success && data.vms) { vms = data.vms; renderVMList(); addLog(`Đã tải ${vms.length} VM`, 'success'); }
+                else addLog(`Lỗi tải: ${data.error}`, 'error');
+            } catch(e) { addLog(`Lỗi: ${e.message}`, 'error'); }
         }
         
         window.deleteVM = async function(id) {
-            if (!confirm('Delete this VM?')) return;
+            if (!confirm('Xóa VM này? Hành động không thể hoàn tác!')) return;
             try {
                 const res = await fetch(`${API_URL}?id=${id}`, { method: 'DELETE' });
                 const data = await res.json();
-                if (data.success) { showToast('VM deleted', 'success'); await loadVMs(); }
-                else showToast('Delete failed', 'error');
-            } catch(e) { showToast('Delete error', 'error'); }
+                if (data.success) { showToast('Đã xóa VM', 'success'); await loadVMs(); }
+                else showToast('Xóa thất bại', 'error');
+            } catch(e) { showToast('Lỗi xóa', 'error'); }
         };
         
         async function createVM() {
@@ -300,20 +320,21 @@
             const tailscaleKey = elements.tailscaleKey.value.trim();
             let username = elements.vmUsername.value.trim();
             let password = elements.vmPassword.value.trim();
-            if (!githubToken) { showToast('Enter GitHub Token', 'error'); return; }
-            if (!tailscaleKey) { showToast('Enter Tailscale Key', 'error'); return; }
-            if (!username) username = randomStr(8, false);
-            if (!password) password = randomStr(12, true);
+            
+            if (!githubToken) { showToast('Vui lòng nhập GitHub Token', 'error'); return; }
+            if (!tailscaleKey) { showToast('Vui lòng nhập Tailscale Key', 'error'); return; }
+            if (!username) username = randomUsername();
+            if (!password) password = randomPassword();
             
             elements.progressContainer.style.display = 'block';
             elements.createBtn.disabled = true;
-            elements.createBtn.innerHTML = '<span class="spinner"></span> Creating...';
+            elements.createBtn.innerHTML = '<span class="spinner"></span> Đang tạo VM...';
             const start = Date.now();
             
-            updateCreateProgress(0, 10, 'Validating token...'); await new Promise(r => setTimeout(r, 800));
-            updateCreateProgress(1, 30, 'Creating repository...'); await new Promise(r => setTimeout(r, 1200));
-            updateCreateProgress(2, 55, 'Creating workflow...'); await new Promise(r => setTimeout(r, 1500));
-            updateCreateProgress(3, 80, 'Triggering GitHub Actions...'); await new Promise(r => setTimeout(r, 1000));
+            updateCreateProgress(0, 10, '🔑 Đang xác thực token...'); await new Promise(r => setTimeout(r, 800));
+            updateCreateProgress(1, 30, '📁 Đang tạo repository...'); await new Promise(r => setTimeout(r, 1200));
+            updateCreateProgress(2, 55, '📝 Đang tạo workflow...'); await new Promise(r => setTimeout(r, 1500));
+            updateCreateProgress(3, 80, '🚀 Đang trigger GitHub Actions...'); await new Promise(r => setTimeout(r, 1000));
             
             try {
                 const res = await fetch(API_URL, {
@@ -325,46 +346,47 @@
                 totalCreations++;
                 if (data.success) {
                     successfulCreations++;
-                    updateCreateProgress(4, 100, 'Complete! VM is being created...');
-                    showToast(`VM "${username}" created!`, 'success');
+                    updateCreateProgress(4, 100, '✅ Hoàn tất! VM đang được tạo...');
+                    showToast(`✅ VM "${username}" đã được khởi tạo!`, 'success');
                     await loadVMs();
                     elements.githubToken.value = '';
                     elements.tailscaleKey.value = '';
                     setTimeout(() => { elements.progressContainer.style.display = 'none'; }, 2000);
                 } else {
-                    updateCreateProgress(0, 0, 'Failed!');
-                    showToast(data.error || 'Creation failed', 'error');
+                    updateCreateProgress(0, 0, '❌ Tạo VM thất bại!');
+                    showToast(data.error || 'Tạo VM thất bại', 'error');
                     setTimeout(() => { elements.progressContainer.style.display = 'none'; }, 3000);
                 }
             } catch(e) {
-                showToast('Network error', 'error');
+                showToast('Lỗi kết nối', 'error');
                 elements.progressContainer.style.display = 'none';
             }
             elements.createBtn.disabled = false;
-            elements.createBtn.innerHTML = '<i class="fas fa-play"></i> Create VM';
+            elements.createBtn.innerHTML = '<i class="fas fa-play"></i> Tạo VM Ngay';
         }
         
         // ============================================ // Event Listeners // ============================================
         document.getElementById('createBtn').onclick = createVM;
-        document.getElementById('randomUserBtn').onclick = () => { elements.vmUsername.value = randomStr(8, false); showToast('Random username generated', 'info'); };
-        document.getElementById('randomPassBtn').onclick = () => { elements.vmPassword.value = randomStr(12, true); showToast('Random password generated', 'info'); };
-        document.getElementById('demoBtn').onclick = () => { elements.githubToken.value = 'ghp_demo_token'; elements.tailscaleKey.value = 'tskey-demo'; showToast('Demo tokens filled', 'info'); };
-        document.getElementById('clearBtn').onclick = () => { elements.githubToken.value = ''; elements.tailscaleKey.value = ''; elements.vmUsername.value = randomStr(8, false); elements.vmPassword.value = randomStr(12, true); showToast('Form cleared', 'info'); };
-        document.getElementById('refreshBtn').onclick = () => { loadVMs(); showToast('Refreshing...', 'info'); };
-        document.getElementById('saveConfigBtn').onclick = () => { localStorage.setItem('vm_config', JSON.stringify({ token: elements.githubToken.value, key: elements.tailscaleKey.value })); showToast('Config saved', 'success'); };
-        document.getElementById('loadConfigBtn').onclick = () => { const cfg = JSON.parse(localStorage.getItem('vm_config') || '{}'); if (cfg.token) elements.githubToken.value = cfg.token; if (cfg.key) elements.tailscaleKey.value = cfg.key; showToast('Config loaded', 'success'); };
+        document.getElementById('randomUserBtn').onclick = () => { elements.vmUsername.value = randomUsername(); showToast('Đã tạo username ngẫu nhiên', 'info'); };
+        document.getElementById('randomPassBtn').onclick = () => { elements.vmPassword.value = randomPassword(); showToast('Đã tạo mật khẩu 23 ký tự mạnh', 'info'); };
+        document.getElementById('demoBtn').onclick = () => { elements.githubToken.value = 'ghp_demo_token'; elements.tailscaleKey.value = 'tskey-demo'; showToast('Đã điền token demo', 'info'); };
+        document.getElementById('clearBtn').onclick = () => { elements.githubToken.value = ''; elements.tailscaleKey.value = ''; elements.vmUsername.value = ''; elements.vmPassword.value = ''; showToast('Đã xóa form', 'info'); };
+        document.getElementById('refreshBtn').onclick = () => { loadVMs(); showToast('Đang làm mới...', 'info'); };
+        document.getElementById('saveConfigBtn').onclick = () => { localStorage.setItem('vm_config', JSON.stringify({ token: elements.githubToken.value, key: elements.tailscaleKey.value })); showToast('Đã lưu cấu hình', 'success'); };
+        document.getElementById('loadConfigBtn').onclick = () => { const cfg = JSON.parse(localStorage.getItem('vm_config') || '{}'); if (cfg.token) elements.githubToken.value = cfg.token; if (cfg.key) elements.tailscaleKey.value = cfg.key; showToast('Đã tải cấu hình', 'success'); };
         
         elements.filterSelect.onchange = (e) => { currentFilter = e.target.value; renderVMList(); };
         elements.sortSelect.onchange = (e) => { currentSort = e.target.value; renderVMList(); };
         elements.searchInput.oninput = () => { renderVMList(); };
         
+        // Debug panel
         let debugVisible = true;
         document.getElementById('debugHeader').onclick = () => {
             debugVisible = !debugVisible;
             document.querySelector('.debug-content').classList.toggle('hidden', !debugVisible);
             document.getElementById('debugToggle').textContent = debugVisible ? '▼' : '▲';
         };
-        document.getElementById('clearLogsBtn').onclick = () => { elements.debugLogs.innerHTML = ''; addLog('Console cleared', 'info'); };
+        document.getElementById('clearLogsBtn').onclick = () => { elements.debugLogs.innerHTML = ''; addLog('Đã xóa console', 'info'); };
         
         // Theme toggle
         let isDark = true;
@@ -373,18 +395,18 @@
             document.body.classList.toggle('light', !isDark);
             document.getElementById('themeToggle').innerHTML = isDark ? '<i class="fas fa-moon"></i>' : '<i class="fas fa-sun"></i>';
             localStorage.setItem('theme', isDark ? 'dark' : 'light');
-            showToast(`${isDark ? 'Dark' : 'Light'} mode`, 'info');
         };
         if (localStorage.getItem('theme') === 'light') { document.body.classList.add('light'); isDark = false; document.getElementById('themeToggle').innerHTML = '<i class="fas fa-sun"></i>'; }
         
-        // Auto refresh
-        elements.vmUsername.value = randomStr(8, false);
-        elements.vmPassword.value = randomStr(12, true);
+        // Khởi tạo
+        elements.vmUsername.value = randomUsername();
+        elements.vmPassword.value = randomPassword();
         loadVMs();
         refreshInterval = setInterval(loadVMs, 10000);
         setInterval(updateStats, 1000);
-        addLog('🚀 Quantum Core ready', 'success');
-        addLog('🔗 Backend connected', 'info');
+        addLog('🚀 Singularity Club v7.0 khởi động', 'success');
+        addLog('🔗 Kết nối backend: ' + API_URL, 'info');
+        addLog('🔐 Mật khẩu mặc định: 23 ký tự (chữ hoa, thường, số, ký tự đặc biệt)', 'info');
     </script>
 </body>
 </html>
