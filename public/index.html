@@ -1,2078 +1,895 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
-  <title>Singularity Cloud | Hell & Heaven VM Platform</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-  <style>
-    /* ==================== RESET & BASE ==================== */
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Singularity Club | Hell & Heaven VM Platform</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-    body {
-      min-height: 100vh;
-      font-family: 'Inter', system-ui, -apple-system, sans-serif;
-      transition: all 0.4s cubic-bezier(0.2, 0.9, 0.4, 1.1);
-      overflow-x: hidden;
-    }
+        body {
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a0a2e 50%, #0a0a0a 100%);
+            font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
+            color: #e0e0e0;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
 
-    /* ==================== HELL MODE (DARK) ==================== */
-    body.hell {
-      background: #000000;
-      color: #ffffff;
-    }
-    body.hell .bg-universe {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: radial-gradient(ellipse at 30% 40%, #0a0a1a 0%, #000000 100%);
-      z-index: 0;
-      pointer-events: none;
-    }
-    body.hell .hell-core {
-      position: fixed;
-      top: 50%;
-      left: 50%;
-      width: 70vmin;
-      height: 70vmin;
-      background: radial-gradient(circle, #ff4400, #ff0080, #1a0033, transparent 80%);
-      border-radius: 50%;
-      transform: translate(-50%, -50%);
-      filter: blur(70px);
-      opacity: 0.4;
-      animation: hellPulse 6s infinite alternate;
-      z-index: 0;
-      pointer-events: none;
-    }
-    body.hell .hell-disk {
-      position: fixed;
-      top: 50%;
-      left: 50%;
-      width: 150vmin;
-      height: 150vmin;
-      background: conic-gradient(from 0deg, #ff4400, #ff00aa, #ff6600, #ff4400);
-      border-radius: 50%;
-      transform: translate(-50%, -50%);
-      filter: blur(45px);
-      opacity: 0.15;
-      animation: hellSpin 25s linear infinite;
-      z-index: 0;
-      pointer-events: none;
-    }
-    body.hell .hell-stars {
-      position: fixed;
-      width: 100%;
-      height: 100%;
-      background-image: 
-        radial-gradient(1px 1px at 15% 25%, #fff, transparent),
-        radial-gradient(2px 2px at 78% 42%, #ffcc88, transparent),
-        radial-gradient(1px 1px at 45% 80%, #fff, transparent),
-        radial-gradient(1.5px 1.5px at 90% 15%, #fff, transparent),
-        radial-gradient(1px 1px at 30% 70%, #ffaa66, transparent);
-      background-repeat: no-repeat;
-      background-size: 600px 600px;
-      opacity: 0.9;
-      animation: starDrift 60s linear infinite;
-      z-index: 0;
-      pointer-events: none;
-    }
-    body.hell .hell-grid {
-      position: fixed;
-      width: 100%;
-      height: 100%;
-      background-image: linear-gradient(rgba(255, 68, 0, 0.03) 1px, transparent 1px),
-                        linear-gradient(90deg, rgba(255, 68, 0, 0.03) 1px, transparent 1px);
-      background-size: 40px 40px;
-      z-index: 0;
-      pointer-events: none;
-    }
+        /* Quantum Fabric Effect */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                linear-gradient(rgba(168, 85, 247, 0.05) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(168, 85, 247, 0.05) 1px, transparent 1px);
+            background-size: 50px 50px;
+            pointer-events: none;
+            z-index: 0;
+        }
 
-    /* ==================== HEAVEN MODE (LIGHT) ==================== */
-    body.heaven {
-      background: linear-gradient(135deg, #f0f4ff 0%, #e0e8ff 100%);
-      color: #1e293b;
-    }
-    body.heaven .bg-universe {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: radial-gradient(circle at 30% 40%, rgba(255, 248, 225, 0.6), rgba(200, 220, 255, 0.3));
-      z-index: 0;
-      pointer-events: none;
-    }
-    body.heaven .heaven-clouds {
-      position: fixed;
-      width: 100%;
-      height: 100%;
-      background: radial-gradient(ellipse at 80% 20%, rgba(255, 255, 245, 0.4) 0%, transparent 60%),
-                  radial-gradient(ellipse at 20% 80%, rgba(180, 200, 255, 0.3) 0%, transparent 50%);
-      z-index: 0;
-      pointer-events: none;
-    }
-    body.heaven .heaven-particles {
-      position: fixed;
-      width: 100%;
-      height: 100%;
-      background-image: 
-        radial-gradient(2px 2px at 25% 35%, #88aaff, transparent),
-        radial-gradient(1.5px 1.5px at 65% 75%, #66aaff, transparent),
-        radial-gradient(1px 1px at 85% 15%, #aaccff, transparent);
-      background-repeat: no-repeat;
-      background-size: 500px 500px;
-      opacity: 0.5;
-      animation: floatSlow 30s ease-in-out infinite;
-      z-index: 0;
-      pointer-events: none;
-    }
-    body.heaven .hell-core,
-    body.heaven .hell-disk,
-    body.heaven .hell-stars,
-    body.heaven .hell-grid {
-      display: none;
-    }
+        /* Animated gradient orb */
+        body::after {
+            content: '';
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle, rgba(168, 85, 247, 0.3) 0%, rgba(236, 72, 153, 0.1) 70%, transparent 100%);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            filter: blur(60px);
+            pointer-events: none;
+            z-index: 0;
+            animation: pulse 8s ease-in-out infinite;
+        }
 
-    @keyframes hellPulse {
-      0% { opacity: 0.3; transform: translate(-50%, -50%) scale(0.9); filter: blur(65px);}
-      100% { opacity: 0.55; transform: translate(-50%, -50%) scale(1.1); filter: blur(85px);}
-    }
-    @keyframes hellSpin {
-      0% { transform: translate(-50%, -50%) rotate(0deg); opacity: 0.12;}
-      100% { transform: translate(-50%, -50%) rotate(360deg); opacity: 0.18;}
-    }
-    @keyframes starDrift {
-      0% { transform: translateY(0px) translateX(0px);}
-      100% { transform: translateY(-200px) translateX(50px);}
-    }
-    @keyframes floatSlow {
-      0% { transform: translateY(0px) translateX(0px);}
-      50% { transform: translateY(-25px) translateX(15px);}
-      100% { transform: translateY(0px) translateX(0px);}
-    }
-    @keyframes slideInRight {
-      from { transform: translateX(100%); opacity: 0; }
-      to { transform: translateX(0); opacity: 1; }
-    }
-    @keyframes slideInLeft {
-      from { transform: translateX(-100%); opacity: 0; }
-      to { transform: translateX(0); opacity: 1; }
-    }
-    @keyframes fadeInUp {
-      from { transform: translateY(20px); opacity: 0; }
-      to { transform: translateY(0); opacity: 1; }
-    }
-    @keyframes pulse {
-      0%, 100% { opacity: 1; }
-      50% { opacity: 0.5; }
-    }
-    @keyframes spin {
-      to { transform: rotate(360deg); }
-    }
+        @keyframes pulse {
+            0%, 100% { opacity: 0.5; transform: translate(-50%, -50%) scale(1); }
+            50% { opacity: 0.8; transform: translate(-50%, -50%) scale(1.2); }
+        }
 
-    /* ==================== CONTAINER ==================== */
-    .container {
-      max-width: 1400px;
-      margin: 0 auto;
-      position: relative;
-      z-index: 20;
-      padding: 0 1.8rem;
-    }
+        .container {
+            position: relative;
+            z-index: 1;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
 
-    /* ==================== GLASS CARD ==================== */
-    .glass-card {
-      border-radius: 32px;
-      padding: 1.8rem;
-      margin-bottom: 1.8rem;
-      transition: all 0.3s cubic-bezier(0.2, 0.9, 0.4, 1.1);
-      animation: fadeInUp 0.5s ease;
-    }
-    body.hell .glass-card {
-      background: rgba(8, 10, 25, 0.75);
-      backdrop-filter: blur(20px);
-      border: 1px solid rgba(255, 80, 40, 0.45);
-      box-shadow: 0 25px 45px -12px rgba(0, 0, 0, 0.6);
-    }
-    body.heaven .glass-card {
-      background: rgba(255, 255, 255, 0.7);
-      backdrop-filter: blur(20px);
-      border: 1px solid rgba(100, 120, 200, 0.3);
-      box-shadow: 0 15px 35px -10px rgba(0, 0, 0, 0.08);
-    }
+        /* Header */
+        .header {
+            text-align: center;
+            padding: 30px 0 20px;
+        }
 
-    /* ==================== TYPOGRAPHY ==================== */
-    body.hell h1, body.hell h2, body.hell h3, body.hell h4 {
-      color: #ffffff !important;
-    }
-    body.hell p, body.hell span, body.hell label, body.hell li {
-      color: #e2e8f0 !important;
-    }
-    body.hell .glow-text {
-      background: linear-gradient(135deg, #ffffff, #ffaa66, #ff66cc, #ff3300);
-      -webkit-background-clip: text;
-      background-clip: text;
-      color: transparent !important;
-    }
-    body.hell .subtitle {
-      color: #ffaa88 !important;
-    }
-    body.hell .text-accent {
-      color: #ffaa77 !important;
-    }
-    body.hell .text-muted {
-      color: #94a3b8 !important;
-    }
+        .logo {
+            font-size: 2.5rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #fff, #a855f7, #ec4899);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            letter-spacing: -0.5px;
+            text-shadow: 0 0 30px rgba(168, 85, 247, 0.3);
+        }
 
-    body.heaven h1, body.heaven h2, body.heaven h3, body.heaven h4 {
-      color: #1e293b !important;
-    }
-    body.heaven p, body.heaven span, body.heaven label, body.heaven li {
-      color: #334155 !important;
-    }
-    body.heaven .glow-text {
-      background: linear-gradient(135deg, #1a2a4a, #2b4c8a, #5a6eaa);
-      -webkit-background-clip: text;
-      background-clip: text;
-      color: transparent !important;
-    }
-    body.heaven .subtitle {
-      color: #4a627a !important;
-    }
-    body.heaven .text-accent {
-      color: #2c5282 !important;
-    }
+        .subtitle {
+            font-size: 0.75rem;
+            opacity: 0.6;
+            margin-top: 5px;
+            letter-spacing: 1px;
+        }
 
-    .glow-text {
-      font-size: 3.5rem;
-      font-weight: 800;
-      letter-spacing: -0.02em;
-      text-align: center;
-    }
-    .subtitle {
-      font-size: 0.9rem;
-      letter-spacing: 3px;
-      margin-top: 0.5rem;
-      text-align: center;
-    }
+        .badge {
+            display: inline-block;
+            background: rgba(168, 85, 247, 0.2);
+            border: 1px solid rgba(168, 85, 247, 0.5);
+            border-radius: 20px;
+            padding: 4px 12px;
+            font-size: 0.7rem;
+            margin-top: 10px;
+        }
 
-    /* ==================== INPUT FIELDS ==================== */
-    .input-group {
-      margin-bottom: 1.2rem;
-    }
-    .input-group label {
-      display: block;
-      margin-bottom: 0.4rem;
-      font-weight: 600;
-      font-size: 0.85rem;
-    }
-    body.hell .input-group label { color: #ffaa77 !important; }
-    body.heaven .input-group label { color: #2c5282 !important; }
-    
-    .input-wrapper {
-      display: flex;
-      gap: 0.6rem;
-      align-items: center;
-      flex-wrap: wrap;
-    }
-    .input-wrapper input {
-      flex: 1;
-      padding: 0.9rem 1.2rem;
-      border-radius: 28px;
-      font-size: 0.9rem;
-      font-family: 'JetBrains Mono', monospace;
-      border: 1px solid transparent;
-      transition: all 0.2s;
-      min-width: 200px;
-    }
-    body.hell .input-wrapper input {
-      background: #0f111f;
-      border-color: #ff6633aa;
-      color: #f0f3ff !important;
-    }
-    body.hell .input-wrapper input::placeholder {
-      color: #4a5568 !important;
-    }
-    body.hell .input-wrapper input:focus {
-      border-color: #ff884d;
-      box-shadow: 0 0 0 3px rgba(255, 102, 0, 0.2);
-      outline: none;
-    }
-    body.heaven .input-wrapper input {
-      background: white;
-      border-color: #cbd5e1;
-      color: #1e293b;
-    }
-    body.heaven .input-wrapper input:focus {
-      border-color: #3b82f6;
-      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
-      outline: none;
-    }
-    
-    .input-hint {
-      font-size: 0.65rem;
-      margin-top: 0.3rem;
-    }
-    body.hell .input-hint { color: #94a3b8 !important; }
-    body.heaven .input-hint { color: #64748b !important; }
-    
-    .example-token {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 0.7rem;
-      padding: 0.2rem 0.5rem;
-      border-radius: 6px;
-      display: inline-block;
-    }
-    body.hell .example-token {
-      background: #1e293b;
-      color: #facc15;
-    }
-    body.heaven .example-token {
-      background: #e2e8f0;
-      color: #1e293b;
-    }
+        /* Language Switch */
+        .lang-switch {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            display: flex;
+            gap: 8px;
+            background: rgba(0, 0, 0, 0.4);
+            padding: 4px 8px;
+            border-radius: 30px;
+            backdrop-filter: blur(5px);
+        }
 
-    .random-btn {
-      padding: 0.9rem 1.2rem;
-      border-radius: 28px;
-      border: none;
-      cursor: pointer;
-      font-size: 0.9rem;
-      transition: all 0.2s;
-      background: linear-gradient(135deg, #ff6600, #ff33aa);
-      color: white;
-      display: inline-flex;
-      align-items: center;
-      gap: 0.5rem;
-      white-space: nowrap;
-    }
-    .random-btn:hover {
-      transform: translateY(-2px);
-      filter: brightness(1.05);
-    }
+        .lang-btn {
+            background: none;
+            border: none;
+            color: #888;
+            cursor: pointer;
+            font-size: 0.75rem;
+            font-weight: 600;
+            padding: 4px 8px;
+            border-radius: 20px;
+            transition: all 0.2s;
+        }
 
-    .input-error {
-      color: #ef4444;
-      font-size: 0.7rem;
-      margin-top: 0.3rem;
-      display: none;
-    }
-    .input-error.show { display: block; }
+        .lang-btn.active {
+            background: linear-gradient(135deg, #a855f7, #ec4899);
+            color: white;
+        }
 
-    /* ==================== BUTTONS ==================== */
-    .btn-primary {
-      width: 100%;
-      padding: 1rem;
-      border: none;
-      border-radius: 44px;
-      font-weight: 700;
-      font-size: 1rem;
-      cursor: pointer;
-      transition: all 0.25s;
-      position: relative;
-      overflow: hidden;
-    }
-    .btn-primary::after {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: -100%;
-      width: 100%;
-      height: 100%;
-      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
-      transition: left 0.5s;
-    }
-    .btn-primary:hover::after { left: 100%; }
-    body.hell .btn-primary {
-      background: linear-gradient(95deg, #ff4d00, #ff0099);
-      color: white;
-      box-shadow: 0 4px 20px rgba(255, 68, 0, 0.35);
-    }
-    body.heaven .btn-primary {
-      background: linear-gradient(95deg, #1e3a5f, #3b5a8a);
-      color: white;
-    }
-    .btn-primary:hover {
-      transform: translateY(-3px);
-      filter: brightness(1.05);
-    }
-    .btn-primary:disabled {
-      opacity: 0.6;
-      cursor: not-allowed;
-      transform: none;
-    }
+        /* Form Card */
+        .form-card {
+            background: rgba(20, 20, 40, 0.6);
+            backdrop-filter: blur(10px);
+            border-radius: 24px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 24px;
+            margin-bottom: 20px;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
 
-    /* ==================== TAB SWITCHER ==================== */
-    .tab-container {
-      display: flex;
-      justify-content: center;
-      gap: 1rem;
-      margin-bottom: 2rem;
-      flex-wrap: wrap;
-    }
-    .tab-btn {
-      padding: 0.7rem 2.2rem;
-      border-radius: 60px;
-      font-weight: 600;
-      cursor: pointer;
-      font-size: 1rem;
-      transition: all 0.2s;
-      border: none;
-      background: transparent;
-    }
-    body.hell .tab-btn {
-      color: #94a3b8;
-      border: 1px solid #ff663355;
-    }
-    body.heaven .tab-btn {
-      color: #475569;
-      border: 1px solid #cbd5e1;
-    }
-    .tab-btn.active {
-      background: linear-gradient(135deg, #ff6600, #ff33aa);
-      color: white;
-      border: none;
-    }
-    body.heaven .tab-btn.active {
-      background: linear-gradient(135deg, #1e3a5f, #3b5a8a);
-    }
+        .form-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(168, 85, 247, 0.2);
+        }
 
-    /* ==================== TECH SECTION ==================== */
-    .tech-section {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-      gap: 1.5rem;
-      margin: 2rem 0;
-    }
-    .tech-card {
-      padding: 1.3rem;
-      text-align: center;
-      border-radius: 24px;
-      transition: all 0.3s;
-      animation: fadeInUp 0.5s ease;
-    }
-    body.hell .tech-card {
-      background: rgba(0, 0, 0, 0.55);
-      backdrop-filter: blur(12px);
-      border: 1px solid #ff663355;
-    }
-    body.heaven .tech-card {
-      background: rgba(255, 255, 255, 0.6);
-      backdrop-filter: blur(12px);
-      border: 1px solid #cbd5e1;
-    }
-    .tech-card:hover { transform: translateY(-5px); }
-    .tech-icon { font-size: 2.2rem; margin-bottom: 0.6rem; }
-    .tech-title { font-size: 1rem; font-weight: 700; margin-bottom: 0.4rem; }
-    body.hell .tech-title { color: #ffaa77 !important; }
-    body.heaven .tech-title { color: #1e3a5f !important; }
-    .tech-desc { font-size: 0.75rem; line-height: 1.4; }
-    body.hell .tech-desc { color: #cbd5e1 !important; }
-    
-    .spec-badge {
-      display: inline-block;
-      padding: 0.2rem 0.6rem;
-      border-radius: 20px;
-      font-size: 0.65rem;
-      margin: 0.15rem;
-      font-weight: 600;
-    }
-    body.hell .spec-badge {
-      background: rgba(255, 100, 50, 0.3);
-      color: #ffccaa !important;
-    }
-    body.heaven .spec-badge {
-      background: rgba(30, 58, 95, 0.12);
-      color: #1e3a5f !important;
-    }
+        .form-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
 
-    /* ==================== VM GRID ==================== */
-    .vm-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(420px, 1fr));
-      gap: 1.5rem;
-      margin-top: 1.5rem;
-    }
-    .vm-card {
-      padding: 1.3rem;
-      border-radius: 24px;
-      cursor: pointer;
-      transition: all 0.25s;
-      position: relative;
-      animation: fadeInUp 0.4s ease;
-    }
-    body.hell .vm-card {
-      background: rgba(12, 15, 30, 0.9) !important;
-      border: 1px solid rgba(255, 102, 0, 0.5) !important;
-    }
-    body.heaven .vm-card {
-      background: rgba(255, 255, 255, 0.9) !important;
-      border: 1px solid #cbd5e1;
-    }
-    .vm-card:hover {
-      transform: translateY(-5px);
-    }
-    body.hell .vm-card:hover {
-      border-color: #ff884d;
-      box-shadow: 0 15px 30px -12px rgba(255, 68, 0, 0.35);
-    }
-    .vm-name {
-      font-size: 1rem;
-      font-weight: 700;
-      margin-bottom: 0.6rem;
-      word-break: break-all;
-    }
-    body.hell .vm-name { color: #ffaa77 !important; }
-    body.heaven .vm-name { color: #1e3a5f !important; }
-    
-    .vm-info-row {
-      display: flex;
-      align-items: flex-start;
-      gap: 0.5rem;
-      margin-bottom: 0.4rem;
-      font-size: 0.75rem;
-      flex-wrap: wrap;
-    }
-    .vm-info-label {
-      font-weight: 700;
-      min-width: 35px;
-    }
-    body.hell .vm-info-label { color: #ffaa77 !important; }
-    .vm-info-value {
-      font-family: 'JetBrains Mono', monospace;
-      word-break: break-all;
-      flex: 1;
-    }
-    body.hell .vm-info-value { color: #e2e8f0 !important; }
-    
-    .vm-status {
-      display: inline-block;
-      padding: 0.25rem 0.7rem;
-      border-radius: 20px;
-      font-size: 0.7rem;
-      font-weight: 600;
-      margin-top: 0.3rem;
-    }
-    .status-running { background: #22c55e; color: white; }
-    .status-creating { background: #eab308; color: black; animation: pulse 1.5s infinite; }
-    .status-failed { background: #ef4444; color: white; }
-    
-    .vm-error {
-      margin-top: 0.5rem;
-      padding: 0.4rem;
-      border-radius: 12px;
-      font-size: 0.7rem;
-      background: rgba(239, 68, 68, 0.15);
-      border-left: 3px solid #ef4444;
-    }
-    body.hell .vm-error { color: #fca5a5 !important; }
-    
-    .delete-vm-btn {
-      position: absolute;
-      bottom: 0.8rem;
-      right: 0.8rem;
-      background: rgba(220, 38, 38, 0.85);
-      border: none;
-      border-radius: 20px;
-      padding: 0.3rem 0.8rem;
-      color: white;
-      font-size: 0.7rem;
-      cursor: pointer;
-      transition: all 0.2s;
-    }
-    .delete-vm-btn:hover {
-      background: #dc2626;
-      transform: scale(1.02);
-    }
+        .input-group {
+            margin-bottom: 16px;
+        }
 
-    /* ==================== DEBUG PANEL ==================== */
-    .debug-panel {
-      position: fixed;
-      bottom: 20px;
-      right: 20px;
-      width: 420px;
-      max-width: calc(100vw - 40px);
-      z-index: 150;
-      border-radius: 20px;
-      transition: all 0.3s cubic-bezier(0.2, 0.9, 0.4, 1.1);
-      transform: translateX(calc(100% + 20px));
-    }
-    .debug-panel.open {
-      transform: translateX(0);
-    }
-    body.hell .debug-panel {
-      background: rgba(5, 8, 22, 0.98);
-      backdrop-filter: blur(24px);
-      border: 1px solid #ff7744aa;
-      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
-    }
-    body.heaven .debug-panel {
-      background: rgba(255, 255, 250, 0.98);
-      backdrop-filter: blur(20px);
-      border: 1px solid #cbd5e1;
-      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
-    }
-    .debug-header {
-      padding: 1rem;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      cursor: pointer;
-      border-bottom: 1px solid rgba(255, 102, 51, 0.3);
-    }
-    .debug-header h4 {
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      font-size: 0.9rem;
-    }
-    .debug-badge {
-      background: #ef4444;
-      color: white;
-      border-radius: 20px;
-      padding: 0.15rem 0.5rem;
-      font-size: 0.65rem;
-      font-weight: 600;
-    }
-    .debug-content {
-      max-height: 400px;
-      overflow-y: auto;
-      padding: 0.8rem;
-    }
-    .debug-log-item {
-      padding: 0.6rem;
-      border-radius: 12px;
-      margin-bottom: 0.5rem;
-      font-size: 0.7rem;
-      transition: all 0.2s;
-      cursor: pointer;
-    }
-    body.hell .debug-log-item {
-      background: rgba(255, 255, 255, 0.05);
-      border-left: 3px solid #ff6633;
-    }
-    body.heaven .debug-log-item {
-      background: rgba(0, 0, 0, 0.03);
-      border-left: 3px solid #ff6633;
-    }
-    .debug-log-item:hover {
-      transform: translateX(-3px);
-    }
-    .debug-log-time {
-      font-size: 0.6rem;
-      opacity: 0.6;
-      margin-bottom: 0.2rem;
-    }
-    .debug-log-title {
-      font-weight: 600;
-      margin-bottom: 0.2rem;
-    }
-    .debug-log-detail {
-      font-size: 0.65rem;
-      opacity: 0.7;
-      word-break: break-word;
-    }
-    .debug-empty {
-      text-align: center;
-      padding: 1.5rem;
-      opacity: 0.5;
-      font-size: 0.8rem;
-    }
-    .debug-clear-btn {
-      background: transparent;
-      border: none;
-      cursor: pointer;
-      padding: 0.2rem 0.5rem;
-      border-radius: 8px;
-      font-size: 0.7rem;
-    }
-    body.hell .debug-clear-btn {
-      color: #ffaa77;
-    }
-    body.heaven .debug-clear-btn {
-      color: #2c5282;
-    }
-    .debug-clear-btn:hover {
-      background: rgba(239,68,68,0.2);
-    }
+        .input-label {
+            display: block;
+            font-size: 0.75rem;
+            font-weight: 500;
+            margin-bottom: 6px;
+            opacity: 0.8;
+        }
 
-    /* ==================== SETTINGS PANEL ==================== */
-    .settings-btn {
-      position: fixed;
-      top: 20px;
-      left: 20px;
-      z-index: 300;
-      border-radius: 50px;
-      padding: 0.6rem 1rem;
-      cursor: pointer;
-      font-size: 1.2rem;
-      transition: all 0.2s;
-    }
-    body.hell .settings-btn {
-      background: rgba(0, 0, 0, 0.6);
-      backdrop-filter: blur(12px);
-      border: 1px solid #ff6633aa;
-      color: #ffaa77;
-    }
-    body.heaven .settings-btn {
-      background: rgba(255, 255, 255, 0.7);
-      backdrop-filter: blur(12px);
-      border: 1px solid #cbd5e1;
-      color: #1e3a5f;
-    }
-    .settings-btn:hover {
-      transform: rotate(15deg);
-    }
-    .settings-panel {
-      position: fixed;
-      top: 80px;
-      left: 20px;
-      width: 320px;
-      z-index: 200;
-      border-radius: 28px;
-      padding: 1.2rem;
-      transform: translateX(-120%);
-      transition: transform 0.3s cubic-bezier(0.2, 0.9, 0.4, 1.1);
-    }
-    body.hell .settings-panel {
-      background: rgba(5, 8, 22, 0.98);
-      backdrop-filter: blur(24px);
-      border: 1px solid #ff7744aa;
-    }
-    body.heaven .settings-panel {
-      background: rgba(255, 255, 250, 0.98);
-      backdrop-filter: blur(20px);
-      border: 1px solid #cbd5e1;
-    }
-    .settings-panel.open { transform: translateX(0); }
-    .settings-box {
-      margin-bottom: 1rem;
-      padding: 0.8rem;
-      border-radius: 20px;
-    }
-    body.hell .settings-box { background: #0f111faa; }
-    body.heaven .settings-box { background: #eef3ffaa; }
-    body.hell .settings-box h4 { color: #ffaa77 !important; margin-bottom: 0.3rem; }
-    
-    .design-indicator {
-      display: inline-block;
-      margin-left: 8px;
-      font-size: 0.7rem;
-      padding: 2px 8px;
-      border-radius: 20px;
-    }
-    body.hell .design-indicator {
-      background: #ff663355;
-      color: #ffaa77;
-    }
-    body.heaven .design-indicator {
-      background: #2c528255;
-      color: white;
-    }
-    .switch-group {
-      display: flex;
-      gap: 0.6rem;
-      margin-top: 0.5rem;
-    }
-    .switch-option {
-      flex: 1;
-      text-align: center;
-      padding: 0.5rem;
-      border-radius: 40px;
-      cursor: pointer;
-      font-size: 0.8rem;
-      font-weight: 500;
-      transition: all 0.2s;
-    }
-    body.hell .switch-option { background: #1e1f2e; color: #ccccff; }
-    body.heaven .switch-option { background: #e3eaff; color: #1a2c44; }
-    .switch-option.active {
-      background: linear-gradient(135deg, #ff6600, #ff33aa);
-      color: white;
-    }
-    .step {
-      display: flex;
-      align-items: center;
-      gap: 0.6rem;
-      margin-bottom: 0.6rem;
-      font-size: 0.75rem;
-    }
-    .step-number {
-      width: 24px;
-      height: 24px;
-      background: #ff6633;
-      border-radius: 50%;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      font-weight: bold;
-      color: white;
-      font-size: 0.65rem;
-    }
+        .input-field {
+            width: 100%;
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 12px;
+            padding: 12px 16px;
+            color: white;
+            font-size: 0.85rem;
+            transition: all 0.2s;
+        }
 
-    /* ==================== LANGUAGE SWITCH ==================== */
-    .lang-switch {
-      position: fixed;
-      top: 20px;
-      right: 20px;
-      z-index: 300;
-      border-radius: 50px;
-      padding: 0.3rem 0.5rem;
-      display: flex;
-      gap: 0.3rem;
-    }
-    body.hell .lang-switch {
-      background: rgba(0, 0, 0, 0.6);
-      backdrop-filter: blur(12px);
-    }
-    body.heaven .lang-switch {
-      background: rgba(255, 255, 255, 0.7);
-      backdrop-filter: blur(12px);
-    }
-    .lang-btn {
-      background: transparent;
-      border: none;
-      padding: 0.3rem 0.8rem;
-      border-radius: 40px;
-      font-weight: 600;
-      cursor: pointer;
-      font-size: 0.8rem;
-      transition: all 0.2s;
-    }
-    body.hell .lang-btn { color: #94a3b8; }
-    body.heaven .lang-btn { color: #475569; }
-    .lang-btn.active {
-      background: #ff6633;
-      color: white;
-    }
+        .input-field:focus {
+            outline: none;
+            border-color: #a855f7;
+            box-shadow: 0 0 0 2px rgba(168, 85, 247, 0.2);
+        }
 
-    /* ==================== DEBUG BUTTON ==================== */
-    .debug-btn {
-      position: fixed;
-      bottom: 20px;
-      right: 20px;
-      z-index: 160;
-      width: 48px;
-      height: 48px;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      transition: all 0.2s;
-      font-size: 1.2rem;
-    }
-    body.hell .debug-btn {
-      background: linear-gradient(135deg, #ff6600, #ff33aa);
-      box-shadow: 0 4px 15px rgba(255, 68, 0, 0.4);
-    }
-    body.heaven .debug-btn {
-      background: linear-gradient(135deg, #1e3a5f, #3b5a8a);
-      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-    }
-    .debug-btn:hover {
-      transform: scale(1.1);
-    }
-    .debug-btn.has-error {
-      animation: pulse 1s infinite;
-    }
+        .input-hint {
+            font-size: 0.6rem;
+            opacity: 0.5;
+            margin-top: 4px;
+        }
 
-    /* ==================== MODAL ==================== */
-    .modal {
-      display: none;
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      backdrop-filter: blur(28px);
-      justify-content: center;
-      align-items: center;
-      z-index: 1000;
-      animation: fadeInUp 0.3s ease;
-    }
-    body.hell .modal { background: rgba(0, 0, 0, 0.95); }
-    body.heaven .modal { background: rgba(0, 0, 0, 0.6); }
-    .modal-content {
-      max-width: 650px;
-      width: 90%;
-      border-radius: 32px;
-      padding: 1.8rem;
-      max-height: 85vh;
-      overflow-y: auto;
-      animation: slideInRight 0.3s ease;
-    }
-    body.hell .modal-content {
-      background: #0a0d1c;
-      border: 1px solid #ff8844;
-    }
-    body.heaven .modal-content {
-      background: #ffffff;
-      border: 1px solid #cbd5e1;
-    }
-    .result-box {
-      border-radius: 20px;
-      padding: 1rem;
-      margin: 0.8rem 0;
-      border-left: 3px solid #ff6633;
-    }
-    body.hell .result-box { background: #0f172a; }
-    body.heaven .result-box { background: #f1f5f9; }
-    
-    .info-row {
-      display: flex;
-      align-items: flex-start;
-      gap: 1rem;
-      margin-bottom: 0.6rem;
-      flex-wrap: wrap;
-    }
-    .info-label {
-      font-weight: 700;
-      min-width: 100px;
-      font-size: 0.85rem;
-    }
-    body.hell .info-label { color: #ffaa77 !important; }
-    .info-value {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 0.85rem;
-      word-break: break-all;
-      flex: 1;
-      padding: 0.2rem 0.5rem;
-      border-radius: 8px;
-      cursor: pointer;
-      transition: all 0.2s;
-    }
-    body.hell .info-value {
-      background: #1e293b;
-      color: #facc15 !important;
-    }
-    body.heaven .info-value {
-      background: #e2e8f0;
-      color: #1e293b;
-    }
-    .info-value:hover {
-      opacity: 0.8;
-    }
-    .copy-hint {
-      font-size: 0.6rem;
-      margin-left: 0.5rem;
-      opacity: 0.6;
-    }
+        .input-row {
+            display: flex;
+            gap: 12px;
+        }
 
-    /* ==================== FOOTER ==================== */
-    .footer {
-      margin-top: 2.5rem;
-      text-align: center;
-      padding: 1.2rem 0;
-      border-top: 1px solid;
-      font-size: 0.7rem;
-      opacity: 0.5;
-    }
-    body.hell .footer { border-top-color: #ff774433; }
-    body.heaven .footer { border-top-color: #cbd5e1; }
+        .input-row .input-group {
+            flex: 1;
+        }
 
-    /* ==================== UTILITIES ==================== */
-    .hidden { display: none; }
-    .toast {
-      position: fixed;
-      bottom: 80px;
-      right: 80px;
-      padding: 0.8rem 1.2rem;
-      border-radius: 50px;
-      z-index: 1000;
-      animation: slideInRight 0.3s ease;
-      color: white;
-      font-size: 0.85rem;
-      font-weight: 500;
-    }
-    .loading-spinner {
-      display: inline-block;
-      width: 18px;
-      height: 18px;
-      border: 2px solid rgba(255,255,255,0.3);
-      border-radius: 50%;
-      border-top-color: white;
-      animation: spin 0.6s linear infinite;
-      margin-right: 8px;
-      vertical-align: middle;
-    }
-    .error-detail {
-      background: rgba(239, 68, 68, 0.15);
-      border-radius: 12px;
-      padding: 0.8rem;
-      margin-top: 0.8rem;
-      font-size: 0.75rem;
-    }
-    .error-detail-title {
-      font-weight: 700;
-      margin-bottom: 0.3rem;
-    }
-    body.hell .error-detail-title { color: #ffaa77; }
+        /* Buttons */
+        .btn {
+            padding: 12px 20px;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: none;
+        }
 
-    /* ==================== RESPONSIVE ==================== */
-    @media (max-width: 768px) {
-      .glow-text { font-size: 2rem; }
-      .container { padding: 0 1rem; }
-      .glass-card { padding: 1.2rem; }
-      .tab-btn { padding: 0.5rem 1.2rem; font-size: 0.85rem; }
-      .vm-grid { grid-template-columns: 1fr; }
-      .tech-section { grid-template-columns: 1fr; }
-      .settings-panel { width: 280px; left: 10px; top: 75px; }
-      .debug-panel { width: calc(100vw - 40px); right: 20px; bottom: 80px; }
-      .input-wrapper { flex-direction: column; }
-      .input-wrapper input { width: 100%; }
-      .random-btn { width: 100%; justify-content: center; }
-      .info-row { flex-direction: column; gap: 0.3rem; }
-      .info-label { min-width: auto; }
-      .debug-btn { bottom: 20px; right: 20px; }
-      .toast { bottom: 80px; right: 20px; left: 20px; text-align: center; }
-    }
-    @media (max-width: 480px) {
-      .glow-text { font-size: 1.6rem; }
-      .tab-container { flex-direction: column; align-items: center; gap: 0.6rem; }
-      .tab-btn { width: 80%; }
-    }
-  </style>
+        .btn-primary {
+            background: linear-gradient(135deg, #a855f7, #ec4899);
+            color: white;
+            width: 100%;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-primary::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .btn-primary:hover::before {
+            left: 100%;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(168, 85, 247, 0.3);
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .btn-random {
+            background: rgba(168, 85, 247, 0.3);
+            color: white;
+            font-size: 0.7rem;
+            padding: 8px 12px;
+            white-space: nowrap;
+        }
+
+        .btn-random:hover {
+            background: rgba(168, 85, 247, 0.5);
+        }
+
+        /* VM List */
+        .vm-list {
+            background: rgba(20, 20, 40, 0.6);
+            backdrop-filter: blur(10px);
+            border-radius: 24px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 20px;
+        }
+
+        .vm-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .vm-title {
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .vm-count {
+            background: rgba(168, 85, 247, 0.3);
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.7rem;
+        }
+
+        .vm-item {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 16px;
+            padding: 16px;
+            margin-bottom: 12px;
+            transition: all 0.2s;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .vm-item:hover {
+            background: rgba(0, 0, 0, 0.5);
+        }
+
+        .vm-name {
+            font-weight: 600;
+            margin-bottom: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .vm-status {
+            font-size: 0.7rem;
+            padding: 2px 8px;
+            border-radius: 20px;
+        }
+
+        .status-creating { background: rgba(245, 158, 11, 0.3); color: #f59e0b; }
+        .status-running { background: rgba(34, 197, 94, 0.3); color: #22c55e; }
+        .status-failed { background: rgba(239, 68, 68, 0.3); color: #ef4444; }
+        .status-timeout { background: rgba(239, 68, 68, 0.3); color: #ef4444; }
+
+        .vm-info {
+            font-size: 0.7rem;
+            opacity: 0.7;
+            margin-top: 8px;
+            word-break: break-all;
+        }
+
+        .vm-link {
+            color: #a855f7;
+            text-decoration: none;
+            font-size: 0.7rem;
+        }
+
+        .vm-link:hover {
+            text-decoration: underline;
+        }
+
+        .vm-actions {
+            margin-top: 10px;
+            display: flex;
+            gap: 10px;
+        }
+
+        .vm-delete {
+            background: rgba(239, 68, 68, 0.2);
+            border: none;
+            color: #ef4444;
+            padding: 4px 8px;
+            border-radius: 8px;
+            font-size: 0.65rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .vm-delete:hover {
+            background: rgba(239, 68, 68, 0.4);
+        }
+
+        /* Debug Panel */
+        .debug-panel {
+            background: rgba(20, 20, 40, 0.6);
+            backdrop-filter: blur(10px);
+            border-radius: 24px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            margin-top: 20px;
+            overflow: hidden;
+        }
+
+        .debug-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 20px;
+            background: rgba(0, 0, 0, 0.3);
+            cursor: pointer;
+        }
+
+        .debug-title {
+            font-size: 0.8rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .debug-toggle {
+            font-size: 0.7rem;
+            transition: transform 0.3s;
+        }
+
+        .debug-content {
+            padding: 16px 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            max-height: 300px;
+            overflow-y: auto;
+            font-size: 0.7rem;
+            font-family: monospace;
+        }
+
+        .debug-content.hidden {
+            display: none;
+        }
+
+        .debug-log {
+            padding: 6px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            font-family: monospace;
+            font-size: 0.65rem;
+        }
+
+        .debug-log-error { color: #ef4444; }
+        .debug-log-success { color: #22c55e; }
+        .debug-log-info { color: #a855f7; }
+        .debug-log-warning { color: #f59e0b; }
+
+        /* Toast */
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            right: 20px;
+            background: rgba(0, 0, 0, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 12px;
+            padding: 12px 16px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transform: translateY(100px);
+            transition: transform 0.3s;
+            z-index: 1000;
+        }
+
+        .toast.show {
+            transform: translateY(0);
+        }
+
+        .toast-success { border-left: 3px solid #22c55e; }
+        .toast-error { border-left: 3px solid #ef4444; }
+        .toast-info { border-left: 3px solid #a855f7; }
+
+        /* Loading */
+        .loading {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-top-color: white;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Empty state */
+        .empty-state {
+            text-align: center;
+            padding: 30px 20px;
+            opacity: 0.5;
+        }
+
+        /* Responsive */
+        @media (max-width: 480px) {
+            .container { padding: 12px; }
+            .form-card, .vm-list { padding: 16px; }
+            .input-row { flex-direction: column; gap: 0; }
+            .logo { font-size: 1.8rem; }
+        }
+    </style>
 </head>
-<body class="hell">
-  <div class="bg-universe"></div>
-  <div class="hell-stars"></div>
-  <div class="hell-grid"></div>
-  <div class="hell-core"></div>
-  <div class="hell-disk"></div>
-  <div class="heaven-clouds"></div>
-  <div class="heaven-particles"></div>
-
-  <!-- Settings Button -->
-  <div class="settings-btn" id="settingsBtn">
-    <i class="fas fa-cog"></i>
-  </div>
-
-  <!-- Settings Panel -->
-  <div class="settings-panel" id="settingsPanel">
-    <div class="settings-box">
-      <h4><i class="fas fa-palette"></i> <span data-i18n="design_mode">Chế độ hiển thị</span> <span id="designIndicator" class="design-indicator">🌑 Hell</span></h4>
-      <div class="switch-group">
-        <div class="switch-option active" data-design="hell">🌑 <span data-i18n="hell_mode">Hell Mode</span></div>
-        <div class="switch-option" data-design="heaven">☁️ <span data-i18n="heaven_mode">Heaven Mode</span></div>
-      </div>
-    </div>
-    <div class="settings-box">
-      <h4><i class="fas fa-question-circle"></i> <span data-i18n="guide_title">Hướng dẫn</span></h4>
-      <div class="step"><span class="step-number">1</span><span data-i18n="step1">Lấy GitHub Token (cần quyền repo, workflow)</span></div>
-      <div class="step"><span class="step-number">2</span><span data-i18n="step2">Lấy Tailscale Auth Key</span></div>
-      <div class="step"><span class="step-number">3</span><span data-i18n="step3">Bấm Random để tạo user/pass</span></div>
-      <div class="step"><span class="step-number">4</span><span data-i18n="step4">Nhấn "Tạo VM" và chờ 2-3 phút</span></div>
-    </div>
-    <div class="settings-box">
-      <h4><i class="fas fa-envelope"></i> <span data-i18n="contact">Liên hệ</span></h4>
-      <div style="font-size: 0.8rem;">📧 <a href="mailto:thienantran1268@gmail.com" style="text-decoration: none;">thienantran1268@gmail.com</a></div>
-      <div style="font-size: 0.7rem; opacity: 0.6;">🔮 Singularity Beta • Quantum-ready</div>
-    </div>
-  </div>
-
-  <!-- Language Switch -->
-  <div class="lang-switch">
-    <button class="lang-btn active" data-lang="vi">🇻🇳 VI</button>
-    <button class="lang-btn" data-lang="en">🇬🇧 EN</button>
-  </div>
-
-  <!-- Debug Button -->
-  <div class="debug-btn" id="debugBtn">
-    <i class="fas fa-bug"></i>
-  </div>
-
-  <!-- Debug Panel -->
-  <div class="debug-panel" id="debugPanel">
-    <div class="debug-header" id="debugHeader">
-      <h4><i class="fas fa-terminal"></i> <span data-i18n="debug_title">Debug Console</span> <span id="debugCount" class="debug-badge">0</span></h4>
-      <button class="debug-clear-btn" id="clearDebugBtn"><i class="fas fa-trash-alt"></i></button>
-    </div>
-    <div class="debug-content" id="debugContent">
-      <div class="debug-empty"><i class="fas fa-check-circle"></i> <span data-i18n="debug_empty">Chưa có lỗi nào</span></div>
-    </div>
-  </div>
-
-  <div class="container">
-    <!-- Header -->
-    <div class="header" style="margin: 1rem 0 1.5rem 0;">
-      <div class="glow-text" id="mainTitle">🌀 SINGULARITY CLOUD</div>
-      <div class="subtitle" id="subText">Hell & Heaven Virtual Machine Platform • 144Hz Quantum Fabric</div>
-    </div>
-
-    <!-- Tab Switcher -->
-    <div class="tab-container">
-      <button class="tab-btn active" data-tab="create" id="createTabBtn"><i class="fas fa-plus-circle"></i> <span data-i18n="create_tab">Tạo VM</span></button>
-      <button class="tab-btn" data-tab="manage" id="manageTabBtn"><i class="fas fa-server"></i> <span data-i18n="manage_tab">Quản lý VM</span></button>
-    </div>
-
-    <!-- Create VM Panel -->
-    <div id="createPanel" class="glass-card">
-      <h2 style="margin-bottom: 1.2rem; font-size: 1.3rem;" id="authTitle"><i class="fas fa-key"></i> <span data-i18n="auth_title">Khởi tạo Virtual Machine</span></h2>
-      
-      <div class="input-group">
-        <label id="githubTokenLabel"><i class="fab fa-github"></i> <span data-i18n="github_label">GitHub Token</span></label>
-        <div class="input-wrapper">
-          <input type="password" id="githubToken" placeholder="ghp_xxxxx...">
+<body>
+    <div class="container">
+        <!-- Language Switch -->
+        <div class="lang-switch">
+            <button class="lang-btn active" data-lang="vi">VI</button>
+            <button class="lang-btn" data-lang="en">EN</button>
         </div>
-        <div class="input-hint" id="githubHint">
-          <span class="example-token">✅ <span data-i18n="github_hint">Hỗ trợ: ghp_, github_pat_, gho_, ghu_, ghs_</span></span><br>
-          <span class="example-token">📌 <span data-i18n="github_scope">Cần quyền: repo, workflow</span></span>
+
+        <!-- Header -->
+        <div class="header">
+            <div class="logo">SINGULARITY CLUB</div>
+            <div class="subtitle">Hell & Heaven Virtual Machine Platform • 144Hz Quantum Fabric</div>
+            <div class="badge" id="versionBadge">⚡ BETA v7.0 | Anti-Block Mode</div>
         </div>
-      </div>
 
-      <div class="input-group">
-        <label id="tailscaleLabel"><i class="fas fa-network-wired"></i> <span data-i18n="tailscale_label">Tailscale Auth Key</span></label>
-        <div class="input-wrapper">
-          <input type="password" id="tailscaleKey" placeholder="tskey-auth_xxxxx...">
-        </div>
-        <div class="input-hint" id="tailscaleHint">
-          <span class="example-token">✅ <span data-i18n="tailscale_hint">Đúng: tskey-auth_abc123xyz...</span></span>
-        </div>
-      </div>
-
-      <div class="input-group">
-        <label id="usernameLabel"><i class="fas fa-user"></i> <span data-i18n="username_label">Tên đăng nhập VM</span></label>
-        <div class="input-wrapper">
-          <input type="text" id="vmUsername" placeholder="Tên đăng nhập (tự động random)">
-          <button class="random-btn" id="randomUsernameBtn"><i class="fas fa-dice-d6"></i> <span data-i18n="random_btn">Random</span></button>
-        </div>
-        <div class="input-error" id="usernameError"><span data-i18n="username_error">Tên đăng nhập phải có ít nhất 5 ký tự</span></div>
-      </div>
-
-      <div class="input-group">
-        <label id="passwordLabel"><i class="fas fa-lock"></i> <span data-i18n="password_label">Mật khẩu VM</span></label>
-        <div class="input-wrapper">
-          <input type="text" id="vmPassword" placeholder="Mật khẩu (tự động random 30-32 ký tự)">
-          <button class="random-btn" id="randomPasswordBtn"><i class="fas fa-dice-d6"></i> <span data-i18n="random_btn">Random</span></button>
-        </div>
-        <div class="input-error" id="passwordError"><span data-i18n="password_error">Mật khẩu phải có ít nhất 5 ký tự</span></div>
-        <div class="input-hint" id="passwordHint">💡 <span data-i18n="password_hint">Bấm Random để tạo user/pass mạnh tự động</span></div>
-      </div>
-
-      <button class="btn-primary" id="createBtn"><i class="fas fa-rocket"></i> <span data-i18n="create_btn">Tạo Virtual Machine</span></button>
-      <div id="createResult" style="margin-top: 1rem;"></div>
-    </div>
-
-    <!-- Manage VM Panel -->
-    <div id="managePanel" class="glass-card hidden">
-      <h2 style="margin-bottom: 1.2rem; font-size: 1.3rem;" id="manageTitle"><i class="fas fa-database"></i> <span data-i18n="manage_title">Virtual Machines</span></h2>
-      <div id="vmList" class="vm-grid">
-        <div style="text-align:center; padding: 2rem;"><i class="fas fa-spinner fa-pulse"></i> <span data-i18n="loading">Đang tải danh sách...</span></div>
-      </div>
-    </div>
-
-    <!-- Tech Features Section -->
-    <div class="tech-section">
-      <div class="tech-card">
-        <div class="tech-icon">⚡</div>
-        <div class="tech-title"><span data-i18n="tech1_title">Quantum Engine</span></div>
-        <div class="tech-desc"><span data-i18n="tech1_desc">4 vCPU • 16 GB DDR5<br>NVMe SSD 56GB</span></div>
-        <div><span class="spec-badge">4 Cores</span><span class="spec-badge">16GB RAM</span><span class="spec-badge">56GB SSD</span></div>
-      </div>
-      <div class="tech-card">
-        <div class="tech-icon">🌐</div>
-        <div class="tech-title"><span data-i18n="tech2_title">Hyperfast Network</span></div>
-        <div class="tech-desc"><span data-i18n="tech2_desc">1~2 Gbps • &lt;5ms latency<br>Tailscale 500+ Mbps</span></div>
-        <div><span class="spec-badge">2Gbps</span><span class="spec-badge">WireGuard</span><span class="spec-badge">Tailscale</span></div>
-      </div>
-      <div class="tech-card">
-        <div class="tech-icon">⏱️</div>
-        <div class="tech-title"><span data-i18n="tech3_title">Auto Lifecycle</span></div>
-        <div class="tech-desc"><span data-i18n="tech3_desc">Tự động reset sau 6 giờ<br>Zero-downtime orchestration</span></div>
-        <div><span class="spec-badge">6h Cycle</span><span class="spec-badge">99.9%</span></div>
-      </div>
-      <div class="tech-card">
-        <div class="tech-icon">🔒</div>
-        <div class="tech-title"><span data-i18n="tech4_title">Zero-Trust Security</span></div>
-        <div class="tech-desc"><span data-i18n="tech4_desc">WireGuard® E2EE<br>IDS/IPS Protection</span></div>
-        <div><span class="spec-badge">E2EE</span><span class="spec-badge">WireGuard</span></div>
-      </div>
-    </div>
-
-    <!-- Footer -->
-    <div class="footer">
-      ⚡ Singularity Cloud | Hell & Heaven Virtual Machine Platform
-      <div style="font-size: 0.6rem; opacity: 0.5; margin-top: 0.4rem;">Developed by SuperDzAn • v7.0</div>
-    </div>
-  </div>
-
-  <!-- VM Detail Modal -->
-  <div id="vmModal" class="modal">
-    <div class="modal-content">
-      <h2 id="modalTitle" style="margin-bottom: 1rem;"></h2>
-      <div id="modalBody"></div>
-      <button class="btn-primary" id="closeModal"><span data-i18n="close_btn">Đóng</span></button>
-    </div>
-  </div>
-
-  <script>
-    // ==================== CONFIG ====================
-    const API_URL = '/api/vps';
-    let currentDesign = 'hell';
-    let currentLang = 'vi';
-    let vms = [];
-    let refreshInterval = null;
-    let debugLogs = [];
-
-    // ==================== TRANSLATIONS ====================
-    const translations = {
-      vi: {
-        // General
-        design_mode: "Chế độ hiển thị",
-        hell_mode: "Hell Mode",
-        heaven_mode: "Heaven Mode",
-        guide_title: "Hướng dẫn",
-        step1: "Lấy GitHub Token (cần quyền repo, workflow)",
-        step2: "Lấy Tailscale Auth Key",
-        step3: "Bấm Random để tạo user/pass",
-        step4: "Nhấn 'Tạo VM' và chờ 2-3 phút",
-        contact: "Liên hệ",
-        
-        // Debug
-        debug_title: "Debug Console",
-        debug_empty: "Chưa có lỗi nào",
-        debug_error: "Lỗi",
-        debug_time: "Thời gian",
-        debug_cause: "Nguyên nhân",
-        debug_solution: "Cách khắc phục",
-        
-        // Tabs
-        create_tab: "Tạo VM",
-        manage_tab: "Quản lý VM",
-        
-        // Auth
-        auth_title: "Khởi tạo Virtual Machine",
-        github_label: "GitHub Token",
-        github_hint: "Hỗ trợ: ghp_, github_pat_, gho_, ghu_, ghs_",
-        github_scope: "Cần quyền: repo, workflow",
-        tailscale_label: "Tailscale Auth Key",
-        tailscale_hint: "Đúng: tskey-auth_abc123xyz...",
-        username_label: "Tên đăng nhập VM",
-        password_label: "Mật khẩu VM",
-        random_btn: "Random",
-        username_error: "Tên đăng nhập phải có ít nhất 5 ký tự",
-        password_error: "Mật khẩu phải có ít nhất 5 ký tự",
-        password_hint: "Bấm Random để tạo user/pass mạnh tự động",
-        create_btn: "Tạo Virtual Machine",
-        
-        // Manage
-        manage_title: "Virtual Machines",
-        loading: "Đang tải danh sách...",
-        no_vm: "Chưa có Virtual Machine nào. Hãy tạo VM đầu tiên",
-        
-        // Modal
-        close_btn: "Đóng",
-        modal_connection: "Thông tin kết nối",
-        modal_user: "Tên đăng nhập",
-        modal_pass: "Mật khẩu",
-        modal_ip: "Tailscale IP",
-        modal_vnc: "noVNC",
-        modal_time: "Thời gian",
-        modal_created: "Tạo lúc",
-        modal_expires: "Hết hạn",
-        modal_repo: "Repository",
-        modal_config: "Cấu hình",
-        modal_cpu: "CPU: 4 vCPU (Intel Xeon)",
-        modal_ram: "RAM: 16 GB DDR5 ECC",
-        modal_storage: "Ổ cứng: 56 GB NVMe SSD",
-        modal_network: "Mạng: 1-2 Gbps",
-        modal_vpn: "VPN: Tailscale + WireGuard",
-        modal_note: "VM sẽ tự động xóa sau 6 giờ. Kết nối qua Tailscale để dùng RDP.",
-        modal_error: "Lỗi",
-        
-        // Actions
-        delete_confirm: "Bạn có chắc chắn muốn xóa VM này?",
-        delete_success: "VM đã được xóa thành công",
-        delete_error: "Lỗi khi xóa VM",
-        creating: "Đang khởi tạo VM...",
-        create_success: "Virtual Machine đã được khởi tạo!",
-        create_error: "Lỗi khi tạo VM",
-        missing_token: "Vui lòng nhập GitHub Token và Tailscale Key",
-        invalid_token: "Token GitHub không hợp lệ",
-        copy_success: "Đã sao chép vào clipboard!",
-        
-        // Tech
-        tech1_title: "Quantum Engine",
-        tech1_desc: "4 vCPU • 16 GB DDR5<br>NVMe SSD 56GB",
-        tech2_title: "Hyperfast Network",
-        tech2_desc: "1~2 Gbps • <5ms latency<br>Tailscale 500+ Mbps",
-        tech3_title: "Auto Lifecycle",
-        tech3_desc: "Tự động reset sau 6 giờ<br>Zero-downtime orchestration",
-        tech4_title: "Zero-Trust Security",
-        tech4_desc: "WireGuard® E2EE<br>IDS/IPS Protection",
-        
-        // Status
-        status_running: "Đang chạy",
-        status_creating: "Đang tạo",
-        status_failed: "Thất bại",
-        status_expired: "Hết hạn"
-      },
-      en: {
-        // General
-        design_mode: "Display Mode",
-        hell_mode: "Hell Mode",
-        heaven_mode: "Heaven Mode",
-        guide_title: "Guide",
-        step1: "Get GitHub Token (requires repo, workflow)",
-        step2: "Get Tailscale Auth Key",
-        step3: "Click Random to generate user/pass",
-        step4: "Click 'Create VM' and wait 2-3 minutes",
-        contact: "Contact",
-        
-        // Debug
-        debug_title: "Debug Console",
-        debug_empty: "No errors yet",
-        debug_error: "Error",
-        debug_time: "Time",
-        debug_cause: "Cause",
-        debug_solution: "Solution",
-        
-        // Tabs
-        create_tab: "Create VM",
-        manage_tab: "Manage VM",
-        
-        // Auth
-        auth_title: "Initialize Virtual Machine",
-        github_label: "GitHub Token",
-        github_hint: "Supports: ghp_, github_pat_, gho_, ghu_, ghs_",
-        github_scope: "Required: repo, workflow",
-        tailscale_label: "Tailscale Auth Key",
-        tailscale_hint: "Valid: tskey-auth_abc123xyz...",
-        username_label: "VM Username",
-        password_label: "VM Password",
-        random_btn: "Random",
-        username_error: "Username must be at least 5 characters",
-        password_error: "Password must be at least 5 characters",
-        password_hint: "Click Random to generate strong credentials",
-        create_btn: "Create Virtual Machine",
-        
-        // Manage
-        manage_title: "Virtual Machines",
-        loading: "Loading list...",
-        no_vm: "No Virtual Machine yet. Create your first VM",
-        
-        // Modal
-        close_btn: "Close",
-        modal_connection: "Connection Info",
-        modal_user: "Username",
-        modal_pass: "Password",
-        modal_ip: "Tailscale IP",
-        modal_vnc: "noVNC",
-        modal_time: "Time Information",
-        modal_created: "Created at",
-        modal_expires: "Expires at",
-        modal_repo: "Repository",
-        modal_config: "Configuration",
-        modal_cpu: "CPU: 4 vCPU (Intel Xeon)",
-        modal_ram: "RAM: 16 GB DDR5 ECC",
-        modal_storage: "Storage: 56 GB NVMe SSD",
-        modal_network: "Network: 1-2 Gbps",
-        modal_vpn: "VPN: Tailscale + WireGuard",
-        modal_note: "VM will auto-delete after 6 hours. Connect via Tailscale for RDP.",
-        modal_error: "Error",
-        
-        // Actions
-        delete_confirm: "Are you sure you want to delete this VM?",
-        delete_success: "VM deleted successfully",
-        delete_error: "Error deleting VM",
-        creating: "Creating VM...",
-        create_success: "Virtual Machine created!",
-        create_error: "Error creating VM",
-        missing_token: "Please enter GitHub Token and Tailscale Key",
-        invalid_token: "Invalid GitHub Token",
-        copy_success: "Copied to clipboard!",
-        
-        // Tech
-        tech1_title: "Quantum Engine",
-        tech1_desc: "4 vCPU • 16 GB DDR5<br>NVMe SSD 56GB",
-        tech2_title: "Hyperfast Network",
-        tech2_desc: "1~2 Gbps • <5ms latency<br>Tailscale 500+ Mbps",
-        tech3_title: "Auto Lifecycle",
-        tech3_desc: "Auto reset after 6 hours<br>Zero-downtime orchestration",
-        tech4_title: "Zero-Trust Security",
-        tech4_desc: "WireGuard® E2EE<br>IDS/IPS Protection",
-        
-        // Status
-        status_running: "Running",
-        status_creating: "Creating",
-        status_failed: "Failed",
-        status_expired: "Expired"
-      }
-    };
-
-    // ==================== HELPER FUNCTIONS ====================
-    function t(key) {
-      return translations[currentLang][key] || key;
-    }
-
-    function updateAllTexts() {
-      // Update all elements with data-i18n
-      document.querySelectorAll('[data-i18n]').forEach(el => {
-        const key = el.getAttribute('data-i18n');
-        if (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA') {
-          el.placeholder = t(key);
-        } else {
-          el.innerHTML = t(key);
-        }
-      });
-      
-      // Update buttons that don't have data-i18n
-      document.getElementById('createTabBtn').innerHTML = `<i class="fas fa-plus-circle"></i> ${t('create_tab')}`;
-      document.getElementById('manageTabBtn').innerHTML = `<i class="fas fa-server"></i> ${t('manage_tab')}`;
-      document.getElementById('createBtn').innerHTML = `<i class="fas fa-rocket"></i> ${t('create_btn')}`;
-      document.getElementById('closeModal').innerHTML = t('close_btn');
-      
-      // Update tech titles
-      document.querySelectorAll('.tech-title').forEach((el, idx) => {
-        const keys = ['tech1_title', 'tech2_title', 'tech3_title', 'tech4_title'];
-        if (idx < keys.length) el.innerHTML = t(keys[idx]);
-      });
-      document.querySelectorAll('.tech-desc').forEach((el, idx) => {
-        const keys = ['tech1_desc', 'tech2_desc', 'tech3_desc', 'tech4_desc'];
-        if (idx < keys.length) el.innerHTML = t(keys[idx]);
-      });
-      
-      // Update status texts in VM list if exists
-      if (vms.length) renderVMList();
-    }
-
-    // ==================== VALIDATION FUNCTIONS ====================
-    function isValidGitHubToken(token) {
-      if (!token || typeof token !== 'string') return false;
-      const validPatterns = [
-        /^ghp_[A-Za-z0-9]+$/,
-        /^github_pat_[A-Za-z0-9_]+$/,
-        /^gho_[A-Za-z0-9]+$/,
-        /^ghu_[A-Za-z0-9]+$/,
-        /^ghs_[A-Za-z0-9]+$/
-      ];
-      return validPatterns.some(pattern => pattern.test(token));
-    }
-
-    function isValidTailscaleKey(key) {
-      if (!key || typeof key !== 'string') return false;
-      return /^tskey-[a-zA-Z0-9_-]+$/.test(key);
-    }
-
-    // ==================== RANDOM GENERATORS ====================
-    function generateRandomUsername() {
-      const chars = 'abcdefghijklmnopqrstuvwxyz0123456789';
-      const length = Math.floor(Math.random() * 5) + 6;
-      let result = '';
-      for (let i = 0; i < length; i++) result += chars[Math.floor(Math.random() * chars.length)];
-      return result;
-    }
-
-    function generateRandomPassword() {
-      const upper = 'ABCDEFGHJKLMNPQRSTUVWXYZ';
-      const lower = 'abcdefghijkmnopqrstuvwxyz';
-      const numbers = '23456789';
-      const special = '!@#$%^&*()_+[]{}<>?';
-      const all = upper + lower + numbers + special;
-      let password = '';
-      password += upper[Math.floor(Math.random() * upper.length)];
-      password += lower[Math.floor(Math.random() * lower.length)];
-      password += numbers[Math.floor(Math.random() * numbers.length)];
-      password += special[Math.floor(Math.random() * special.length)];
-      const targetLength = Math.floor(Math.random() * 3) + 28;
-      for (let i = password.length; i < targetLength; i++) password += all[Math.floor(Math.random() * all.length)];
-      let shuffled = password.split('').sort(() => Math.random() - 0.5).join('');
-      shuffled = shuffled.slice(0, -2) + 'dz';
-      return shuffled;
-    }
-
-    function validateInputs() {
-      let isValid = true;
-      const username = document.getElementById('vmUsername').value.trim();
-      const password = document.getElementById('vmPassword').value.trim();
-      if (username.length < 5) { document.getElementById('usernameError').classList.add('show'); isValid = false; }
-      else { document.getElementById('usernameError').classList.remove('show'); }
-      if (password.length < 5) { document.getElementById('passwordError').classList.add('show'); isValid = false; }
-      else { document.getElementById('passwordError').classList.remove('show'); }
-      return isValid;
-    }
-
-    // ==================== UI HELPERS ====================
-    function applyDesign() {
-      document.body.classList.remove('hell', 'heaven');
-      document.body.classList.add(currentDesign);
-      localStorage.setItem('singularity_design', currentDesign);
-      
-      const indicator = document.getElementById('designIndicator');
-      if (currentDesign === 'hell') {
-        indicator.innerHTML = '🌑 Hell Mode';
-      } else {
-        indicator.innerHTML = '☁️ Heaven Mode';
-      }
-      
-      document.querySelectorAll('[data-design]').forEach(opt => {
-        if (opt.dataset.design === currentDesign) opt.classList.add('active');
-        else opt.classList.remove('active');
-      });
-    }
-
-    function showToast(message, type = 'info') {
-      const toast = document.createElement('div');
-      toast.className = 'toast';
-      toast.style.background = type === 'success' ? '#22c55e' : type === 'error' ? '#ef4444' : '#3b82f6';
-      toast.innerHTML = `<i class="fas ${type === 'success' ? 'fa-check-circle' : type === 'error' ? 'fa-exclamation-triangle' : 'fa-info-circle'}"></i> ${message}`;
-      document.body.appendChild(toast);
-      setTimeout(() => toast.remove(), 4000);
-    }
-
-    function copyToClipboard(text, label) {
-      navigator.clipboard.writeText(text).then(() => {
-        showToast(`${label} ${t('copy_success')}`, 'success');
-      }).catch(() => {
-        showToast(`Không thể sao chép ${label}`, 'error');
-      });
-    }
-
-    // ==================== DEBUG FUNCTIONS ====================
-    function addDebugLog(errorData, vmContext = null) {
-      const logEntry = {
-        id: `debug_${Date.now()}_${Math.random().toString(36).substr(2, 6)}`,
-        timestamp: new Date().toISOString(),
-        error: errorData,
-        vmContext: vmContext,
-        viewed: false
-      };
-      debugLogs.unshift(logEntry);
-      if (debugLogs.length > 50) debugLogs.pop();
-      renderDebugPanel();
-      
-      // Highlight debug button
-      const debugBtn = document.getElementById('debugBtn');
-      debugBtn.classList.add('has-error');
-      setTimeout(() => debugBtn.classList.remove('has-error'), 3000);
-    }
-
-    function renderDebugPanel() {
-      const container = document.getElementById('debugContent');
-      const countSpan = document.getElementById('debugCount');
-      countSpan.textContent = debugLogs.length;
-      
-      if (debugLogs.length === 0) {
-        container.innerHTML = `<div class="debug-empty"><i class="fas fa-check-circle"></i> ${t('debug_empty')}</div>`;
-        return;
-      }
-      
-      container.innerHTML = debugLogs.map(log => `
-        <div class="debug-log-item" data-debug-id="${log.id}" onclick="showDebugDetail('${log.id}')">
-          <div class="debug-log-time"><i class="far fa-clock"></i> ${new Date(log.timestamp).toLocaleString()}</div>
-          <div class="debug-log-title"><i class="fas ${log.error.icon || 'fa-exclamation-triangle'}"></i> ${log.error.title || 'Lỗi'}</div>
-          <div class="debug-log-detail">${log.error.originalError?.substring(0, 100) || 'Không có chi tiết'}...</div>
-          ${log.vmContext ? `<div class="debug-log-detail"><i class="fas fa-server"></i> VM: ${log.vmContext}</div>` : ''}
-        </div>
-      `).join('');
-    }
-
-    async function showDebugDetail(debugId) {
-      const log = debugLogs.find(l => l.id === debugId);
-      if (!log) return;
-      
-      const errorInfo = log.error;
-      const modalBody = document.getElementById('modalBody');
-      document.getElementById('modalTitle').innerHTML = `<i class="fas fa-bug"></i> ${errorInfo.title || t('debug_error')}`;
-      
-      modalBody.innerHTML = `
-        <div class="result-box">
-          <strong><i class="far fa-calendar-alt"></i> ${t('debug_time')}:</strong><br>
-          <span style="font-family: monospace;">${new Date(log.timestamp).toLocaleString()}</span>
-        </div>
-        <div class="result-box">
-          <strong><i class="fas fa-code"></i> Chi tiết lỗi:</strong><br>
-          <span style="font-family: monospace; font-size: 0.75rem; word-break: break-all;">${errorInfo.originalError || 'Không có chi tiết'}</span>
-        </div>
-        ${errorInfo.commonCauses ? `
-          <div class="result-box">
-            <strong><i class="fas fa-search"></i> ${t('debug_cause')}:</strong><br>
-            ${errorInfo.commonCauses.map(cause => `<div style="margin: 0.3rem 0;">• ${cause}</div>`).join('')}
-          </div>
-        ` : ''}
-        ${errorInfo.solutions ? `
-          <div class="result-box">
-            <strong><i class="fas fa-lightbulb"></i> ${t('debug_solution')}:</strong><br>
-            ${errorInfo.solutions.map(solution => `<div style="margin: 0.3rem 0;">✅ ${solution}</div>`).join('')}
-          </div>
-        ` : ''}
-        ${errorInfo.example ? `
-          <div class="result-box">
-            <strong><i class="fas fa-check-circle"></i> Định dạng đúng:</strong><br>
-            <span class="example-token" style="font-size: 0.7rem;">${errorInfo.example}</span>
-          </div>
-        ` : ''}
-        ${log.vmContext ? `
-          <div class="result-box">
-            <strong><i class="fas fa-server"></i> VM liên quan:</strong><br>
-            ${log.vmContext}
-          </div>
-        ` : ''}
-      `;
-      
-      document.getElementById('vmModal').style.display = 'flex';
-    }
-
-    function clearDebugLogs() {
-      debugLogs = [];
-      renderDebugPanel();
-      showToast('Đã xóa debug logs', 'success');
-    }
-
-    // ==================== API CALLS ====================
-    async function loadVMs() {
-      try {
-        const response = await fetch(API_URL);
-        const data = await response.json();
-        if (data.success) {
-          vms = data.vms || [];
-          if (data.debugLogs) {
-            debugLogs = data.debugLogs;
-            renderDebugPanel();
-          }
-          renderVMList();
-        }
-      } catch (error) {
-        console.error('Failed to load VMs:', error);
-        addDebugLog({
-          title: 'Lỗi tải danh sách VM',
-          originalError: error.message,
-          commonCauses: ['Mất kết nối đến server', 'API đang bảo trì'],
-          solutions: ['Làm mới trang (F5)', 'Kiểm tra kết nối mạng']
-        });
-      }
-    }
-
-    async function deleteVM(vmId, event) {
-      event.stopPropagation();
-      if (!confirm(t('delete_confirm'))) return;
-      try {
-        const response = await fetch(`${API_URL}?id=${vmId}`, { method: 'DELETE' });
-        const data = await response.json();
-        if (data.success) {
-          vms = vms.filter(vm => vm.id !== vmId);
-          renderVMList();
-          showToast(t('delete_success'), 'success');
-        }
-      } catch (error) {
-        showToast(t('delete_error'), 'error');
-      }
-    }
-
-    function renderVMList() {
-      const container = document.getElementById('vmList');
-      if (!vms.length) {
-        container.innerHTML = `<div style="text-align:center; padding:2rem;"><i class="fas fa-inbox"></i> ${t('no_vm')}</div>`;
-        return;
-      }
-      container.innerHTML = vms.map(vm => {
-        let statusText = '';
-        if (vm.status === 'running') statusText = t('status_running');
-        else if (vm.status === 'creating') statusText = t('status_creating');
-        else if (vm.status === 'failed') statusText = t('status_failed');
-        else statusText = t('status_expired');
-        
-        return `
-        <div class="vm-card" data-id="${vm.id}">
-          <div class="vm-name"><i class="fas fa-microchip"></i> ${vm.name}</div>
-          <div class="vm-info-row">
-            <span class="vm-info-label"><i class="fas fa-user"></i></span>
-            <span class="vm-info-value" onclick="copyToClipboard('${vm.username}', 'Username')">${vm.username || 'N/A'} <i class="fas fa-copy"></i></span>
-          </div>
-          <div class="vm-info-row">
-            <span class="vm-info-label"><i class="fas fa-lock"></i></span>
-            <span class="vm-info-value" onclick="copyToClipboard('${vm.password}', 'Password')">${vm.password ? '••••••••' : 'N/A'} <i class="fas fa-copy"></i></span>
-          </div>
-          <div class="vm-info-row">
-            <span class="vm-info-label"><i class="fas fa-network-wired"></i></span>
-            <span class="vm-info-value">${vm.tailscaleIP || t('status_creating')}</span>
-          </div>
-          <div class="vm-info-row">
-            <span class="vm-info-label"><i class="far fa-calendar"></i></span>
-            <span class="vm-info-value">${t('modal_created')}: ${new Date(vm.createdAt).toLocaleString()}</span>
-          </div>
-          <div class="vm-info-row">
-            <span class="vm-info-label"><i class="far fa-hourglass-half"></i></span>
-            <span class="vm-info-value">${t('modal_expires')}: ${new Date(vm.expiresAt).toLocaleString()}</span>
-          </div>
-          <div>
-            <span class="vm-status status-${vm.status}"><i class="fas ${vm.status === 'running' ? 'fa-play' : vm.status === 'creating' ? 'fa-spinner fa-pulse' : 'fa-stop'}"></i> ${statusText}</span>
-          </div>
-          ${vm.error ? `<div class="vm-error"><i class="fas fa-exclamation-triangle"></i> ${vm.error}</div>` : ''}
-          <div class="terminal-logs" id="logs-${vm.id}">
-            <div class="log-line"><span class="log-time">[${new Date(vm.createdAt).toLocaleTimeString()}]</span> 🚀 ${t('status_creating')}</div>
-            <div class="log-line"><span class="log-time">[${new Date(vm.createdAt).toLocaleTimeString()}]</span> 📁 Tạo repository: ${vm.name}</div>
-            ${vm.status === 'running' ? '<div class="log-line"><span class="log-time">[Đã hoàn thành]</span> ✅ VM đã sẵn sàng!</div>' : ''}
-            ${vm.status === 'failed' ? '<div class="log-line"><span class="log-time">[Lỗi]</span> ❌ Quá trình tạo VM thất bại</div>' : ''}
-          </div>
-          <button class="delete-vm-btn" onclick="window.deleteVM('${vm.id}', event)"><i class="fas fa-trash-alt"></i> Xóa</button>
-        </div>
-      `}).join('');
-      
-      document.querySelectorAll('.vm-card').forEach(card => {
-        card.addEventListener('click', (e) => {
-          if (e.target.classList.contains('delete-vm-btn') || e.target.closest('.delete-vm-btn')) return;
-          const vm = vms.find(v => v.id === card.dataset.id);
-          if (vm) showVMDetails(vm);
-        });
-      });
-    }
-
-    function showVMDetails(vm) {
-      const noVNCUrl = vm.tailscaleIP ? `http://${vm.tailscaleIP}:6080/vnc.html` : '#';
-      document.getElementById('modalTitle').innerHTML = `<i class="fas fa-microchip"></i> ${vm.name}`;
-      document.getElementById('modalBody').innerHTML = `
-        <div class="result-box">
-          <strong><i class="fas fa-plug"></i> ${t('modal_connection')}</strong><br><br>
-          <div class="info-row">
-            <span class="info-label"><i class="fas fa-user"></i> ${t('modal_user')}:</span>
-            <span class="info-value" onclick="copyToClipboard('${vm.username}', 'Username')">${vm.username || 'N/A'} <span class="copy-hint">(click để copy)</span></span>
-          </div>
-          <div class="info-row">
-            <span class="info-label"><i class="fas fa-lock"></i> ${t('modal_pass')}:</span>
-            <span class="info-value" onclick="copyToClipboard('${vm.password}', 'Password')">${vm.password || 'N/A'} <span class="copy-hint">(click để copy)</span></span>
-          </div>
-          <div class="info-row">
-            <span class="info-label"><i class="fas fa-network-wired"></i> ${t('modal_ip')}:</span>
-            <span class="info-value" onclick="copyToClipboard('${vm.tailscaleIP}', 'IP')">${vm.tailscaleIP || t('status_creating')} <span class="copy-hint">(click để copy)</span></span>
-          </div>
-          <div class="info-row">
-            <span class="info-label"><i class="fas fa-globe"></i> ${t('modal_vnc')}:</span>
-            <span class="info-value" onclick="copyToClipboard('${noVNCUrl}', 'noVNC URL')">${vm.tailscaleIP ? `${noVNCUrl}` : t('status_creating')} <span class="copy-hint">(click để copy)</span></span>
-          </div>
-        </div>
-        <div class="result-box">
-          <strong><i class="far fa-clock"></i> ${t('modal_time')}</strong><br><br>
-          <div class="info-row"><span class="info-label">${t('modal_created')}:</span><span class="info-value">${new Date(vm.createdAt).toLocaleString()}</span></div>
-          <div class="info-row"><span class="info-label">${t('modal_expires')}:</span><span class="info-value">${new Date(vm.expiresAt).toLocaleString()}</span></div>
-          <div class="info-row"><span class="info-label">${t('modal_repo')}:</span><span class="info-value"><a href="${vm.repoUrl}" target="_blank" style="color: #ffaa77;">GitHub <i class="fas fa-external-link-alt"></i></a></span></div>
-        </div>
-        <div class="result-box">
-          <strong><i class="fas fa-microchip"></i> ${t('modal_config')}</strong><br><br>
-          <div class="info-row"><span class="info-label">🖥️ CPU:</span><span class="info-value">${t('modal_cpu')}</span></div>
-          <div class="info-row"><span class="info-label">🧠 RAM:</span><span class="info-value">${t('modal_ram')}</span></div>
-          <div class="info-row"><span class="info-label">💾 Storage:</span><span class="info-value">${t('modal_storage')}</span></div>
-          <div class="info-row"><span class="info-label">📶 Network:</span><span class="info-value">${t('modal_network')}</span></div>
-          <div class="info-row"><span class="info-label">🔗 VPN:</span><span class="info-value">${t('modal_vpn')}</span></div>
-        </div>
-        ${vm.error ? `<div class="error-message" style="background: rgba(239,68,68,0.1); padding: 0.8rem; border-radius: 12px;"><strong><i class="fas fa-exclamation-triangle"></i> ${t('modal_error')}:</strong> ${vm.error}</div>` : ''}
-        <p style="margin-top:0.8rem; padding:0.7rem; background:#ff663322; border-radius:14px; font-size:0.8rem;">
-          <i class="fas fa-info-circle"></i> ${t('modal_note')}
-        </p>
-      `;
-      document.getElementById('vmModal').style.display = 'flex';
-    }
-
-    async function createVM() {
-      const githubToken = document.getElementById('githubToken').value.trim();
-      const tailscaleKey = document.getElementById('tailscaleKey').value.trim();
-      let vmUsername = document.getElementById('vmUsername').value.trim();
-      let vmPassword = document.getElementById('vmPassword').value.trim();
-
-      // Validate GitHub Token
-      if (!githubToken) {
-        showToast(t('missing_token'), 'error');
-        return;
-      }
-      
-      if (!isValidGitHubToken(githubToken)) {
-        const errorDetail = {
-          title: 'GitHub Token không hợp lệ',
-          originalError: `Token "${githubToken.substring(0, 15)}..." không đúng định dạng`,
-          commonCauses: [
-            'Token không bắt đầu bằng đúng prefix (ghp_, github_pat_, gho_, ghu_, ghs_)',
-            'Token bị thiếu hoặc thừa ký tự',
-            'Token chứa khoảng trắng hoặc ký tự đặc biệt'
-          ],
-          solutions: [
-            'Tạo token mới tại https://github.com/settings/tokens',
-            'Chọn "Generate new token (classic)"',
-            'Chọn quyền: repo (tất cả) và workflow',
-            'Copy token ngay sau khi tạo (bắt đầu bằng ghp_)'
-          ],
-          example: 'ghp_aBcDeFgHiJkLmNoPqRsTuVwXyZ123456789',
-          icon: '🔑'
-        };
-        addDebugLog(errorDetail, { step: 'frontend_validation' });
-        
-        document.getElementById('createResult').innerHTML = `
-          <div style="color:#ef4444; padding:0.8rem; background:rgba(239,68,68,0.1); border-radius:14px; margin-top:1rem; font-size:0.8rem;">
-            <strong><i class="fas fa-exclamation-triangle"></i> ${errorDetail.title}</strong><br>
-            <span style="font-size:0.7rem;">${errorDetail.originalError}</span>
-            <div style="margin-top:0.5rem; padding:0.5rem; background:rgba(0,0,0,0.2); border-radius:8px;">
-              <strong>✅ Cách khắc phục:</strong><br>
-              ${errorDetail.solutions.map(s => `• ${s}`).join('<br>')}
+        <!-- Form tạo VM -->
+        <div class="form-card">
+            <div class="form-title">
+                <span id="formTitleIcon">🚀</span>
+                <span id="formTitle">Khởi tạo Virtual Machine</span>
             </div>
-          </div>
-        `;
-        return;
-      }
-
-      // Validate Tailscale Key
-      if (!tailscaleKey) {
-        showToast(t('missing_token'), 'error');
-        return;
-      }
-      
-      if (!isValidTailscaleKey(tailscaleKey)) {
-        const errorDetail = {
-          title: 'Tailscale Key không hợp lệ',
-          originalError: `Key "${tailscaleKey.substring(0, 15)}..." không đúng định dạng`,
-          commonCauses: [
-            'Key không bắt đầu bằng "tskey-"',
-            'Key đã hết hạn hoặc bị thu hồi',
-            'Key không có quyền reusable'
-          ],
-          solutions: [
-            'Tạo key mới tại https://login.tailscale.com/admin/authkeys',
-            'Chọn "Reusable" khi tạo key',
-            'Copy toàn bộ key (bắt đầu bằng tskey-)'
-          ],
-          example: 'tskey-auth_abc123xyz789',
-          icon: '🌀'
-        };
-        addDebugLog(errorDetail, { step: 'frontend_validation' });
-        
-        document.getElementById('createResult').innerHTML = `
-          <div style="color:#ef4444; padding:0.8rem; background:rgba(239,68,68,0.1); border-radius:14px; margin-top:1rem; font-size:0.8rem;">
-            <strong><i class="fas fa-exclamation-triangle"></i> ${errorDetail.title}</strong><br>
-            <span style="font-size:0.7rem;">${errorDetail.originalError}</span>
-          </div>
-        `;
-        return;
-      }
-
-      // Auto generate missing fields
-      if (!vmUsername) {
-        vmUsername = generateRandomUsername();
-        document.getElementById('vmUsername').value = vmUsername;
-      }
-      if (!vmPassword) {
-        vmPassword = generateRandomPassword();
-        document.getElementById('vmPassword').value = vmPassword;
-      }
-      
-      if (!validateInputs()) {
-        showToast(t('username_error'), 'error');
-        return;
-      }
-
-      const createBtn = document.getElementById('createBtn');
-      const originalText = createBtn.innerHTML;
-      createBtn.disabled = true;
-      createBtn.innerHTML = '<span class="loading-spinner"></span>' + t('creating');
-      document.getElementById('createResult').innerHTML = `
-        <div style="margin-top:1rem;">
-          <div style="height:3px; background:linear-gradient(90deg,#ff6600,#ff33aa); width:100%; animation: spin 2s ease-in-out infinite;"></div>
-          <p style="margin-top:0.8rem; font-size:0.8rem;"><i class="fas fa-spinner fa-pulse"></i> ${t('creating')}</p>
-        </div>
-      `;
-
-      try {
-        const response = await fetch(API_URL, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ githubToken, tailscaleKey, vmUsername, vmPassword })
-        });
-        
-        const data = await response.json();
-        
-        if (data.success) {
-          vms.unshift(data);
-          renderVMList();
-          document.getElementById('createResult').innerHTML = `
-            <div style="color:#22c55e; padding:0.8rem; background:rgba(34,197,94,0.1); border-radius:14px; margin-top:1rem; font-size:0.8rem;">
-              <i class="fas fa-check-circle"></i> ${t('create_success')}<br>
-              <span style="font-size:0.75rem;"><i class="fas fa-info-circle"></i> VM sẽ sẵn sàng trong 2-3 phút. Click vào tab "Quản lý VM" để xem trạng thái.</span>
+            
+            <div class="input-group">
+                <label class="input-label" id="labelGithubToken">🔑 GitHub Token</label>
+                <input type="password" class="input-field" id="githubToken" placeholder="ghp_xxx...">
+                <div class="input-hint" id="hintGithubToken">Supports: ghp_, github_pat_, gho_, ghu_, ghs_ | Required: repo, workflow</div>
             </div>
-          `;
-          document.getElementById('githubToken').value = '';
-          document.getElementById('tailscaleKey').value = '';
-          setTimeout(() => {
-            document.getElementById('manageTabBtn').click();
-            loadVMs();
-          }, 2000);
-        } else {
-          // Add debug log from backend response
-          if (data.debug) {
-            addDebugLog(data.debug, { step: 'backend', vmName: data.name });
-          } else {
-            addDebugLog({
-              title: t('create_error'),
-              originalError: data.error || t('create_error'),
-              commonCauses: ['Token thiếu quyền', 'GitHub API lỗi', 'Network issue'],
-              solutions: ['Kiểm tra lại token', 'Thử lại sau', 'Liên hệ support']
+            
+            <div class="input-group">
+                <label class="input-label" id="labelTailscaleKey">🌀 Tailscale Key</label>
+                <input type="password" class="input-field" id="tailscaleKey" placeholder="tskey-xxx...">
+                <div class="input-hint" id="hintTailscaleKey">Get from https://login.tailscale.com/admin/authkeys</div>
+            </div>
+            
+            <div class="input-row">
+                <div class="input-group">
+                    <label class="input-label" id="labelUsername">👤 Tên đăng nhập</label>
+                    <div style="display: flex; gap: 8px;">
+                        <input type="text" class="input-field" id="vmUsername" placeholder="username" style="flex: 1;">
+                        <button class="btn btn-random" id="randomUsernameBtn">Random</button>
+                    </div>
+                </div>
+                <div class="input-group">
+                    <label class="input-label" id="labelPassword">🔒 Mật khẩu</label>
+                    <div style="display: flex; gap: 8px;">
+                        <input type="password" class="input-field" id="vmPassword" placeholder="password" style="flex: 1;">
+                        <button class="btn btn-random" id="randomPasswordBtn">Random</button>
+                    </div>
+                </div>
+            </div>
+            
+            <button class="btn btn-primary" id="createBtn">
+                <span id="createBtnIcon">✨</span>
+                <span id="createBtnText">Tạo VM Ngay</span>
+            </button>
+        </div>
+
+        <!-- Danh sách VM -->
+        <div class="vm-list">
+            <div class="vm-header">
+                <span class="vm-title" id="vmListTitle">📋 Danh sách VM</span>
+                <span class="vm-count" id="vmCount">0</span>
+            </div>
+            <div id="vmList">
+                <div class="empty-state" id="emptyState">✨ Chưa có VM nào | Tạo VM đầu tiên ngay bên trên ✨</div>
+            </div>
+        </div>
+
+        <!-- Debug Panel -->
+        <div class="debug-panel" id="debugPanel">
+            <div class="debug-header" id="debugHeader">
+                <div class="debug-title">
+                    <span>🔧</span>
+                    <span id="debugTitle">Debug Console</span>
+                </div>
+                <div class="debug-toggle" id="debugToggle">▼</div>
+            </div>
+            <div class="debug-content" id="debugContent">
+                <div class="debug-log debug-log-info">🚀 System initialized</div>
+                <div class="debug-log debug-log-info">🛡️ Anti-block pattern active</div>
+                <div class="debug-log debug-log-info">📡 API ready: /api/vps</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast -->
+    <div id="toast" class="toast">
+        <span id="toastIcon">✅</span>
+        <span id="toastMessage">Thành công!</span>
+    </div>
+
+    <script>
+        // ============================================
+        // ANTI-BLOCK PATTERN - SAFE FOR SAFARI
+        // ============================================
+        
+        (function() {
+            // Safe JSON parse - tránh lỗi pattern
+            window.safeJsonParse = function(str) {
+                if (typeof str !== 'string') return null;
+                try {
+                    return JSON.parse(str);
+                } catch(e) {
+                    console.warn('JSON parse error:', e.message);
+                    return null;
+                }
+            };
+            
+            // Safe fetch với error handling - tránh lỗi pattern
+            window.safeFetch = async function(url, options) {
+                try {
+                    const res = await fetch(url, options);
+                    const text = await res.text();
+                    
+                    // Kiểm tra content-type
+                    const contentType = res.headers.get('content-type') || '';
+                    if (contentType.includes('application/json')) {
+                        const json = window.safeJsonParse(text);
+                        return { ok: res.ok, data: json || { error: 'Invalid JSON' }, status: res.status };
+                    }
+                    
+                    // Fallback cho non-JSON response
+                    return { ok: res.ok, data: { raw: text }, status: res.status };
+                } catch(e) {
+                    return { ok: false, data: { error: e.message }, status: 0 };
+                }
+            };
+            
+            // Safe querySelector wrapper
+            const originalQS = Document.prototype.querySelector;
+            Document.prototype.querySelector = function(selector) {
+                try {
+                    return originalQS.call(this, selector);
+                } catch(e) {
+                    console.warn('Invalid selector:', selector);
+                    return null;
+                }
+            };
+            
+            // Safe addEventListener
+            const originalAddEventListener = EventTarget.prototype.addEventListener;
+            EventTarget.prototype.addEventListener = function(type, listener, options) {
+                try {
+                    return originalAddEventListener.call(this, type, listener, options);
+                } catch(e) {
+                    console.warn('EventListener error:', e.message);
+                }
+            };
+            
+            console.log('🛡️ Anti-block patterns loaded');
+        })();
+        
+        // ============================================
+        // MAIN APPLICATION
+        // ============================================
+        
+        const API_URL = '/api/vps';
+        
+        // DOM Elements
+        const elements = {
+            githubToken: document.getElementById('githubToken'),
+            tailscaleKey: document.getElementById('tailscaleKey'),
+            vmUsername: document.getElementById('vmUsername'),
+            vmPassword: document.getElementById('vmPassword'),
+            createBtn: document.getElementById('createBtn'),
+            vmList: document.getElementById('vmList'),
+            vmCount: document.getElementById('vmCount'),
+            emptyState: document.getElementById('emptyState'),
+            toast: document.getElementById('toast'),
+            toastIcon: document.getElementById('toastIcon'),
+            toastMessage: document.getElementById('toastMessage'),
+            debugContent: document.getElementById('debugContent'),
+            debugToggle: document.getElementById('debugToggle'),
+            debugHeader: document.getElementById('debugHeader')
+        };
+        
+        let currentLanguage = 'vi';
+        let vms = [];
+        let debugLogs = [];
+        
+        // Debug logger
+        function addDebugLog(message, type = 'info') {
+            const timestamp = new Date().toLocaleTimeString();
+            const logEntry = { message, type, timestamp };
+            debugLogs.unshift(logEntry);
+            if (debugLogs.length > 50) debugLogs.pop();
+            
+            if (elements.debugContent) {
+                const logDiv = document.createElement('div');
+                logDiv.className = `debug-log debug-log-${type}`;
+                logDiv.innerHTML = `[${timestamp}] ${message}`;
+                elements.debugContent.insertBefore(logDiv, elements.debugContent.firstChild);
+                if (elements.debugContent.children.length > 30) {
+                    elements.debugContent.removeChild(elements.debugContent.lastChild);
+                }
+            }
+        }
+        
+        // Toast
+        function showToast(message, type = 'success') {
+            elements.toastIcon.textContent = type === 'success' ? '✅' : type === 'error' ? '❌' : 'ℹ️';
+            elements.toastMessage.textContent = message;
+            elements.toast.className = `toast toast-${type} show`;
+            setTimeout(() => {
+                elements.toast.classList.remove('show');
+            }, 3000);
+            addDebugLog(message, type);
+        }
+        
+        // Random string
+        function randomString(length, isPassword = false) {
+            const chars = 'abcdefghijklmnopqrstuvwxyz0123456789';
+            const passwordChars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*';
+            const source = isPassword ? passwordChars : chars;
+            let result = '';
+            for (let i = 0; i < length; i++) {
+                result += source.charAt(Math.floor(Math.random() * source.length));
+            }
+            return result;
+        }
+        
+        // Render VM list
+        function renderVMList() {
+            if (!vms || vms.length === 0) {
+                elements.vmList.innerHTML = '<div class="empty-state">✨ Chưa có VM nào | Tạo VM đầu tiên ngay bên trên ✨</div>';
+                elements.vmCount.textContent = '0';
+                return;
+            }
+            
+            elements.vmCount.textContent = vms.length;
+            
+            elements.vmList.innerHTML = vms.map(vm => `
+                <div class="vm-item" data-vm-id="${vm.id}">
+                    <div class="vm-name">
+                        <span>🖥️ ${vm.name || vm.id.substring(0, 15)}</span>
+                        <span class="vm-status status-${vm.status || 'creating'}">${vm.status || 'creating'}</span>
+                    </div>
+                    <div class="vm-info">
+                        👤 ${vm.username || 'unknown'} | 🕐 ${new Date(vm.createdAt).toLocaleString()}
+                    </div>
+                    ${vm.tailscaleIP ? `<div class="vm-info">🌐 Tailscale IP: ${vm.tailscaleIP}</div>` : ''}
+                    ${vm.novncUrl ? `<div class="vm-info">🔗 <a href="${vm.novncUrl}" target="_blank" class="vm-link">noVNC Console</a></div>` : ''}
+                    ${vm.repoUrl ? `<div class="vm-info">📦 <a href="${vm.repoUrl}" target="_blank" class="vm-link">GitHub Repository</a></div>` : ''}
+                    ${vm.workflowUrl ? `<div class="vm-info">⚙️ <a href="${vm.workflowUrl}" target="_blank" class="vm-link">GitHub Actions</a></div>` : ''}
+                    <div class="vm-actions">
+                        <button class="vm-delete" onclick="deleteVM('${vm.id}')">🗑️ Xóa</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+        
+        // Load VMs from API
+        async function loadVMs() {
+            addDebugLog('Đang tải danh sách VM...', 'info');
+            const result = await window.safeFetch(API_URL);
+            
+            if (result.ok && result.data && result.data.vms) {
+                vms = result.data.vms;
+                renderVMList();
+                addDebugLog(`Đã tải ${vms.length} VM`, 'success');
+            } else {
+                addDebugLog(`Lỗi tải VM: ${result.data?.error || 'Unknown'}`, 'error');
+            }
+        }
+        
+        // Create VM
+        async function createVM() {
+            const githubToken = elements.githubToken.value.trim();
+            const tailscaleKey = elements.tailscaleKey.value.trim();
+            let vmUsername = elements.vmUsername.value.trim();
+            let vmPassword = elements.vmPassword.value.trim();
+            
+            if (!githubToken) {
+                showToast('Vui lòng nhập GitHub Token', 'error');
+                return;
+            }
+            
+            if (!tailscaleKey) {
+                showToast('Vui lòng nhập Tailscale Key', 'error');
+                return;
+            }
+            
+            if (!vmUsername) vmUsername = randomString(8, false);
+            if (!vmPassword) vmPassword = randomString(12, true);
+            
+            elements.createBtn.disabled = true;
+            elements.createBtn.innerHTML = '<span class="loading"></span> Đang tạo...';
+            addDebugLog(`Đang tạo VM: ${vmUsername}`, 'info');
+            
+            const requestBody = {
+                githubToken: githubToken,
+                tailscaleKey: tailscaleKey,
+                vmUsername: vmUsername,
+                vmPassword: vmPassword
+            };
+            
+            const result = await window.safeFetch(API_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(requestBody)
             });
-          }
-          
-          document.getElementById('createResult').innerHTML = `
-            <div style="color:#ef4444; padding:0.8rem; background:rgba(239,68,68,0.1); border-radius:14px; margin-top:1rem; font-size:0.8rem;">
-              <i class="fas fa-exclamation-triangle"></i> ${data.error || t('create_error')}
-            </div>
-          `;
-          showToast(data.error || t('create_error'), 'error');
+            
+            if (result.ok && result.data && result.data.success) {
+                showToast(`✅ Đã tạo VM: ${vmUsername}`, 'success');
+                addDebugLog(`VM created: ${vmUsername}`, 'success');
+                await loadVMs();
+                
+                // Clear sensitive fields
+                elements.githubToken.value = '';
+                elements.tailscaleKey.value = '';
+            } else {
+                const errorMsg = result.data?.error || 'Tạo VM thất bại';
+                showToast(errorMsg, 'error');
+                addDebugLog(`Create failed: ${errorMsg}`, 'error');
+            }
+            
+            elements.createBtn.disabled = false;
+            elements.createBtn.innerHTML = '<span>✨</span> Tạo VM Ngay';
         }
-      } catch (error) {
-        console.error('Create error:', error);
-        addDebugLog({
-          title: 'Lỗi kết nối',
-          originalError: error.message,
-          commonCauses: ['Mất kết nối internet', 'Server đang bận', 'CORS error'],
-          solutions: ['Kiểm tra lại mạng', 'Làm mới trang', 'Thử lại sau']
+        
+        // Delete VM
+        window.deleteVM = async function(id) {
+            addDebugLog(`Đang xóa VM: ${id}`, 'info');
+            const result = await window.safeFetch(`${API_URL}?id=${id}`, { method: 'DELETE' });
+            
+            if (result.ok && result.data?.success) {
+                showToast('Đã xóa VM', 'success');
+                await loadVMs();
+            } else {
+                showToast('Xóa VM thất bại', 'error');
+            }
+        };
+        
+        // Random buttons
+        document.getElementById('randomUsernameBtn').onclick = () => {
+            elements.vmUsername.value = randomString(8, false);
+            addDebugLog('Random username generated', 'info');
+        };
+        
+        document.getElementById('randomPasswordBtn').onclick = () => {
+            elements.vmPassword.value = randomString(12, true);
+            addDebugLog('Random password generated', 'info');
+        };
+        
+        // Create button
+        elements.createBtn.onclick = createVM;
+        
+        // Debug panel toggle
+        let debugVisible = true;
+        elements.debugHeader.onclick = () => {
+            debugVisible = !debugVisible;
+            elements.debugContent.classList.toggle('hidden', !debugVisible);
+            elements.debugToggle.textContent = debugVisible ? '▼' : '▲';
+        };
+        
+        // Language switch
+        const translations = {
+            vi: {
+                formTitle: 'Khởi tạo Virtual Machine',
+                labelGithubToken: '🔑 GitHub Token',
+                labelTailscaleKey: '🌀 Tailscale Key',
+                labelUsername: '👤 Tên đăng nhập',
+                labelPassword: '🔒 Mật khẩu',
+                createBtn: 'Tạo VM Ngay',
+                vmListTitle: '📋 Danh sách VM',
+                debugTitle: 'Debug Console',
+                hintTailscale: 'Get from https://login.tailscale.com/admin/authkeys'
+            },
+            en: {
+                formTitle: 'Initialize Virtual Machine',
+                labelGithubToken: '🔑 GitHub Token',
+                labelTailscaleKey: '🌀 Tailscale Key',
+                labelUsername: '👤 Username',
+                labelPassword: '🔒 Password',
+                createBtn: 'Create VM Now',
+                vmListTitle: '📋 VM List',
+                debugTitle: 'Debug Console',
+                hintTailscale: 'Get from https://login.tailscale.com/admin/authkeys'
+            }
+        };
+        
+        function setLanguage(lang) {
+            currentLanguage = lang;
+            const t = translations[lang];
+            if (!t) return;
+            
+            document.getElementById('formTitle').textContent = t.formTitle;
+            document.getElementById('labelGithubToken').textContent = t.labelGithubToken;
+            document.getElementById('labelTailscaleKey').textContent = t.labelTailscaleKey;
+            document.getElementById('labelUsername').textContent = t.labelUsername;
+            document.getElementById('labelPassword').textContent = t.labelPassword;
+            document.getElementById('createBtnText').textContent = t.createBtn;
+            document.getElementById('vmListTitle').textContent = t.vmListTitle;
+            document.getElementById('debugTitle').textContent = t.debugTitle;
+            document.getElementById('hintTailscaleKey').textContent = t.hintTailscale;
+            
+            document.querySelectorAll('.lang-btn').forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.lang === lang);
+            });
+        }
+        
+        document.querySelectorAll('.lang-btn').forEach(btn => {
+            btn.onclick = () => setLanguage(btn.dataset.lang);
         });
         
-        document.getElementById('createResult').innerHTML = `
-          <div style="color:#ef4444; padding:0.8rem; background:rgba(239,68,68,0.1); border-radius:14px; margin-top:1rem; font-size:0.8rem;">
-            <i class="fas fa-exclamation-triangle"></i> Lỗi kết nối: ${error.message}
-          </div>
-        `;
-        showToast(t('create_error'), 'error');
-      } finally {
-        createBtn.disabled = false;
-        createBtn.innerHTML = originalText;
-        setTimeout(() => {
-          if (document.getElementById('createResult').innerHTML.includes('spinner')) {
-            document.getElementById('createResult').innerHTML = '';
-          }
-        }, 8000);
-      }
-    }
-
-    function startAutoRefresh() {
-      if (refreshInterval) clearInterval(refreshInterval);
-      refreshInterval = setInterval(() => {
-        if (!document.getElementById('managePanel').classList.contains('hidden')) {
-          loadVMs();
-        }
-      }, 10000);
-    }
-
-    // ==================== INIT ====================
-    function init() {
-      const savedDesign = localStorage.getItem('singularity_design');
-      const savedLang = localStorage.getItem('singularity_lang');
-      if (savedDesign) currentDesign = savedDesign;
-      if (savedLang) currentLang = savedLang;
-      
-      applyDesign();
-      updateAllTexts();
-      loadVMs();
-      startAutoRefresh();
-
-      // Random initial values
-      document.getElementById('vmUsername').value = generateRandomUsername();
-      document.getElementById('vmPassword').value = generateRandomPassword();
-
-      // Event listeners
-      document.getElementById('createBtn').addEventListener('click', createVM);
-      document.getElementById('randomUsernameBtn').addEventListener('click', () => {
-        document.getElementById('vmUsername').value = generateRandomUsername();
-        document.getElementById('usernameError').classList.remove('show');
-        showToast('👤 Tên đăng nhập ngẫu nhiên đã được tạo!', 'success');
-      });
-      document.getElementById('randomPasswordBtn').addEventListener('click', () => {
-        document.getElementById('vmPassword').value = generateRandomPassword();
-        document.getElementById('passwordError').classList.remove('show');
-        showToast('🔐 Mật khẩu ngẫu nhiên 30-32 ký tự đã được tạo!', 'success');
-      });
-      
-      document.getElementById('vmUsername').addEventListener('input', validateInputs);
-      document.getElementById('vmPassword').addEventListener('input', validateInputs);
-      
-      document.getElementById('closeModal').addEventListener('click', () => {
-        document.getElementById('vmModal').style.display = 'none';
-      });
-      window.addEventListener('click', (e) => {
-        if (e.target === document.getElementById('vmModal')) {
-          document.getElementById('vmModal').style.display = 'none';
-        }
-      });
-
-      // Tab switching with animation
-      document.getElementById('createTabBtn').addEventListener('click', () => {
-        document.getElementById('createTabBtn').classList.add('active');
-        document.getElementById('manageTabBtn').classList.remove('active');
-        document.getElementById('createPanel').classList.remove('hidden');
-        document.getElementById('managePanel').classList.add('hidden');
-      });
-      document.getElementById('manageTabBtn').addEventListener('click', () => {
-        document.getElementById('manageTabBtn').classList.add('active');
-        document.getElementById('createTabBtn').classList.remove('active');
-        document.getElementById('createPanel').classList.add('hidden');
-        document.getElementById('managePanel').classList.remove('hidden');
+        // Auto refresh every 10 seconds
         loadVMs();
-      });
-
-      // Settings panel
-      const settingsBtn = document.getElementById('settingsBtn');
-      const settingsPanel = document.getElementById('settingsPanel');
-      settingsBtn.addEventListener('click', (e) => {
-        e.stopPropagation();
-        settingsPanel.classList.toggle('open');
-      });
-      document.addEventListener('click', (e) => {
-        if (!settingsPanel.contains(e.target) && !settingsBtn.contains(e.target)) {
-          settingsPanel.classList.remove('open');
-        }
-      });
-
-      // Debug panel
-      const debugBtn = document.getElementById('debugBtn');
-      const debugPanel = document.getElementById('debugPanel');
-      const debugHeader = document.getElementById('debugHeader');
-      
-      debugBtn.addEventListener('click', (e) => {
-        e.stopPropagation();
-        debugPanel.classList.toggle('open');
-      });
-      debugHeader.addEventListener('click', () => {
-        debugPanel.classList.remove('open');
-      });
-      document.addEventListener('click', (e) => {
-        if (!debugPanel.contains(e.target) && !debugBtn.contains(e.target)) {
-          debugPanel.classList.remove('open');
-        }
-      });
-      
-      document.getElementById('clearDebugBtn').addEventListener('click', clearDebugLogs);
-
-      // Design switcher
-      document.querySelectorAll('[data-design]').forEach(opt => {
-        opt.addEventListener('click', () => {
-          currentDesign = opt.dataset.design;
-          applyDesign();
-        });
-      });
-
-      // Language switcher with UI update
-      document.querySelectorAll('.lang-btn').forEach(btn => {
-        if (btn.dataset.lang === currentLang) btn.classList.add('active');
-        btn.addEventListener('click', () => {
-          document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
-          btn.classList.add('active');
-          currentLang = btn.dataset.lang;
-          updateAllTexts();
-          localStorage.setItem('singularity_lang', currentLang);
-          renderVMList();
-          renderDebugPanel();
-        });
-      });
-    }
-
-    // Make functions global for onclick
-    window.deleteVM = deleteVM;
-    window.copyToClipboard = copyToClipboard;
-    window.showDebugDetail = showDebugDetail;
-    
-    init();
-  </script>
+        setInterval(loadVMs, 10000);
+        
+        // Set random defaults
+        elements.vmUsername.value = randomString(8, false);
+        elements.vmPassword.value = randomString(12, true);
+        
+        addDebugLog('🚀 Application loaded successfully', 'success');
+        addDebugLog('🛡️ Anti-block pattern active', 'info');
+        addDebugLog(`📡 API endpoint: ${API_URL}`, 'info');
+    </script>
 </body>
 </html>
