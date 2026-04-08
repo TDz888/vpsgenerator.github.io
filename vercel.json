@@ -1,9 +1,13 @@
 {
-  "name": "singularity-cloud",
-  "version": "7.0.0",
-  "type": "module",
-  "scripts": {
-    "dev": "npx serve .",
-    "start": "npx serve ."
-  }
+  "version": 2,
+  "routes": [
+    {
+      "src": "/api/(.*)",
+      "dest": "/api/vps.js"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/index.html"
+    }
+  ]
 }
