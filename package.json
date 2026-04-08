@@ -1,16 +1,8 @@
 {
   "name": "singularity-cloud",
   "version": "7.0.0",
-  "description": "Next-Gen Virtual Machine Platform - Tự động tạo VM Windows qua GitHub Actions",
-  "main": "public/index.html",
+  "type": "module",
   "scripts": {
-    "dev": "npx serve .",
     "start": "npx serve ."
-  },
-  "keywords": ["vps", "github-actions", "tailscale", "windows", "novnc"],
-  "author": "SuperDzAn",
-  "license": "MIT",
-  "devDependencies": {
-    "serve": "^14.2.0"
   }
 }
