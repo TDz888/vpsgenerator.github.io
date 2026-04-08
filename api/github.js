@@ -1,45 +1,72 @@
-// api/github.js - Đơn giản, không pattern validation
+// api/github.js - Safe API calls
 const GITHUB_API = 'https://api.github.com';
+
+async function safeFetch(url, options) {
+  try {
+    const res = await fetch(url, options);
+    const text = await res.text();
+    try {
+      return { ok: res.ok, data: JSON.parse(text), status: res.status };
+    } catch(e) {
+      return { ok: res.ok, data: { message: text }, status: res.status };
+    }
+  } catch(e) {
+    return { ok: false, data: { message: e.message }, status: 0 };
+  }
+}
+
+export async function validateGitHubToken(token) {
+  if (!token || token.length < 10) {
+    return { valid: false, error: 'Token too short' };
+  }
+  
+  const result = await safeFetch(`${GITHUB_API}/user`, {
+    headers: { 'Authorization': `Bearer ${token}` }
+  });
+  
+  if (result.ok && result.data && result.data.login) {
+    return { valid: true, user: result.data };
+  }
+  return { valid: false, error: result.data?.message || 'Invalid token' };
+}
 
 export async function createRepository(token, name, description) {
   try {
-    const cleanToken = token ? token.trim() : '';
-    const cleanName = name ? name.trim() : '';
-    
-    const res = await fetch(`${GITHUB_API}/user/repos`, {
+    const result = await safeFetch(`${GITHUB_API}/user/repos`, {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${cleanToken}`,
+        'Authorization': `Bearer ${token}`,
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
-        name: cleanName,
+        name: name,
         description: description || 'Created by Singularity Cloud',
         private: false,
         auto_init: true
       })
     });
     
-    if (!res.ok) {
-      const error = await res.json();
-      return { success: false, error: error.message || `HTTP ${res.status}` };
+    if (result.ok && result.data) {
+      return { 
+        success: true, 
+        repo: result.data, 
+        owner: result.data.owner?.login || 'unknown' 
+      };
     }
-    
-    const repo = await res.json();
-    return { success: true, repo: repo, owner: repo.owner.login };
-  } catch (error) {
-    return { success: false, error: error.message };
+    return { success: false, error: result.data?.message || 'Create failed' };
+  } catch(e) {
+    return { success: false, error: e.message };
   }
 }
 
 export async function deleteRepository(token, owner, repo) {
   try {
-    await fetch(`${GITHUB_API}/repos/${owner}/${repo}`, {
+    await safeFetch(`${GITHUB_API}/repos/${owner}/${repo}`, {
       method: 'DELETE',
       headers: { 'Authorization': `Bearer ${token}` }
     });
     return true;
-  } catch {
+  } catch(e) {
     return false;
   }
 }
