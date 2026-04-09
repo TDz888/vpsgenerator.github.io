@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Singularity Club | VPS Premium Generator v1.0 beta</title>
+    <title>Singularity Club | VPS Premium Generator - Demo UI</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
@@ -22,7 +22,14 @@
             --text: #f1f5f9;
             --text-muted: #94a3b8;
         }
-        body { background: var(--bg); font-family: 'Inter', sans-serif; color: var(--text); min-height: 100vh; }
+        body.light {
+            --bg: #f1f5f9;
+            --card: rgba(255,255,255,0.8);
+            --border: rgba(0,0,0,0.1);
+            --text: #0f172a;
+            --text-muted: #475569;
+        }
+        body { background: var(--bg); font-family: 'Inter', sans-serif; color: var(--text); min-height: 100vh; transition: all 0.3s; }
         .container { max-width: 1400px; margin: 0 auto; padding: 24px; }
         
         /* Header */
@@ -180,7 +187,7 @@
         <div class="header">
             <div class="logo"><i class="fas fa-infinity"></i> SINGULARITY CLUB</div>
             <div class="subtitle">Hell & Heaven Virtual Machine Platform • Powered by GitHub Actions</div>
-            <div class="version-badge">⚡ V1.0 (beta-version) | 25+ tính năng nâng cấp</div>
+            <div class="version-badge">⚡ UI DEMO | Chỉ xem giao diện</div>
             <div class="badge-container">
                 <div class="badge"><i class="fab fa-github"></i> GitHub Actions</div>
                 <div class="badge"><i class="fas fa-network-wired"></i> Tailscale Mesh</div>
@@ -189,21 +196,23 @@
                 <div class="badge"><i class="fas fa-bolt"></i> 144Hz Fabric</div>
                 <div class="badge"><i class="fas fa-copy"></i> Copy thông minh</div>
                 <div class="badge"><i class="fas fa-chart-simple"></i> Real-time Stats</div>
+                <div class="badge"><i class="fas fa-moon"></i> Dark/Light Mode</div>
             </div>
         </div>
 
+        <!-- Stats -->
         <div class="stats-grid">
-            <div class="stat-card" onclick="refreshData()">
+            <div class="stat-card">
                 <div class="stat-label"><i class="fas fa-microchip"></i> TOTAL VMS</div>
-                <div class="stat-value" id="statTotal">0</div>
+                <div class="stat-value" id="statTotal">3</div>
             </div>
             <div class="stat-card">
                 <div class="stat-label"><i class="fas fa-play-circle"></i> ACTIVE VMS</div>
-                <div class="stat-value" id="statActive">0</div>
+                <div class="stat-value" id="statActive">2</div>
             </div>
             <div class="stat-card">
                 <div class="stat-label"><i class="fas fa-clock"></i> UPTIME</div>
-                <div class="stat-value" id="statUptime">00:00:00</div>
+                <div class="stat-value" id="statUptime">02:15:30</div>
             </div>
             <div class="stat-card">
                 <div class="stat-label"><i class="fas fa-chart-simple"></i> SUCCESS RATE</div>
@@ -212,25 +221,26 @@
         </div>
 
         <div class="two-columns">
+            <!-- Left: Form tạo VM -->
             <div class="card">
                 <div class="card-title"><i class="fas fa-rocket"></i> Khởi tạo Virtual Machine</div>
                 
                 <div class="input-group">
                     <label class="input-label"><i class="fab fa-github"></i> GitHub Token</label>
-                    <input type="password" class="input-field" id="githubToken" placeholder="ghp_xxxxxxxxxxxx">
+                    <input type="password" class="input-field" id="githubToken" placeholder="ghp_xxxxxxxxxxxx" value="ghp_demo_token_123456789">
                     <div style="font-size:0.65rem; color:var(--text-muted); margin-top:4px;">Cần quyền repo và workflow</div>
                 </div>
                 
                 <div class="input-group">
                     <label class="input-label"><i class="fas fa-network-wired"></i> Tailscale Key</label>
-                    <input type="password" class="input-field" id="tailscaleKey" placeholder="tskey-xxxxxxxxxxxx">
+                    <input type="password" class="input-field" id="tailscaleKey" placeholder="tskey-xxxxxxxxxxxx" value="tskey_demo_key_123456789">
                     <div style="font-size:0.65rem; color:var(--text-muted); margin-top:4px;">Lấy từ <a href="https://login.tailscale.com/admin/authkeys" target="_blank" style="color:var(--primary);">login.tailscale.com</a></div>
                 </div>
                 
                 <div class="input-row">
                     <div class="input-group">
                         <label class="input-label"><i class="fas fa-user"></i> Tên đăng nhập</label>
-                        <input type="text" class="input-field" id="vmUsername" placeholder="username">
+                        <input type="text" class="input-field" id="vmUsername" placeholder="username" value="admin_user">
                     </div>
                     <button class="random-btn" id="randomUserBtn"><i class="fas fa-dice"></i> Random</button>
                 </div>
@@ -238,21 +248,9 @@
                 <div class="input-row">
                     <div class="input-group">
                         <label class="input-label"><i class="fas fa-lock"></i> Mật khẩu</label>
-                        <input type="password" class="input-field" id="vmPassword" placeholder="password">
+                        <input type="password" class="input-field" id="vmPassword" placeholder="password" value="Admin@123456!">
                     </div>
                     <button class="random-btn" id="randomPassBtn"><i class="fas fa-dice"></i> Random</button>
-                </div>
-                
-                <div class="progress-container" id="progressContainer">
-                    <div class="progress-steps" id="progressSteps">
-                        <div class="progress-step"><i class="fas fa-key"></i> Token</div>
-                        <div class="progress-step"><i class="fas fa-folder-plus"></i> Repo</div>
-                        <div class="progress-step"><i class="fas fa-file-code"></i> Workflow</div>
-                        <div class="progress-step"><i class="fas fa-play"></i> Trigger</div>
-                        <div class="progress-step"><i class="fas fa-check-circle"></i> Hoàn tất</div>
-                    </div>
-                    <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
-                    <div class="progress-text" id="progressText">Sẵn sàng tạo VM</div>
                 </div>
                 
                 <button class="btn btn-primary" id="createBtn">
@@ -268,6 +266,7 @@
                 </div>
             </div>
 
+            <!-- Right: Danh sách VM -->
             <div class="card">
                 <div class="card-title"><i class="fas fa-server"></i> Virtual Machines</div>
                 
@@ -284,97 +283,202 @@
                         <option value="oldest">🕐 Cũ nhất</option>
                         <option value="name">📝 Tên A-Z</option>
                     </select>
-                    <div class="vm-count"><i class="fas fa-chart-simple"></i> <span id="vmCount">0</span></div>
+                    <div class="vm-count"><i class="fas fa-chart-simple"></i> <span id="vmCount">3</span></div>
                 </div>
                 
                 <div id="vmList">
-                    <div class="empty-state">
-                        <div class="empty-icon"><i class="fas fa-cloud-upload-alt"></i></div>
-                        <div>✨ Chưa có VM nào<br>Tạo VM đầu tiên bên trái ✨</div>
+                    <!-- VM 1 -->
+                    <div class="vm-item open" data-id="1">
+                        <div class="vm-header" onclick="toggleVM('1')">
+                            <div class="vm-info">
+                                <div class="vm-icon"><i class="fas fa-play-circle"></i></div>
+                                <div>
+                                    <div class="vm-name">vm-windows-pro-01</div>
+                                    <div class="vm-time"><i class="far fa-calendar-alt"></i> 9/4/2026, 10:30:00</div>
+                                </div>
+                            </div>
+                            <div style="display: flex; gap: 12px; align-items: center;">
+                                <span class="vm-status status-running">running</span>
+                                <i class="fas fa-chevron-down vm-expand-icon"></i>
+                            </div>
+                        </div>
+                        <div class="vm-detail">
+                            <div class="info-grid">
+                                <div class="info-card">
+                                    <div class="info-title"><i class="fas fa-user"></i> Thông tin đăng nhập</div>
+                                    <div class="info-value">
+                                        <span><i class="fas fa-user"></i> admin_user</span>
+                                        <button class="copy-btn" onclick="copyDemoText('admin_user')"><i class="fas fa-copy"></i> Sao chép</button>
+                                    </div>
+                                    <div class="info-value" style="margin-top: 8px;">
+                                        <span><i class="fas fa-lock"></i> Admin@123456!</span>
+                                        <button class="copy-btn" onclick="copyDemoText('Admin@123456!')"><i class="fas fa-copy"></i> Sao chép</button>
+                                    </div>
+                                </div>
+                                <div class="info-card">
+                                    <div class="info-title"><i class="fas fa-clock"></i> Thời gian</div>
+                                    <div class="info-value"><i class="far fa-calendar-check"></i> Tạo: 9/4/2026</div>
+                                    <div class="info-value"><i class="far fa-hourglass-half"></i> Hết hạn: 9/4/2026, 16:30:00</div>
+                                </div>
+                                <div class="info-card">
+                                    <div class="info-title"><i class="fas fa-network-wired"></i> Kết nối</div>
+                                    <div class="info-value">
+                                        <span><i class="fas fa-ip"></i> 100.64.12.34</span>
+                                        <button class="copy-btn" onclick="copyDemoText('100.64.12.34')"><i class="fas fa-copy"></i> Sao chép</button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="vm-links">
+                                <a href="#" class="vm-link"><i class="fab fa-github"></i> Repository</a>
+                                <a href="#" class="vm-link"><i class="fas fa-code-branch"></i> GitHub Actions</a>
+                                <a href="#" class="vm-link"><i class="fas fa-desktop"></i> noVNC Console</a>
+                                <button class="vm-delete" onclick="deleteDemo()"><i class="fas fa-trash-alt"></i> Xóa VM</button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- VM 2 -->
+                    <div class="vm-item" data-id="2">
+                        <div class="vm-header" onclick="toggleVM('2')">
+                            <div class="vm-info">
+                                <div class="vm-icon"><i class="fas fa-spinner fa-pulse"></i></div>
+                                <div>
+                                    <div class="vm-name">vm-ubuntu-server-02</div>
+                                    <div class="vm-time"><i class="far fa-calendar-alt"></i> 9/4/2026, 10:45:00</div>
+                                </div>
+                            </div>
+                            <div style="display: flex; gap: 12px; align-items: center;">
+                                <span class="vm-status status-creating">creating</span>
+                                <i class="fas fa-chevron-down vm-expand-icon"></i>
+                            </div>
+                        </div>
+                        <div class="vm-detail">
+                            <div class="info-grid">
+                                <div class="info-card">
+                                    <div class="info-title"><i class="fas fa-user"></i> Thông tin đăng nhập</div>
+                                    <div class="info-value">
+                                        <span><i class="fas fa-user"></i> ubuntu_user</span>
+                                        <button class="copy-btn" onclick="copyDemoText('ubuntu_user')"><i class="fas fa-copy"></i> Sao chép</button>
+                                    </div>
+                                    <div class="info-value" style="margin-top: 8px;">
+                                        <span><i class="fas fa-lock"></i> Ubuntu@2026!</span>
+                                        <button class="copy-btn" onclick="copyDemoText('Ubuntu@2026!')"><i class="fas fa-copy"></i> Sao chép</button>
+                                    </div>
+                                </div>
+                                <div class="info-card">
+                                    <div class="info-title"><i class="fas fa-clock"></i> Thời gian</div>
+                                    <div class="info-value"><i class="far fa-calendar-check"></i> Tạo: 9/4/2026</div>
+                                    <div class="info-value"><i class="far fa-hourglass-half"></i> Hết hạn: 9/4/2026, 16:45:00</div>
+                                </div>
+                            </div>
+                            <div class="vm-progress">
+                                <div class="vm-progress-bar"><div class="vm-progress-fill" style="width: 65%"></div></div>
+                                <div class="vm-progress-text"><i class="fas fa-spinner fa-pulse"></i> Đang trigger GitHub Actions... (65%)</div>
+                            </div>
+                            <div class="vm-links">
+                                <a href="#" class="vm-link"><i class="fab fa-github"></i> Repository</a>
+                                <a href="#" class="vm-link"><i class="fas fa-code-branch"></i> GitHub Actions</a>
+                                <button class="vm-delete" onclick="deleteDemo()"><i class="fas fa-trash-alt"></i> Xóa VM</button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- VM 3 -->
+                    <div class="vm-item" data-id="3">
+                        <div class="vm-header" onclick="toggleVM('3')">
+                            <div class="vm-info">
+                                <div class="vm-icon"><i class="fas fa-stop-circle"></i></div>
+                                <div>
+                                    <div class="vm-name">vm-test-failed-03</div>
+                                    <div class="vm-time"><i class="far fa-calendar-alt"></i> 9/4/2026, 09:15:00</div>
+                                </div>
+                            </div>
+                            <div style="display: flex; gap: 12px; align-items: center;">
+                                <span class="vm-status status-failed">failed</span>
+                                <i class="fas fa-chevron-down vm-expand-icon"></i>
+                            </div>
+                        </div>
+                        <div class="vm-detail">
+                            <div class="info-grid">
+                                <div class="info-card">
+                                    <div class="info-title"><i class="fas fa-user"></i> Thông tin đăng nhập</div>
+                                    <div class="info-value">
+                                        <span><i class="fas fa-user"></i> test_user</span>
+                                        <button class="copy-btn" onclick="copyDemoText('test_user')"><i class="fas fa-copy"></i> Sao chép</button>
+                                    </div>
+                                    <div class="info-value" style="margin-top: 8px;">
+                                        <span><i class="fas fa-lock"></i> Test@123456</span>
+                                        <button class="copy-btn" onclick="copyDemoText('Test@123456')"><i class="fas fa-copy"></i> Sao chép</button>
+                                    </div>
+                                </div>
+                                <div class="info-card">
+                                    <div class="info-title"><i class="fas fa-clock"></i> Thời gian</div>
+                                    <div class="info-value"><i class="far fa-calendar-check"></i> Tạo: 9/4/2026</div>
+                                    <div class="info-value"><i class="far fa-hourglass-half"></i> Hết hạn: 9/4/2026, 15:15:00</div>
+                                </div>
+                            </div>
+                            <div class="vm-links">
+                                <a href="#" class="vm-link"><i class="fab fa-github"></i> Repository</a>
+                                <button class="vm-delete" onclick="deleteDemo()"><i class="fas fa-trash-alt"></i> Xóa VM</button>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
 
+        <!-- Debug Panel -->
         <div class="debug-panel">
             <div class="debug-header" id="debugHeader">
-                <div class="debug-title"><i class="fas fa-terminal"></i> Quantum Debug Console <span style="font-size:0.6rem; opacity:0.6;">v1.0 beta</span></div>
+                <div class="debug-title"><i class="fas fa-terminal"></i> Quantum Debug Console <span style="font-size:0.6rem; opacity:0.6;">DEMO MODE</span></div>
                 <div class="debug-actions">
                     <button class="debug-clear" id="clearLogsBtn"><i class="fas fa-trash-alt"></i> Xóa</button>
                     <span class="debug-toggle" id="debugToggle">▼</span>
                 </div>
             </div>
             <div class="debug-content" id="debugLogs">
-                <div class="debug-log"><span class="debug-time">--:--:--</span><span class="debug-info">🚀 Singularity Club v1.0 (beta) khởi động</span></div>
-                <div class="debug-log"><span class="debug-time">--:--:--</span><span class="debug-info">🔗 API: Đang kết nối...</span></div>
-                <div class="debug-log"><span class="debug-time">--:--:--</span><span class="debug-info">💻 25+ tính năng nâng cấp đã sẵn sàng</span></div>
+                <div class="debug-log"><span class="debug-time">10:30:15</span><span class="debug-info">🚀 Singularity Club UI Demo khởi động</span></div>
+                <div class="debug-log"><span class="debug-time">10:30:15</span><span class="debug-info">🎨 Đây là bản demo giao diện - không kết nối backend</span></div>
+                <div class="debug-log"><span class="debug-time">10:30:15</span><span class="debug-success">✅ 3 VM demo đã được tải</span></div>
+                <div class="debug-log"><span class="debug-time">10:30:15</span><span class="debug-info">💡 Click vào VM để xem chi tiết</span></div>
+                <div class="debug-log"><span class="debug-time">10:30:15</span><span class="debug-info">🔧 Các nút copy hoạt động, các nút khác là demo</span></div>
             </div>
         </div>
         
         <div class="footer">
             <p>© 2026 Singularity Club | <i class="fab fa-github"></i> GitHub | <i class="fab fa-twitter"></i> Twitter | <i class="fab fa-discord"></i> Discord</p>
-            <p style="margin-top:8px; font-size:0.65rem;">⚡ V1.0 (beta-version) | Tự động tạo workflow • Monitor realtime • Lấy IP/noVNC tự động</p>
+            <p style="margin-top:8px; font-size:0.65rem;">⚡ UI DEMO | Chỉ xem giao diện | Không kết nối backend thật</p>
         </div>
     </div>
 
     <div id="toast" class="toast"><i class="fas fa-check-circle"></i> <span id="toastMsg"></span></div>
 
     <script>
-        // ============================================ //
-        // CẤU HÌNH API - THAY IP VPS CỦA BẠN VÀO ĐÂY
-        // ============================================ //
-        const API_URL = 'http://136.110.6.250:5000/api/vps';
-        
-        let vms = [];
-        let sessionStart = Date.now();
-        let currentFilter = 'all';
-        let currentSort = 'newest';
-        let totalCreations = 0;
-        let successfulCreations = 0;
-        
-        // DOM Elements
-        const elements = {
-            githubToken: document.getElementById('githubToken'),
-            tailscaleKey: document.getElementById('tailscaleKey'),
-            vmUsername: document.getElementById('vmUsername'),
-            vmPassword: document.getElementById('vmPassword'),
-            createBtn: document.getElementById('createBtn'),
-            vmList: document.getElementById('vmList'),
-            searchInput: document.getElementById('searchInput'),
-            filterSelect: document.getElementById('filterSelect'),
-            sortSelect: document.getElementById('sortSelect'),
-            vmCount: document.getElementById('vmCount'),
-            statTotal: document.getElementById('statTotal'),
-            statActive: document.getElementById('statActive'),
-            statUptime: document.getElementById('statUptime'),
-            statRate: document.getElementById('statRate'),
-            progressContainer: document.getElementById('progressContainer'),
-            progressFill: document.getElementById('progressFill'),
-            progressText: document.getElementById('progressText'),
-            progressSteps: document.getElementById('progressSteps'),
-            toast: document.getElementById('toast'),
-            toastMsg: document.getElementById('toastMsg'),
-            debugLogs: document.getElementById('debugLogs')
-        };
-        
-        function addLog(msg, type = 'info') {
-            const time = new Date().toLocaleTimeString();
-            const div = document.createElement('div');
-            div.className = 'debug-log';
-            div.innerHTML = `<span class="debug-time">${time}</span><span class="debug-${type}">${msg}</span>`;
-            elements.debugLogs.insertBefore(div, elements.debugLogs.firstChild);
-            while (elements.debugLogs.children.length > 100) {
-                elements.debugLogs.removeChild(elements.debugLogs.lastChild);
-            }
-        }
+        // Demo mode - chỉ để xem giao diện, không gọi API thật
         
         function showToast(msg, type = 'success') {
-            elements.toastMsg.textContent = msg;
-            elements.toast.classList.add('show');
-            setTimeout(() => elements.toast.classList.remove('show'), 3000);
-            addLog(msg, type);
+            const toast = document.getElementById('toast');
+            const toastMsg = document.getElementById('toastMsg');
+            toastMsg.textContent = msg;
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 3000);
         }
         
+        function toggleVM(id) {
+            const item = document.querySelector(`.vm-item[data-id="${id}"]`);
+            if (item) item.classList.toggle('open');
+        }
+        
+        function copyDemoText(text) {
+            navigator.clipboard.writeText(text);
+            showToast(`✅ Đã sao chép: ${text}`, 'success');
+        }
+        
+        function deleteDemo() {
+            showToast('⚠️ Đây là bản demo, không xóa thật!', 'warning');
+        }
+        
+        // Random functions cho form
         function randomUsername() {
             const chars = 'abcdefghijklmnopqrstuvwxyz0123456789';
             return Array(8).fill().map(() => chars[Math.floor(Math.random() * chars.length)]).join('');
@@ -395,320 +499,63 @@
             return result.split('').sort(() => Math.random() - 0.5).join('');
         }
         
-        function formatUptime() {
-            const elapsed = Math.floor((Date.now() - sessionStart) / 1000);
-            return `${Math.floor(elapsed/3600).toString().padStart(2,'0')}:${Math.floor((elapsed%3600)/60).toString().padStart(2,'0')}:${(elapsed%60).toString().padStart(2,'0')}`;
-        }
-        
-        function updateStats() {
-            elements.statTotal.textContent = vms.length;
-            elements.statActive.textContent = vms.filter(v => v.status === 'running').length;
-            const rate = totalCreations > 0 ? Math.floor((successfulCreations / totalCreations) * 100) : 100;
-            elements.statRate.textContent = rate + '%';
-            elements.statUptime.textContent = formatUptime();
-        }
-        
-        function updateCreateProgress(step, percent, text) {
-            elements.progressFill.style.width = percent + '%';
-            elements.progressText.textContent = text;
-            const steps = elements.progressSteps.children;
-            for (let i = 0; i < steps.length; i++) {
-                steps[i].classList.remove('active', 'completed', 'failed');
-                if (i < step) steps[i].classList.add('completed');
-                else if (i === step) steps[i].classList.add('active');
-            }
-        }
-        
-        function renderVMList() {
-            let filtered = [...vms];
-            const search = elements.searchInput.value.toLowerCase();
-            
-            if (search) {
-                filtered = filtered.filter(v => 
-                    (v.name || '').toLowerCase().includes(search) || 
-                    (v.username || '').toLowerCase().includes(search)
-                );
-            }
-            
-            if (currentFilter !== 'all') {
-                filtered = filtered.filter(v => v.status === currentFilter);
-            }
-            
-            if (currentSort === 'newest') {
-                filtered.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-            } else if (currentSort === 'oldest') {
-                filtered.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
-            } else {
-                filtered.sort((a, b) => (a.name || '').localeCompare(b.name || ''));
-            }
-            
-            elements.vmCount.textContent = filtered.length;
-            updateStats();
-            
-            if (filtered.length === 0) {
-                elements.vmList.innerHTML = `
-                    <div class="empty-state">
-                        <div class="empty-icon"><i class="fas fa-cloud-upload-alt"></i></div>
-                        <div>✨ ${search ? 'Không tìm thấy VM' : 'Chưa có VM nào | Tạo VM đầu tiên bên trái'} ✨</div>
-                    </div>
-                `;
-                return;
-            }
-            
-            elements.vmList.innerHTML = filtered.map(vm => {
-                const progress = vm.status === 'creating' ? 
-                    Math.min(95, Math.floor((Date.now() - new Date(vm.createdAt).getTime()) / 360000)) : 
-                    (vm.status === 'running' ? 100 : 0);
-                const stepText = progress < 20 ? 'Đang tạo repository...' :
-                                progress < 40 ? 'Đang tạo workflow...' :
-                                progress < 60 ? 'Đang trigger...' :
-                                progress < 80 ? 'Đợi GitHub Runner...' :
-                                progress < 95 ? 'Đang cài đặt...' : 'Đã sẵn sàng!';
-                
-                return `
-                    <div class="vm-item" data-id="${vm.id}">
-                        <div class="vm-header" onclick="toggleVM('${vm.id}')">
-                            <div class="vm-info">
-                                <div class="vm-icon">
-                                    <i class="fas ${vm.status === 'running' ? 'fa-play-circle' : vm.status === 'creating' ? 'fa-spinner fa-pulse' : 'fa-stop-circle'}"></i>
-                                </div>
-                                <div>
-                                    <div class="vm-name">${vm.name || vm.id.substring(0, 15)}</div>
-                                    <div class="vm-time"><i class="far fa-calendar-alt"></i> ${new Date(vm.createdAt).toLocaleString()}</div>
-                                </div>
-                            </div>
-                            <div style="display: flex; gap: 12px; align-items: center;">
-                                <span class="vm-status status-${vm.status || 'creating'}">${vm.status || 'creating'}</span>
-                                <i class="fas fa-chevron-down vm-expand-icon"></i>
-                            </div>
-                        </div>
-                        <div class="vm-detail">
-                            <div class="info-grid">
-                                <div class="info-card">
-                                    <div class="info-title"><i class="fas fa-user"></i> Thông tin đăng nhập</div>
-                                    <div class="info-value">
-                                        <span><i class="fas fa-user"></i> ${vm.username || 'N/A'}</span>
-                                        <button class="copy-btn" onclick="copyText('${(vm.username || '').replace(/'/g, "\\'")}')"><i class="fas fa-copy"></i> Sao chép</button>
-                                    </div>
-                                    <div class="info-value" style="margin-top: 8px;">
-                                        <span><i class="fas fa-lock"></i> ••••••••</span>
-                                        <button class="copy-btn" onclick="copyText('${(vm.password || '').replace(/'/g, "\\'")}')"><i class="fas fa-copy"></i> Sao chép</button>
-                                    </div>
-                                </div>
-                                <div class="info-card">
-                                    <div class="info-title"><i class="fas fa-clock"></i> Thời gian</div>
-                                    <div class="info-value"><i class="far fa-calendar-check"></i> Tạo: ${new Date(vm.createdAt).toLocaleDateString()}</div>
-                                    <div class="info-value"><i class="far fa-hourglass-half"></i> Hết hạn: ${vm.expiresAt ? new Date(vm.expiresAt).toLocaleString() : '6 giờ'}</div>
-                                </div>
-                                ${vm.tailscaleIP ? `
-                                <div class="info-card">
-                                    <div class="info-title"><i class="fas fa-network-wired"></i> Kết nối</div>
-                                    <div class="info-value">
-                                        <span><i class="fas fa-ip"></i> ${vm.tailscaleIP}</span>
-                                        <button class="copy-btn" onclick="copyText('${vm.tailscaleIP}')"><i class="fas fa-copy"></i> Sao chép</button>
-                                    </div>
-                                </div>
-                                ` : ''}
-                            </div>
-                            
-                            <div class="vm-progress">
-                                <div class="vm-progress-bar">
-                                    <div class="vm-progress-fill" style="width: ${progress}%"></div>
-                                </div>
-                                <div class="vm-progress-text"><i class="fas fa-spinner fa-pulse"></i> ${stepText} (${progress}%)</div>
-                            </div>
-                            
-                            <div class="vm-links">
-                                ${vm.repoUrl ? `<a href="${vm.repoUrl}" target="_blank" class="vm-link"><i class="fab fa-github"></i> Repository</a>` : ''}
-                                ${vm.workflowUrl ? `<a href="${vm.workflowUrl}" target="_blank" class="vm-link"><i class="fas fa-code-branch"></i> GitHub Actions</a>` : ''}
-                                ${vm.novncUrl ? `<a href="${vm.novncUrl}" target="_blank" class="vm-link"><i class="fas fa-desktop"></i> noVNC Console</a>` : ''}
-                                <button class="vm-delete" onclick="deleteVM('${vm.id}')"><i class="fas fa-trash-alt"></i> Xóa VM</button>
-                            </div>
-                        </div>
-                    </div>
-                `;
-            }).join('');
-        }
-        
-        window.toggleVM = function(id) {
-            const item = document.querySelector(`.vm-item[data-id="${id}"]`);
-            if (item) item.classList.toggle('open');
-        };
-        
-        window.copyText = function(text) {
-            navigator.clipboard.writeText(text).then(() => {
-                showToast('Đã sao chép vào clipboard!', 'success');
-            }).catch(() => {
-                showToast('Sao chép thất bại', 'error');
-            });
-        };
-        
-        window.refreshData = function() {
-            loadVMs();
-            showToast('Đang làm mới dữ liệu...', 'info');
-        };
-        
-        async function loadVMs() {
-            try {
-                const res = await fetch(API_URL);
-                const data = await res.json();
-                if (data.success) {
-                    vms = data.vms || [];
-                    renderVMList();
-                    addLog(`Đã tải ${vms.length} VM`, 'success');
-                } else {
-                    addLog(`Lỗi tải VM: ${data.error || 'Unknown'}`, 'error');
-                }
-            } catch (e) {
-                addLog(`Lỗi kết nối API: ${e.message}`, 'error');
-            }
-        }
-        
-        window.deleteVM = async function(id) {
-            if (!confirm('Bạn có chắc chắn muốn xóa VM này? Hành động này không thể hoàn tác!')) return;
-            try {
-                const res = await fetch(`${API_URL}?id=${id}`, { method: 'DELETE' });
-                const data = await res.json();
-                if (data.success) {
-                    showToast('Đã xóa VM thành công', 'success');
-                    await loadVMs();
-                } else {
-                    showToast('Xóa VM thất bại', 'error');
-                }
-            } catch (e) {
-                showToast('Lỗi khi xóa VM', 'error');
-            }
-        };
-        
-        async function createVM() {
-            const githubToken = elements.githubToken.value.trim();
-            const tailscaleKey = elements.tailscaleKey.value.trim();
-            let username = elements.vmUsername.value.trim();
-            let password = elements.vmPassword.value.trim();
-            
-            if (!githubToken) {
-                showToast('Vui lòng nhập GitHub Token', 'error');
-                return;
-            }
-            if (!tailscaleKey) {
-                showToast('Vui lòng nhập Tailscale Key', 'error');
-                return;
-            }
-            if (!username) username = randomUsername();
-            if (!password) password = randomPassword();
-            
-            elements.progressContainer.style.display = 'block';
-            elements.createBtn.disabled = true;
-            elements.createBtn.innerHTML = '<span class="spinner"></span> Đang tạo VM...';
-            
-            updateCreateProgress(0, 10, '🔑 Đang xác thực token...');
-            await new Promise(r => setTimeout(r, 800));
-            
-            updateCreateProgress(1, 30, '📁 Đang tạo repository...');
-            await new Promise(r => setTimeout(r, 1200));
-            
-            updateCreateProgress(2, 55, '📝 Đang tạo workflow...');
-            await new Promise(r => setTimeout(r, 1500));
-            
-            updateCreateProgress(3, 80, '🚀 Đang trigger GitHub Actions...');
-            await new Promise(r => setTimeout(r, 1000));
-            
-            try {
-                const res = await fetch(API_URL, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ 
-                        githubToken, 
-                        tailscaleKey, 
-                        vmUsername: username, 
-                        vmPassword: password 
-                    })
-                });
-                const data = await res.json();
-                totalCreations++;
-                
-                if (data.success) {
-                    successfulCreations++;
-                    updateCreateProgress(4, 100, '✅ Hoàn tất! VM đang được tạo...');
-                    showToast(`✅ VM "${username}" đã được khởi tạo thành công!`, 'success');
-                    await loadVMs();
-                    elements.githubToken.value = '';
-                    elements.tailscaleKey.value = '';
-                    setTimeout(() => {
-                        elements.progressContainer.style.display = 'none';
-                    }, 2000);
-                } else {
-                    updateCreateProgress(0, 0, '❌ Tạo VM thất bại!');
-                    showToast(data.error || 'Tạo VM thất bại', 'error');
-                    setTimeout(() => {
-                        elements.progressContainer.style.display = 'none';
-                    }, 3000);
-                }
-            } catch (e) {
-                showToast('Lỗi kết nối đến server', 'error');
-                elements.progressContainer.style.display = 'none';
-            }
-            
-            elements.createBtn.disabled = false;
-            elements.createBtn.innerHTML = '<i class="fas fa-play"></i> Tạo VM Ngay';
-        }
-        
-        // Event Listeners
-        document.getElementById('createBtn').onclick = createVM;
+        // Event listeners cho các nút (demo)
         document.getElementById('randomUserBtn').onclick = () => {
-            elements.vmUsername.value = randomUsername();
-            showToast('Đã tạo username ngẫu nhiên', 'info');
+            document.getElementById('vmUsername').value = randomUsername();
+            showToast('Đã tạo username ngẫu nhiên (demo)', 'info');
         };
         document.getElementById('randomPassBtn').onclick = () => {
-            elements.vmPassword.value = randomPassword();
-            showToast('Đã tạo mật khẩu 23 ký tự mạnh', 'info');
+            document.getElementById('vmPassword').value = randomPassword();
+            showToast('Đã tạo mật khẩu 23 ký tự (demo)', 'info');
+        };
+        document.getElementById('createBtn').onclick = () => {
+            showToast('🚀 Đây là bản demo UI! Để tạo VM thật, cần deploy backend.', 'info');
         };
         document.getElementById('demoBtn').onclick = () => {
-            elements.githubToken.value = 'ghp_demo_token_here';
-            elements.tailscaleKey.value = 'tskey_demo_key_here';
-            showToast('Đã điền token demo (chỉ để test)', 'info');
+            document.getElementById('githubToken').value = 'ghp_demo_token_123456789';
+            document.getElementById('tailscaleKey').value = 'tskey_demo_key_123456789';
+            showToast('Đã điền token demo', 'info');
         };
         document.getElementById('clearBtn').onclick = () => {
-            elements.githubToken.value = '';
-            elements.tailscaleKey.value = '';
-            elements.vmUsername.value = '';
-            elements.vmPassword.value = '';
+            document.getElementById('githubToken').value = '';
+            document.getElementById('tailscaleKey').value = '';
+            document.getElementById('vmUsername').value = '';
+            document.getElementById('vmPassword').value = '';
             showToast('Đã xóa form', 'info');
         };
         document.getElementById('refreshBtn').onclick = () => {
-            loadVMs();
-            showToast('Đang làm mới danh sách...', 'info');
+            showToast('Đang làm mới (demo)...', 'info');
         };
         document.getElementById('saveConfigBtn').onclick = () => {
-            const config = {
-                githubToken: elements.githubToken.value,
-                tailscaleKey: elements.tailscaleKey.value
-            };
-            localStorage.setItem('singularity_config', JSON.stringify(config));
-            showToast('Đã lưu cấu hình vào trình duyệt', 'success');
+            showToast('Đã lưu cấu hình (demo)', 'success');
         };
         document.getElementById('loadConfigBtn').onclick = () => {
-            const config = JSON.parse(localStorage.getItem('singularity_config') || '{}');
-            if (config.githubToken) elements.githubToken.value = config.githubToken;
-            if (config.tailscaleKey) elements.tailscaleKey.value = config.tailscaleKey;
-            showToast('Đã tải cấu hình từ trình duyệt', 'success');
+            showToast('Đã tải cấu hình (demo)', 'success');
         };
         
-        elements.filterSelect.onchange = (e) => {
-            currentFilter = e.target.value;
-            renderVMList();
-            addLog(`Lọc: ${currentFilter}`, 'info');
+        // Filter và sort demo
+        document.getElementById('filterSelect').onchange = (e) => {
+            showToast(`Lọc: ${e.target.value} (demo)`, 'info');
         };
-        elements.sortSelect.onchange = (e) => {
-            currentSort = e.target.value;
-            renderVMList();
-            addLog(`Sắp xếp: ${currentSort}`, 'info');
+        document.getElementById('sortSelect').onchange = (e) => {
+            showToast(`Sắp xếp: ${e.target.value} (demo)`, 'info');
         };
         
-        let searchTimeout;
-        elements.searchInput.oninput = () => {
-            clearTimeout(searchTimeout);
-            searchTimeout = setTimeout(() => renderVMList(), 300);
+        // Search demo
+        document.getElementById('searchInput').oninput = (e) => {
+            const search = e.target.value.toLowerCase();
+            const items = document.querySelectorAll('.vm-item');
+            items.forEach(item => {
+                const name = item.querySelector('.vm-name')?.innerText.toLowerCase() || '';
+                if (name.includes(search)) {
+                    item.style.display = 'block';
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+            const visibleCount = document.querySelectorAll('.vm-item[style="display: block"]').length;
+            document.getElementById('vmCount').innerText = visibleCount;
+            showToast(`Tìm thấy ${visibleCount} VM`, 'info');
         };
         
         // Debug panel
@@ -716,12 +563,14 @@
         document.getElementById('debugHeader').onclick = () => {
             debugVisible = !debugVisible;
             document.querySelector('.debug-content').classList.toggle('hidden', !debugVisible);
-            document.getElementById('debugToggle').textContent = debugVisible ? '▼' : '▲';
+            document.getElementById('debugToggle').innerHTML = debugVisible ? '▼' : '▲';
         };
         document.getElementById('clearLogsBtn').onclick = (e) => {
             e.stopPropagation();
-            elements.debugLogs.innerHTML = '';
-            addLog('Debug console đã được xóa', 'info');
+            document.getElementById('debugLogs').innerHTML = '';
+            const time = new Date().toLocaleTimeString();
+            document.getElementById('debugLogs').innerHTML = `<div class="debug-log"><span class="debug-time">${time}</span><span class="debug-info">Đã xóa console</span></div>`;
+            showToast('Đã xóa console', 'info');
         };
         
         // Theme toggle
@@ -740,21 +589,10 @@
             document.getElementById('themeToggle').innerHTML = '<i class="fas fa-sun"></i>';
         }
         
-        // Khởi tạo
-        elements.vmUsername.value = randomUsername();
-        elements.vmPassword.value = randomPassword();
-        loadVMs();
-        setInterval(loadVMs, 10000);
-        setInterval(() => {
-            if (document.querySelector('.vm-item')) renderVMList();
-            updateStats();
-        }, 1000);
+        // Khởi tạo số lượng VM hiển thị
+        document.getElementById('vmCount').innerText = '3';
         
-        addLog('🚀 Singularity Club v1.0 (beta) khởi động thành công', 'success');
-        addLog(`🔗 API Endpoint: ${API_URL}`, 'info');
-        addLog('✅ 25+ tính năng nâng cấp đã sẵn sàng', 'success');
-        addLog('🔐 Mật khẩu mặc định: 23 ký tự (chữ hoa, thường, số, ký tự đặc biệt)', 'info');
-        addLog('📊 Monitor workflow realtime - Tự động lấy IP và noVNC', 'success');
+        console.log('🎨 UI Demo - Chỉ xem giao diện, không kết nối backend');
     </script>
 </body>
 </html>
